@@ -5,27 +5,27 @@ import axios, { AxiosInstance } from 'axios';
 import AuthenticationApi from './authentication';
 import MarketplaceApi from './marketplace';
 import prepareAxiosInstance from '../utils/prepare-axios-instance';
-import Listings from './marketplace/listings';
-import AvailabilityExceptions from './marketplace/availabilityExceptions';
-import Bookings from './marketplace/bookings';
-import CurrentUser from './marketplace/currentUser';
-import Images from './marketplace/images';
-import Marketplace from './marketplace/marketplace';
-import Messages from './marketplace/messages';
-import OwnListings from './marketplace/ownListings';
-import PasswordReset from './marketplace/passwordReset';
-import ProcessTransitions from './marketplace/processTransitions';
-import Reviews from './marketplace/reviews';
-import Stock from './marketplace/stock';
-import StockAdjustments from './marketplace/stockAdjustments';
-import StripeAccount from './marketplace/stripeAccount';
-import StripeAccountLinks from './marketplace/stripeAccountLinks';
-import StripeCustomer from './marketplace/stripeCustomer';
-import StripePersons from './marketplace/stripePersons';
-import StripeSetupIntents from './marketplace/stripeSetupIntents';
-import TimeSlots from './marketplace/timeSlots';
-import Transactions from './marketplace/transactions';
-import Users from './marketplace/users';
+import Listings from './marketplace/Listings';
+import AvailabilityExceptions from './marketplace/AvailabilityExceptions';
+import Bookings from './marketplace/Bookings';
+import CurrentUser from './marketplace/CurrentUser';
+import Images from './marketplace/Images';
+import Marketplace from './marketplace/Marketplace';
+import Messages from './marketplace/Messages';
+import OwnListings from './marketplace/OwnListings';
+import PasswordReset from './marketplace/PasswordReset';
+import ProcessTransitions from './marketplace/ProcessTransitions';
+import Reviews from './marketplace/Reviews';
+import Stock from './marketplace/Stock';
+import StockAdjustments from './marketplace/StockAdjustments';
+import StripeAccount from './marketplace/StripeAccount';
+import StripeAccountLinks from './marketplace/StripeAccountLinks';
+import StripeCustomer from './marketplace/StripeCustomer';
+import StripePersons from './marketplace/StripePersons';
+import StripeSetupIntents from './marketplace/StripeSetupIntents';
+import TimeSlots from './marketplace/TimeSlots';
+import Transactions from './marketplace/Transactions';
+import Users from './marketplace/Users';
 import { AuthInfoResponse, LoginParameter, LoginWithIdpParameter, Scope } from '../types/authentication';
 import AssetsApi from './assets';
 
@@ -81,6 +81,7 @@ class SharetribeSdk {
 
   constructor(config: SdkConfig) {
     sdkConfig.parse(config);
+
     this.sdkConfig = {
       ...defaultSdkConfig.parse({}),
       ...config
@@ -107,7 +108,7 @@ class SharetribeSdk {
     this.ownListings = this.api.ownListings
     this.passwordReset = this.api.passwordReset
     this.processTransitions = this.api.processTransitions
-    this.review = this.api.review
+    this.review = this.api.reviews
     this.stock = this.api.stock
     this.stockAdjustments = this.api.stockAdjustments
     this.stripeAccount = this.api.stripeAccount
@@ -136,6 +137,17 @@ class SharetribeSdk {
     });
   }
 
+  async loginWithIdp(params: LoginWithIdpParameter) {
+    if (this.sdkConfig.clientSecret === undefined) {
+      throw new Error('clientSecret is required to login with idp');
+    }
+    return this.auth.authWithIdp({
+      client_id: this.sdkConfig.clientId,
+      client_secret: this.sdkConfig.clientSecret!,
+      ...params,
+    })
+  }
+
   async logout() {
     const {access_token} = (await this.sdkConfig.tokenStore!.getToken())!
     return this.auth.revoke(access_token);
@@ -143,6 +155,9 @@ class SharetribeSdk {
 
   async exchangeToken() {
     const {access_token} = (await this.sdkConfig.tokenStore!.getToken())!
+    if (this.sdkConfig.clientSecret === undefined) {
+      throw new Error('clientSecret is required to exchange token');
+    }
     return this.auth.token<'trusted:user'>({
       client_id: this.sdkConfig.clientId,
       client_secret: this.sdkConfig.clientSecret!,
@@ -164,17 +179,7 @@ class SharetribeSdk {
       return {scopes, isAnonymous, grantType};
     }
 
-    const isAnonymous = !storedToken?.refresh_token;
-    const grantType = isAnonymous ? 'client_credentials' : 'refresh_token';
-    return {isAnonymous, grantType}
-  }
-
-  async loginWithIdp(params: LoginWithIdpParameter) {
-    return this.auth.authWithIdp({
-      client_id: this.sdkConfig.clientId,
-      client_secret: this.sdkConfig.clientSecret!,
-      ...params,
-    })
+    return {}
   }
 }
 

@@ -11,6 +11,7 @@ class StripeCustomer {
   private readonly endpoint: string;
   private readonly axios: AxiosInstance;
   private readonly headers: Record<string, string>;
+  public readonly authRequired = true;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = api.endpoint + '/stripe_customer';

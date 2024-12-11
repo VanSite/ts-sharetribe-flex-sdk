@@ -9,6 +9,7 @@ import { ExtraParameter } from '../../types/sharetribe';
 class StripeSetupIntents {
   private readonly endpoint: string;
   private readonly axios: AxiosInstance;
+  public readonly authRequired = true;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = api.endpoint + '/stripe_setup_intents';

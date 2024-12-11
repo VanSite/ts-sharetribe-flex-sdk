@@ -6,6 +6,7 @@ import { ExtraParameter } from '../../types/sharetribe';
 class Stock{
   private readonly endpoint: string;
   private readonly axios: AxiosInstance;
+  public readonly authRequired = true;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = api.endpoint + '/stock';

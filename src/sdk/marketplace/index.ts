@@ -1,31 +1,32 @@
 import SharetribeSdk from '../index';
-import { AxiosInstance, AxiosResponse } from 'axios';
-import AvailabilityExceptions from './availabilityExceptions';
-import Listings from './listings';
-import Bookings from './bookings';
-import CurrentUser from './currentUser';
-import Images from './images';
-import Marketplace from './marketplace';
-import Messages from './messages';
-import OwnListings from './ownListings';
-import PasswordReset from './passwordReset';
-import ProcessTransitions from './processTransitions';
-import Reviews from './reviews';
-import Stock from './stock';
-import StockAdjustments from './stockAdjustments';
-import StripeAccount from './stripeAccount';
-import StripeAccountLinks from './stripeAccountLinks';
-import StripeCustomer from './stripeCustomer';
-import StripePersons from './stripePersons';
-import StripeSetupIntents from './stripeSetupIntents';
-import TimeSlots from './timeSlots';
-import Transactions from './transactions';
-import Users from './users';
+import {AxiosInstance, AxiosResponse} from 'axios';
+import AvailabilityExceptions from './AvailabilityExceptions';
+import Listings from './Listings';
+import Bookings from './Bookings';
+import CurrentUser from './CurrentUser';
+import Images from './Images';
+import Marketplace from './Marketplace';
+import Messages from './Messages';
+import OwnListings from './OwnListings';
+import PasswordReset from './PasswordReset';
+import ProcessTransitions from './ProcessTransitions';
+import Reviews from './Reviews';
+import Stock from './Stock';
+import StockAdjustments from './StockAdjustments';
+import StripeAccount from './StripeAccount';
+import StripeAccountLinks from './StripeAccountLinks';
+import StripeCustomer from './StripeCustomer';
+import StripePersons from './StripePersons';
+import StripeSetupIntents from './StripeSetupIntents';
+import TimeSlots from './TimeSlots';
+import Transactions from './Transactions';
+import Users from './Users';
 
 class MarketplaceApi {
   axios: AxiosInstance;
   endpoint: string;
   headers: Record<string, string>;
+  authRequired: boolean;
 
   // All marketplace API endpoints are available
   availabilityExceptions: AvailabilityExceptions;
@@ -38,7 +39,7 @@ class MarketplaceApi {
   ownListings: OwnListings;
   passwordReset: PasswordReset;
   processTransitions: ProcessTransitions;
-  review: Reviews;
+  reviews: Reviews;
   stock: Stock;
   stockAdjustments: StockAdjustments;
   stripeAccount: StripeAccount;
@@ -52,9 +53,10 @@ class MarketplaceApi {
 
   constructor(sdk: SharetribeSdk) {
     const config = sdk.apisConfigs.api(sdk.sdkConfig);
-    this.endpoint = config.baseUrl + '/api';
+    this.endpoint = config.baseUrl;
     this.headers = config.headers;
     this.axios = sdk.axios;
+    this.authRequired = false;
 
     this.availabilityExceptions = new AvailabilityExceptions(this)
     this.bookings = new Bookings(this)
@@ -66,7 +68,7 @@ class MarketplaceApi {
     this.ownListings = new OwnListings(this);
     this.passwordReset = new PasswordReset(this);
     this.processTransitions = new ProcessTransitions(this);
-    this.review = new Reviews(this);
+    this.reviews = new Reviews(this);
     this.stock = new Stock(this);
     this.stockAdjustments = new StockAdjustments(this);
     this.stripeAccount = new StripeAccount(this);

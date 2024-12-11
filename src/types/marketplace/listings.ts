@@ -27,9 +27,9 @@ export interface Listing {
     deleted: boolean,
     description: string,
     geolocation: LatLng,
-    metadata: unknown,
+    metadata: ListingCustomMetadata,
     price: Money
-    publicData: unknown,
+    publicData: ListingCustomPublicData,
     state: ListingState,
     title: string,
   }
@@ -74,6 +74,9 @@ export interface ListingsQueryParameter extends ListingsParameter {
 
   sort?: string
 }
+
+export interface ListingCustomPublicData {}
+export interface ListingCustomMetadata {}
 
 type AllListingsParameter = ListingsShowParameter | ListingsQueryParameter
 

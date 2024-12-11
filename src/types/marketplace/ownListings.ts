@@ -46,9 +46,9 @@ export interface OwnListing {
     state: OwnListingState
     title: string
     availabilityPlan: OwnListingsAvailabilityPlan,
-    privateData: unknown,
-    publicData: unknown,
-    metadata: unknown,
+    privateData: OwnListingCustomPrivateData,
+    publicData: OwnListingCustomPublicData,
+    metadata: OwnListingCustomMetadata,
     price: Money
   }
 }
@@ -81,8 +81,9 @@ export interface OwnListingsCreateParameter extends OwnListingsParameter {
   geolocation?: LatLng,
   price?: Money,
   availabilityPlan?: OwnListingsAvailabilityPlan,
-  privateData?: unknown,
-  publicData?: unknown,
+  privateData?: OwnListingCustomPrivateData,
+  publicData?: OwnListingCustomPublicData,
+  metaData?: OwnListingCustomMetadata
   images?: string[]
 }
 
@@ -92,8 +93,9 @@ export interface OwnListingsCreateDraftParameter extends OwnListingsParameter {
   geolocation?: LatLng,
   price?: Money,
   availabilityPlan?: OwnListingsAvailabilityPlan,
-  privateData?: unknown,
-  publicData?: unknown,
+  privateData?: OwnListingCustomPrivateData,
+  publicData?: OwnListingCustomPublicData,
+  metaData?: OwnListingCustomMetadata
   images?: string[]
 }
 
@@ -104,8 +106,9 @@ export interface OwnListingsUpdateParameter extends OwnListingsParameter {
   geolocation?: LatLng,
   price?: Money,
   availabilityPlan?: OwnListingsAvailabilityPlan,
-  privateData?: unknown,
-  publicData?: unknown,
+  privateData?: OwnListingCustomPrivateData,
+  publicData?: OwnListingCustomPublicData,
+  metaData?: OwnListingCustomMetadata
   images?: string[]
 }
 
@@ -129,6 +132,10 @@ export interface OwnListingsAddImageParameter extends OwnListingsParameter {
   id: UUID | string,
   imageId: UUID | string,
 }
+
+export interface OwnListingCustomPublicData {}
+export interface OwnListingCustomPrivateData {}
+export interface OwnListingCustomMetadata {}
 
 type AllOwnListingsParameter =
   OwnListingsShowParameter

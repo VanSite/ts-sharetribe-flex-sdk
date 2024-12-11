@@ -53,8 +53,8 @@ export interface Transaction {
     payinTotal: Money
     payoutTotal: Money
     lineItems: LineItem[]
-    protectedData: unknown,
-    metadata: unknown,
+    protectedData: TransactionCustomProtectedData,
+    metadata: TransactionCustomMetadata,
     transitions: Transition[]
   }
 }
@@ -110,6 +110,9 @@ export interface TransactionsTransitionSpeculativeParameter extends Transactions
   transition: string
   params: unknown
 }
+
+export interface TransactionCustomProtectedData {}
+export interface TransactionCustomMetadata {}
 
 type AllTransactionsParameter = TransactionsShowParameter
   | TransactionsQueryParameter

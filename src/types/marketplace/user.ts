@@ -14,8 +14,8 @@ export interface User {
       displayName: string
       abbreviatedName: string
       bio: string
-      publicData: unknown
-      metadata: unknown
+      publicData: UserCustomProfilePublicData
+      metadata: UserCustomProfileMetadata
     }
   }
 }
@@ -36,6 +36,9 @@ export interface UsersParameter extends ApiParameter {
 export interface UsersShowParameter extends UsersParameter {
   id: UUID | string
 }
+
+export interface UserCustomProfilePublicData {}
+export interface UserCustomProfileMetadata {}
 
 type AllUsersParameter = UsersShowParameter
 

@@ -1,4 +1,5 @@
 import { ApiParameter, ExtraParameter, UUID, Relationship, RelationshipTypeMap } from '../sharetribe';
+import {unknown} from "zod";
 
 export type CurrentUserEndpoints =
   'show'
@@ -10,6 +11,7 @@ export type CurrentUserEndpoints =
   | 'change_email'
   | 'verify_email'
   | 'send_verification_email'
+
 export type CurrentUserRelationshipsFields = 'marketplace' | 'profileImage' | 'stripeAccount' | 'stripeCustomer'
 
 export interface CurrentUser {
@@ -32,10 +34,10 @@ export interface CurrentUser {
       displayName: string,
       abbreviatedName: string,
       bio: string,
-      publicData: unknown,
-      protectedData: unknown,
-      privateData: unknown,
-      metadata: unknown
+      publicData: CurrentUserCustomProfilePublicData,
+      protectedData: CurrentUserCustomProfileProtectedData,
+      privateData: CurrentUserCustomProfilePrivateData,
+      metadata: CurrentUserCustomProfileMetadata
     }
   }
 }
@@ -131,6 +133,11 @@ export interface CurrentUserChangeEmailParameter extends CurrentUserParameter {
 export interface CurrentUserVerifyEmailParameter extends CurrentUserParameter {
   verificationToken: string
 }
+
+export interface CurrentUserCustomProfilePublicData {}
+export interface CurrentUserCustomProfileProtectedData {}
+export interface CurrentUserCustomProfilePrivateData {}
+export interface CurrentUserCustomProfileMetadata {}
 
 type AllCurrentUserParameter =
   CurrentUserShowParameter

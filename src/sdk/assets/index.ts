@@ -31,7 +31,7 @@ class AssetsApi {
 
   constructor(sdk: SharetribeSdk) {
     const config = sdk.apisConfigs.api(sdk.sdkConfig);
-    this.endpoint = config.baseUrl + `/assets/pub/${sdk.sdkConfig.clientId}`;
+    this.endpoint = config.baseUrl + `/pub/${sdk.sdkConfig.clientId}`;
     this.headers = config.headers;
     this.axios = sdk.axios;
   }

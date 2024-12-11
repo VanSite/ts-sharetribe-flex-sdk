@@ -3,9 +3,6 @@ export type TokenTypes = "access_token" | "refresh_token";
 export type GrantType = "client_credentials" | "password" | "refresh_token" | "token_exchange";
 export type Scope = "public-read" | "user" | "trusted:user" | "integ";
 export type ScopeType = "public-read" | "user" | "trusted:user" | "integ" | "details" | "refresh-token"
-export type ResponseContentType = "application/json";
-export type RequestContentType = "application/x-www-form-urlencoded";
-export type ResponseCodes = 200 | 400 | 401;
 export type IdentityProviderType = "facebook" | "google" | string;
 
 export type LoginParameter = {
@@ -116,6 +113,7 @@ export type RevokeResponse = {
 
 export type AuthInfoResponse = {
   scopes?: Scope[],
-  isAnonymous: boolean,
-  grantType: GrantType
+  isAnonymous?: boolean,
+  grantType?: GrantType
+  isLoggedInAs?: string
 }

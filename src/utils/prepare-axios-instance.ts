@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { ExtendedInternalAxiosRequestConfig } from '../types/axios';
 import SharetribeSdk, { QUERY_PARAMETERS } from '../sdk';
 import parameterSerializer from './parameter-serializer';
@@ -15,6 +15,9 @@ export function handleResponseSuccess(sdk: SharetribeSdk) {
 
     if (data?.access_token) {
       sdk.sdkConfig.tokenStore!.setToken(data);
+    }
+    if (data?.revoked) {
+      sdk.sdkConfig.tokenStore!.removeToken();
     }
 
     dataToType(data, sdk);
@@ -43,6 +46,25 @@ export async function handleResponseFailure(sdk: SharetribeSdk, error: AxiosErro
 }
 
 export async function handleRequestSuccess(sdk: SharetribeSdk, requestConfig: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
+  const isAnonymousRequest = requestConfig?.data?.grant_type === 'client_credentials' && requestConfig.data.scope === 'public-read';
+  if (isAnonymousRequest) {
+    return requestConfig;
+  }
+
+  const requestUrl = requestConfig.url!;
+  const found = Object.entries(sdk).find(([_, value]) => {
+    if (typeof value === "object") {
+      return Object.entries(value).find(([key, endpoint]) => {
+        if (key === 'endpoint' && typeof endpoint === "string") {
+          return requestUrl.substring(0, requestUrl.lastIndexOf('/')) === endpoint;
+        }
+      });
+    }
+  }) as [string, { authRequired: boolean}] | undefined;
+  if (found && found[1].authRequired) {
+
+  }
+
   if (!requestConfig.headers.Authorization) {
     const authToken = await sdk.sdkConfig.tokenStore!.getToken();
     if (authToken) {
@@ -53,10 +75,10 @@ export async function handleRequestSuccess(sdk: SharetribeSdk, requestConfig: In
         grant_type: 'client_credentials',
         scope: 'public-read'
       });
-      sdk.sdkConfig.tokenStore!.setToken(response.data);
       requestConfig.headers.Authorization = prepareAuthorizationHeader(response.data);
     }
   }
+
   if (requestConfig.data) {
     Object.keys(requestConfig.data).forEach(key => {
       const isQueryParameter = QUERY_PARAMETERS.find(param => key === param || key.startsWith(param));

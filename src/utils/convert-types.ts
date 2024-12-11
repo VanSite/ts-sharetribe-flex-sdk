@@ -29,7 +29,15 @@ export function convertTypes(key: string, value: any) {
   }
 
   if (key === 'id') {
-    return new UUID(value);
+    if (typeof value === 'string') {
+      return new UUID(value);
+    }
+    if (value instanceof Object) {
+      if ('uuid' in value) {
+        return new UUID(value.uuid);
+      }
+    }
+    throw new Error('Invalid id');
   }
   if (['price', 'payinTotal', 'payoutTotal', 'lineTotal', 'unitPrice'].includes(key)) {
     return convertToMoney(value);

@@ -2,25 +2,48 @@ import { ApiParameter, UUID, Relationship, RelationshipTypeMap } from '../sharet
 
 export type UsersEndpoints = 'show'
 export type UsersRelationshipsFields = 'marketplace' | 'profileImage'
+export type UserState = 'active' | 'banned' | 'pendingApproval'
+export type Permissions = 'permission/allow' | 'permission/deny'
 
-export interface User {
+export interface User<I extends boolean = false> {
   id: UUID
   type: 'user'
-  attributes: {
-    banned: boolean
-    deleted: boolean
-    createdAt: Date
-    profile: {
-      displayName: string
-      abbreviatedName: string
-      bio: string
-      publicData: UserCustomProfilePublicData
-      metadata: UserCustomProfileMetadata
-    }
-  }
+  attributes: UserAttributes<I>
 }
 
-export interface UserWithRelationships extends User {
+type UserAttributes<I extends boolean> = {
+  banned: boolean
+  deleted: boolean
+  createdAt: Date
+  profile: UserAttributesProfile<I>
+} & (I extends true ? {
+  state: UserState,
+  email: string,
+  emailVerified: boolean,
+  pendingEmail: string | null,
+  stripeConnected: boolean,
+  identityProviders: { idpId: string, userId: string }[],
+} : {})
+
+type UserAttributesProfile<I extends boolean> = {
+  displayName: string
+  abbreviatedName: string
+  bio: string
+  publicData: UserCustomProfilePublicData
+  metadata: UserCustomProfileMetadata
+} & (I extends true ? {
+  firstName: string
+  lastName: string
+  protectedData: UserCustomProfileProtectedData
+  privateData: UserCustomProfilePrivateData
+  permissions: {
+    postListings: Permissions,
+    initiateTransactions: Permissions,
+    read: Permissions
+  }
+}: {})
+
+export interface UserWithRelationships<I extends boolean = false> extends User<I> {
   relationships: {
     marketplace: Relationship<false, 'marketplace'>
     profileImage: Relationship<false, 'profileImage'>
@@ -38,6 +61,8 @@ export interface UsersShowParameter extends UsersParameter {
 }
 
 export interface UserCustomProfilePublicData {}
+export interface UserCustomProfileProtectedData {}
+export interface UserCustomProfilePrivateData {}
 export interface UserCustomProfileMetadata {}
 
 type AllUsersParameter = UsersShowParameter

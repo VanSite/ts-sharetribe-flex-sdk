@@ -3,6 +3,7 @@ import LatLng from '../sdkTypes/LatLng';
 import LatLngBounds from '../sdkTypes/LatLngBounds';
 import UUID from '../sdkTypes/UUID';
 import SharetribeSdk from '../sdk';
+import IntegrationSdk from "../integrationSdk";
 
 export function convertToMoney(value: { amount: number, currency: string }): Money {
   return new Money(value.amount, value.currency);
@@ -121,7 +122,7 @@ export function recursiveApplyHandler(value: { [key: string]: any }, handler: an
 }
 
 
-export function dataToType(data: any, sdk: SharetribeSdk) {
+export function dataToType(data: any, sdk: SharetribeSdk | IntegrationSdk) {
   recursiveConvertToSdkTypes(data);
 
   const {typeHandlers} = sdk.sdkConfig
@@ -146,7 +147,7 @@ export function dataToType(data: any, sdk: SharetribeSdk) {
   }
 }
 
-export function typeToData(data: any, sdk: SharetribeSdk) {
+export function typeToData(data: any, sdk: SharetribeSdk | IntegrationSdk) {
   recursiveConvertFromSdkTypes(data);
 
   const {typeHandlers} = sdk.sdkConfig

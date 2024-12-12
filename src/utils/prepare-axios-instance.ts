@@ -1,17 +1,27 @@
-import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { ExtendedInternalAxiosRequestConfig } from '../types/axios';
-import SharetribeSdk, { QUERY_PARAMETERS } from '../sdk';
+import {AxiosError, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
+import {ExtendedInternalAxiosRequestConfig} from '../types/axios';
+import SharetribeSdk from '../sdk';
 import parameterSerializer from './parameter-serializer';
-import { dataToType, typeToData } from './convert-types';
+import {dataToType, typeToData} from './convert-types';
+import IntegrationSdk from "../integrationSdk";
+
+export const QUERY_PARAMETERS = [
+  'include',
+  'page',
+  'perPage',
+  'expand',
+  'fields',
+  'limit',
+]
 
 // Utility functions
 export const isTokenExpired = (status: number) => [401, 403].includes(status);
 export const prepareAuthorizationHeader = (data: any) => `${data.token_type} ${data.access_token}`;
 
 // Interceptor handlers
-export function handleResponseSuccess(sdk: SharetribeSdk) {
+export function handleResponseSuccess(sdk: SharetribeSdk | IntegrationSdk) {
   return function onFulfilled(response: AxiosResponse): AxiosResponse {
-    const { data } = response;
+    const {data} = response;
 
     if (data?.access_token) {
       sdk.sdkConfig.tokenStore!.setToken(data);
@@ -26,7 +36,7 @@ export function handleResponseSuccess(sdk: SharetribeSdk) {
   };
 }
 
-export async function handleResponseFailure(sdk: SharetribeSdk, error: AxiosError | any) {
+export async function handleResponseFailure(sdk: SharetribeSdk | IntegrationSdk, error: AxiosError | any) {
   const originalRequest = error.config as ExtendedInternalAxiosRequestConfig;
   if (isTokenExpired(error.response?.status) && !originalRequest._retry) {
     const token = await sdk.sdkConfig.tokenStore!.getToken();
@@ -45,7 +55,7 @@ export async function handleResponseFailure(sdk: SharetribeSdk, error: AxiosErro
   return Promise.reject(error);
 }
 
-export async function handleRequestSuccess(sdk: SharetribeSdk, requestConfig: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
+export async function handleRequestSuccess(sdk: SharetribeSdk | IntegrationSdk, requestConfig: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> {
   const isAnonymousRequest = requestConfig?.data?.grant_type === 'client_credentials' && requestConfig.data.scope === 'public-read';
   if (isAnonymousRequest) {
     return requestConfig;
@@ -60,7 +70,7 @@ export async function handleRequestSuccess(sdk: SharetribeSdk, requestConfig: In
         }
       });
     }
-  }) as [string, { authRequired: boolean}] | undefined;
+  }) as [string, { authRequired: boolean }] | undefined;
   if (found && found[1].authRequired) {
 
   }
@@ -96,7 +106,7 @@ export async function handleRequestSuccess(sdk: SharetribeSdk, requestConfig: In
 }
 
 // Main setup function
-export function prepareAxiosInstance(sdk: SharetribeSdk) {
+export function prepareAxiosInstance(sdk: SharetribeSdk | IntegrationSdk) {
   sdk.axios.interceptors.response.use(handleResponseSuccess(sdk), (error: AxiosError) => handleResponseFailure(sdk, error));
   sdk.axios.interceptors.request.use((config: InternalAxiosRequestConfig) => handleRequestSuccess(sdk, config));
   sdk.axios.defaults.paramsSerializer = parameterSerializer;

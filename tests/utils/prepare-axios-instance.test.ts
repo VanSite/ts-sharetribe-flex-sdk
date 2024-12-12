@@ -5,7 +5,7 @@ import {
   isTokenExpired,
   prepareAuthorizationHeader
 } from '../../src/utils/prepare-axios-instance'
-import SharetribeSdk from '../../src/sdk';
+import SharetribeSdk from '../../src/sharetribe-sdk';
 import { dataToType, typeToData } from '../../src/utils/convert-types';
 import { AxiosError } from 'axios';
 

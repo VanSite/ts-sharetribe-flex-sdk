@@ -1,4 +1,4 @@
-import SharetribeSdk from '../index';
+import SharetribeSdk from '../../sdk';
 import { AxiosInstance } from 'axios';
 import {
   AssetByAliasParameter,

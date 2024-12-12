@@ -8,7 +8,7 @@ export type BrowserStoreOptions = {
 }
 
 class BrowserStore implements TokenStore {
-  private expiration: number = 30;
+  expiration: number = 30;
   private namespace: string = 'st';
   private readonly key: string;
   private readonly secure: boolean | undefined

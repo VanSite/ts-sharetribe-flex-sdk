@@ -1,43 +1,33 @@
-import { defaultSdkConfig, sdkConfig, SdkConfig } from '../types/config';
-import { createApisConfigs } from '../utils/apis';
-import { ApiConfigs } from '../types/apiConfigs';
+import { defaultSdkConfig, sdkConfig, SdkConfig } from './types/config';
+import { createApisConfigs } from './utils/apis';
+import { ApiConfigs } from './types/apiConfigs';
 import axios, { AxiosInstance } from 'axios';
-import AuthenticationApi from './authentication';
-import MarketplaceApi from './marketplace';
-import prepareAxiosInstance from '../utils/prepare-axios-instance';
-import Listings from './marketplace/Listings';
-import AvailabilityExceptions from './marketplace/AvailabilityExceptions';
-import Bookings from './marketplace/Bookings';
-import CurrentUser from './marketplace/CurrentUser';
-import Images from './marketplace/Images';
-import Marketplace from './marketplace/Marketplace';
-import Messages from './marketplace/Messages';
-import OwnListings from './marketplace/OwnListings';
-import PasswordReset from './marketplace/PasswordReset';
-import ProcessTransitions from './marketplace/ProcessTransitions';
-import Reviews from './marketplace/Reviews';
-import Stock from './marketplace/Stock';
-import StockAdjustments from './marketplace/StockAdjustments';
-import StripeAccount from './marketplace/StripeAccount';
-import StripeAccountLinks from './marketplace/StripeAccountLinks';
-import StripeCustomer from './marketplace/StripeCustomer';
-import StripePersons from './marketplace/StripePersons';
-import StripeSetupIntents from './marketplace/StripeSetupIntents';
-import TimeSlots from './marketplace/TimeSlots';
-import Transactions from './marketplace/Transactions';
-import Users from './marketplace/Users';
-import { AuthInfoResponse, LoginParameter, LoginWithIdpParameter, Scope } from '../types/authentication';
-import AssetsApi from './assets';
-
-export const QUERY_PARAMETERS = [
-  'include',
-  'page',
-  'perPage',
-  'expand',
-  'fields',
-  'limit',
-]
-
+import AuthenticationApi from "./endpoints/auth";
+import MarketplaceApi from './endpoints/marketplace';
+import prepareAxiosInstance from './utils/prepare-axios-instance';
+import Listings from './endpoints/marketplace/Listings';
+import AvailabilityExceptions from './endpoints/marketplace/AvailabilityExceptions';
+import Bookings from './endpoints/marketplace/Bookings';
+import CurrentUser from './endpoints/marketplace/CurrentUser';
+import Images from './endpoints/marketplace/Images';
+import Marketplace from './endpoints/marketplace/Marketplace';
+import Messages from './endpoints/marketplace/Messages';
+import OwnListings from './endpoints/marketplace/OwnListings';
+import PasswordReset from './endpoints/marketplace/PasswordReset';
+import ProcessTransitions from './endpoints/marketplace/ProcessTransitions';
+import Reviews from './endpoints/marketplace/Reviews';
+import Stock from './endpoints/marketplace/Stock';
+import StockAdjustments from './endpoints/marketplace/StockAdjustments';
+import StripeAccount from './endpoints/marketplace/StripeAccount';
+import StripeAccountLinks from './endpoints/marketplace/StripeAccountLinks';
+import StripeCustomer from './endpoints/marketplace/StripeCustomer';
+import StripePersons from './endpoints/marketplace/StripePersons';
+import StripeSetupIntents from './endpoints/marketplace/StripeSetupIntents';
+import TimeSlots from './endpoints/marketplace/TimeSlots';
+import Transactions from './endpoints/marketplace/Transactions';
+import Users from './endpoints/marketplace/Users';
+import { AuthInfoResponse, LoginParameter, LoginWithIdpParameter, Scope } from './types/authentication';
+import AssetsApi from './endpoints/assets';
 
 class SharetribeSdk {
   sdkConfig: SdkConfig;
@@ -60,7 +50,7 @@ class SharetribeSdk {
   ownListings: OwnListings;
   passwordReset: PasswordReset;
   processTransitions: ProcessTransitions;
-  review: Reviews;
+  reviews: Reviews;
   stock: Stock;
   stockAdjustments: StockAdjustments;
   stripeAccount: StripeAccount;
@@ -87,7 +77,6 @@ class SharetribeSdk {
       ...config
     };
     this.apisConfigs = createApisConfigs();
-
     this.axios = axios.create({
       baseURL: `${this.sdkConfig.baseUrl}/${this.sdkConfig.version}/`,
     });
@@ -108,7 +97,7 @@ class SharetribeSdk {
     this.ownListings = this.api.ownListings
     this.passwordReset = this.api.passwordReset
     this.processTransitions = this.api.processTransitions
-    this.review = this.api.reviews
+    this.reviews = this.api.reviews
     this.stock = this.api.stock
     this.stockAdjustments = this.api.stockAdjustments
     this.stripeAccount = this.api.stripeAccount

@@ -1,5 +1,5 @@
 import { ApiParameter, ExtraParameter, UUID } from '../sharetribe';
-import type { Account } from 'stripe';
+import type Stripe from 'stripe';
 
 export type StripeAccountEndpoints = 'fetch' | 'create' | 'update'
 
@@ -8,7 +8,7 @@ export interface StripeAccount {
   type: 'stripeAccount',
   attributes: {
     stripeAccountId: string,
-    stripeAccountData: Account,
+    stripeAccountData: Stripe.Account,
   }
 }
 

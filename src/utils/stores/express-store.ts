@@ -10,7 +10,7 @@ export type ExpressStoreOptions = {
 }
 
 class ExpressStore implements TokenStore {
-  private expiration: number = 180;
+  expiration: number = 180;
   private namespace: string = 'st';
   private key: string;
   private secure: boolean | undefined

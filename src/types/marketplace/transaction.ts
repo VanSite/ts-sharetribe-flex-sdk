@@ -9,6 +9,7 @@ export type TransactionsEndpoints =
   | 'initiateSpeculative'
   | 'transition'
   | 'transitionSpeculative'
+  | 'updateMetadata'
 
 export type TransactionsRelationshipsFields =
   'marketplace'
@@ -53,8 +54,8 @@ export interface Transaction {
     payinTotal: Money
     payoutTotal: Money
     lineItems: LineItem[]
-    protectedData: TransactionCustomProtectedData,
-    metadata: TransactionCustomMetadata,
+    protectedData: TransactionProtectedData & TransactionCustomProtectedData,
+    metadata: TransactionMetadata & TransactionCustomMetadata,
     transitions: Transition[]
   }
 }
@@ -82,10 +83,17 @@ export interface TransactionsShowParameter extends TransactionsParameter {
   id: UUID | string
 }
 
-export interface TransactionsQueryParameter extends TransactionsParameter {
+export type TransactionsQueryParameter<I extends boolean = false> = {} & TransactionsParameter & (I extends false ? {
   only?: TransactionsVariety
   lastTransitions?: string[]
-}
+} : {
+  createdAtStart?: string
+  createdAtEnd?: string
+  userId?: UUID | string
+  customerId?: UUID | string
+  providerId?: UUID | string
+  listingId?: UUID | string
+})
 
 export interface TransactionsInitiateParameter extends TransactionsParameter {
   processAlias: string
@@ -111,7 +119,14 @@ export interface TransactionsTransitionSpeculativeParameter extends Transactions
   params: unknown
 }
 
+export interface TransactionsUpdateMetadataParameter extends TransactionsParameter {
+  id: UUID | string
+  metadata: TransactionMetadata & TransactionCustomMetadata
+}
+
+export interface TransactionProtectedData { [key: string]: any }
 export interface TransactionCustomProtectedData {}
+export interface TransactionMetadata { [key: string]: any }
 export interface TransactionCustomMetadata {}
 
 type AllTransactionsParameter = TransactionsShowParameter

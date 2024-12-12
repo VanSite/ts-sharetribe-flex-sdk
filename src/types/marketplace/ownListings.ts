@@ -24,15 +24,20 @@ export type OwnListingsEndpoints =
   | 'addImage'
 export type OwnListingsRelationshipsFields = 'marketplace' | 'author' | 'images' | 'currentStock'
 
-export type OwnListingsAvailabilityPlan = {
+type OwnListingsAvailabilityPlanTypes = 'availability-plan/day' | 'availability-plan/time'
+
+type OwnListingsAvailabilityPlanEntry<T extends OwnListingsAvailabilityPlanTypes> = {
+  dayOfWeek: 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun',
+  seats: number,
+} & T extends 'availability-plan/time' ? {
+  startTime: string,
+  endTime: string,
+} : {}
+
+export type OwnListingsAvailabilityPlan<T extends OwnListingsAvailabilityPlanTypes = 'availability-plan/day'> = {
   type: 'availability-plan/day' | 'availability-plan/time',
   timezone?: string
-  entries: {
-    dayOfWeek: string
-    seats: number
-    startTime?: string
-    endTime?: string
-  }[]
+  entries: Array<OwnListingsAvailabilityPlanEntry<T>>
 }
 
 export interface OwnListing {
@@ -46,9 +51,9 @@ export interface OwnListing {
     state: OwnListingState
     title: string
     availabilityPlan: OwnListingsAvailabilityPlan,
-    privateData: OwnListingCustomPrivateData,
-    publicData: OwnListingCustomPublicData,
-    metadata: OwnListingCustomMetadata,
+    privateData: OwnListingPrivateData & OwnListingCustomPrivateData,
+    publicData: OwnListingOwnListingPublicData & OwnListingCustomPublicData,
+    metadata: OwnListingMetadata & OwnListingCustomMetadata
     price: Money
   }
 }
@@ -81,9 +86,9 @@ export interface OwnListingsCreateParameter extends OwnListingsParameter {
   geolocation?: LatLng,
   price?: Money,
   availabilityPlan?: OwnListingsAvailabilityPlan,
-  privateData?: OwnListingCustomPrivateData,
-  publicData?: OwnListingCustomPublicData,
-  metaData?: OwnListingCustomMetadata
+  privateData?: OwnListingPrivateData & OwnListingCustomPrivateData,
+  publicData?: OwnListingOwnListingPublicData & OwnListingCustomPublicData,
+  metaData?: OwnListingMetadata & OwnListingCustomMetadata
   images?: string[]
 }
 
@@ -93,9 +98,9 @@ export interface OwnListingsCreateDraftParameter extends OwnListingsParameter {
   geolocation?: LatLng,
   price?: Money,
   availabilityPlan?: OwnListingsAvailabilityPlan,
-  privateData?: OwnListingCustomPrivateData,
-  publicData?: OwnListingCustomPublicData,
-  metaData?: OwnListingCustomMetadata
+  privateData?: OwnListingPrivateData & OwnListingCustomPrivateData,
+  publicData?: OwnListingOwnListingPublicData & OwnListingCustomPublicData,
+  metaData?: OwnListingMetadata & OwnListingCustomMetadata
   images?: string[]
 }
 
@@ -106,9 +111,9 @@ export interface OwnListingsUpdateParameter extends OwnListingsParameter {
   geolocation?: LatLng,
   price?: Money,
   availabilityPlan?: OwnListingsAvailabilityPlan,
-  privateData?: OwnListingCustomPrivateData,
-  publicData?: OwnListingCustomPublicData,
-  metaData?: OwnListingCustomMetadata
+  privateData?: OwnListingPrivateData & OwnListingCustomPrivateData,
+  publicData?: OwnListingOwnListingPublicData & OwnListingCustomPublicData,
+  metaData?: OwnListingMetadata & OwnListingCustomMetadata
   images?: string[]
 }
 
@@ -133,9 +138,13 @@ export interface OwnListingsAddImageParameter extends OwnListingsParameter {
   imageId: UUID | string,
 }
 
+export interface OwnListingOwnListingPublicData { [key: string]: any }
 export interface OwnListingCustomPublicData {}
+export interface OwnListingPrivateData { [key: string]: any }
 export interface OwnListingCustomPrivateData {}
+export interface OwnListingMetadata { [key: string]: any }
 export interface OwnListingCustomMetadata {}
+
 
 type AllOwnListingsParameter =
   OwnListingsShowParameter

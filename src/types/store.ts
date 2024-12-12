@@ -11,7 +11,8 @@ const authToken = z.object({
 export type AuthToken = z.infer<typeof authToken>;
 
 export const tokenStore = z.object({
-  token: authToken.nullable(),
+  token: authToken.optional().nullable(),
+  expiration: z.number().optional(),
   getToken: z.function().returns(z.promise(authToken.nullable())),
   setToken: z.function().args(z.object({
     access_token: z.string(),

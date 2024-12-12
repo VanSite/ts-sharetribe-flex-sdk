@@ -1,6 +1,6 @@
 import { SdkConfig } from './config';
 
-export interface ApiConfigs {
+export type ApiConfigs<I extends boolean = false> = I extends false ? {
   api: (config: SdkConfig) => {
     headers: {
       'X-Transit-Verbose'?: 'true' | 'false';
@@ -18,6 +18,14 @@ export interface ApiConfigs {
   assets: (config: SdkConfig) => {
     headers: {
       Accept: 'application/json',
+    }
+    baseUrl: string;
+  }
+} : {
+  integrationApi: (config: SdkConfig) => {
+    headers: {
+      'X-Transit-Verbose'?: 'true' | 'false';
+      Accept: 'application/transit+json',
     }
     baseUrl: string;
   }

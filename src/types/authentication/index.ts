@@ -57,7 +57,7 @@ export type TrustedUserEndpoint = BaseEndpoint & {
   scope: "trusted:user";
 };
 
-// Integration Endpoints
+// integrationApi Endpoints
 type IntegEndpoint = BaseEndpoint & {
   scope: "integ";
 };

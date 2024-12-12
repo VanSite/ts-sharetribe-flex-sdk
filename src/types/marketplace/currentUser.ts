@@ -34,10 +34,10 @@ export interface CurrentUser {
       displayName: string,
       abbreviatedName: string,
       bio: string,
-      publicData: CurrentUserCustomProfilePublicData,
-      protectedData: CurrentUserCustomProfileProtectedData,
-      privateData: CurrentUserCustomProfilePrivateData,
-      metadata: CurrentUserCustomProfileMetadata
+      publicData: CurrentUserProfilePublicData & CurrentUserCustomProfilePublicData,
+      protectedData: CurrentUserProfileProtectedData & CurrentUserCustomProfileProtectedData,
+      privateData: CurrentUserProfilePrivateData & CurrentUserCustomProfilePrivateData,
+      metadata: CurrentUserProfileMetadata & CurrentUserCustomProfileMetadata
     }
   }
 }
@@ -134,9 +134,13 @@ export interface CurrentUserVerifyEmailParameter extends CurrentUserParameter {
   verificationToken: string
 }
 
+export interface CurrentUserProfilePublicData { [key: string]: any }
 export interface CurrentUserCustomProfilePublicData {}
+export interface CurrentUserProfileProtectedData { [key: string]: any }
 export interface CurrentUserCustomProfileProtectedData {}
+export interface CurrentUserProfilePrivateData { [key: string]: any }
 export interface CurrentUserCustomProfilePrivateData {}
+export interface CurrentUserProfileMetadata { [key: string]: any }
 export interface CurrentUserCustomProfileMetadata {}
 
 type AllCurrentUserParameter =

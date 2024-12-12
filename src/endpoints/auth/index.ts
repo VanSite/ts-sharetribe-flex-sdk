@@ -1,13 +1,14 @@
 import { AuthWithIdpParameter, Endpoint, RevokeResponse, ScopeType, TokenResponse } from '../../types/authentication';
-import SharetribeSdk from '../index';
 import { AxiosInstance } from 'axios';
+import SharetribeSdk from '../../sdk';
+import IntegrationSdk from "../../integrationSdk";
 
 class AuthenticationApi {
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
   private axios: AxiosInstance;
 
-  constructor(sdk: SharetribeSdk) {
+  constructor(sdk: SharetribeSdk | IntegrationSdk) {
     const config = sdk.apisConfigs.auth(sdk.sdkConfig);
     this.endpoint = config.baseUrl;
     this.headers = config.headers;

@@ -1,9 +1,14 @@
 const path = require('path');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
-const fileName = (target) => `ts-sharetribe-flex-sdk.${target}.js`;
-const config = {
+const fileName = (name, target) => `ts-sharetribe-flex-${name}.${target}.js`;
+
+// Use an environment variable to check if we should analyze
+const isAnalyze = process.env.ANALYZE === 'true';
+
+const baseConfig = (name, target) => ({
   mode: 'development', // or 'production'
-  entry: './src/index.ts',
+  entry: './src/sdk.ts',
   module: {
     rules: [
       {
@@ -16,24 +21,32 @@ const config = {
   resolve: {
     extensions: ['.ts', '.js'],
   },
-};
+  plugins: [
+    ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
+  ],
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: fileName(name, target),
+  },
+});
 
-const serverConfig = {
-  ...config,
+const sdkServerConfig = {
+  ...baseConfig('sdk', 'node'),
   target: 'node',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: fileName('node'),
-  },
 };
 
-const clientConfig = {
-  ...config,
+const sdkClientConfig = {
+  ...baseConfig('sdk', 'web'),
   target: 'web',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: fileName('web'),
-  },
 };
 
-module.exports = [serverConfig, clientConfig];
+const integrationSdkServerConfig = {
+  ...baseConfig('integration-sdk', 'node'),
+  target: 'node',
+};
+
+module.exports = [
+  sdkServerConfig,
+  sdkClientConfig,
+  integrationSdkServerConfig
+];

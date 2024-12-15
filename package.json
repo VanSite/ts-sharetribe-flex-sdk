@@ -18,8 +18,7 @@
   "private": false,
   "files": [
     "dist",
-    "types",
-    "src"
+    "types"
   ],
   "scripts": {
     "clean": "rm -rf dist lib types",

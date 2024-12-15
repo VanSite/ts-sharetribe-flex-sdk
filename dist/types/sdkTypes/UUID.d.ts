@@ -6,6 +6,7 @@ export declare const UUIDSchema: z.ZodObject<{
 }, {
     uuid: string;
 }>;
+export type UUIDType = z.infer<typeof UUIDSchema>;
 declare class UUID {
     uuid: string;
     constructor(uuid?: string);

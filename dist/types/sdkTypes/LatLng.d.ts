@@ -9,6 +9,7 @@ export declare const LatLngSchema: z.ZodObject<{
     lat: string | number;
     lng: string | number;
 }>;
+export type LatLngType = z.infer<typeof LatLngSchema>;
 declare class LatLng {
     lat: number | string;
     lng: number | string;

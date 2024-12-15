@@ -9,6 +9,7 @@ export declare const MoneySchema: z.ZodObject<{
     amount: number;
     currency: string;
 }>;
+export type MoneyType = z.infer<typeof MoneySchema>;
 declare class Money {
     amount: number;
     currency: string;

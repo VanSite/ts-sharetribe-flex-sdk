@@ -4568,7 +4568,9 @@ function v4(options, buf, offset) {
 
 // Define the UUID validation schema using a regular expression for UUID v4
 const UUIDSchema = z.object({
-    uuid: z.string()
+    uuid: z.string({
+        message: 'uuid must be a string'
+    })
 });
 class UUID {
     uuid;
@@ -4586,8 +4588,8 @@ class UUID {
 
 // Define the schema using Zod
 const LatLngSchema = z.object({
-    lat: z.union([z.number(), z.string().regex(/^\d+(\.\d+)?$/)]),
-    lng: z.union([z.number(), z.string().regex(/^\d+(\.\d+)?$/)])
+    lat: z.union([z.number(), z.string().regex(/^\d+(\.\d+)?$/)], { message: "Latitude must be a number or a string that represents a number" }),
+    lng: z.union([z.number(), z.string().regex(/^\d+(\.\d+)?$/)], { message: "Longitude must be a number or a string that represents a number" }),
 });
 class LatLng {
     lat;
@@ -4608,8 +4610,8 @@ class LatLng {
 
 // Define the schema using Zod
 const MoneySchema = z.object({
-    amount: z.number().int(),
-    currency: z.string().length(3),
+    amount: z.number({ message: 'Amount must be a number.' }).int({ message: 'Amount must be an integer.' }),
+    currency: z.string({ message: 'Currency must be a string.' }).min(3, { message: 'Currency must be at least 3 characters long.' }),
 });
 class Money {
     amount;
@@ -4628,9 +4630,15 @@ class Money {
 
 // Define the schema for LatLngBounds
 const LatLngBoundsSchema = z.object({
-    ne: z.instanceof(sdkTypes_LatLng).or(z.object({ lat: z.number(), lng: z.number() })),
-    sw: z.instanceof(sdkTypes_LatLng).or(z.object({ lat: z.number(), lng: z.number() }))
-});
+    ne: z.instanceof(sdkTypes_LatLng, { message: 'ne must be an instance of LatLng' }).or(z.object({
+        lat: z.number(),
+        lng: z.number()
+    }, { message: 'ne must be an object with lat and lng' })),
+    sw: z.instanceof(sdkTypes_LatLng, { message: 'sw must be an instance of LatLng' }).or(z.object({
+        lat: z.number(),
+        lng: z.number()
+    }, { message: 'sw must be an object with lat and lng' })),
+}, { message: 'LatLngBounds must be an object with ne and sw' });
 class LatLngBounds {
     ne;
     sw;
@@ -4645,7 +4653,24 @@ class LatLngBounds {
 }
 /* harmony default export */ const sdkTypes_LatLngBounds = (LatLngBounds);
 
+;// ./src/sdkTypes/BigDecimal.ts
+
+// Define the schema using Zod
+const BigDecimalSchema = z.number({ message: "BigDecimal must be a number" });
+class BigDecimal {
+    value;
+    constructor(value) {
+        // Use the Zod schema to parse the input and validate it
+        this.value = BigDecimalSchema.parse(value);
+    }
+    toString() {
+        return `${this.value}`;
+    }
+}
+/* harmony default export */ const sdkTypes_BigDecimal = (BigDecimal);
+
 ;// ./src/types/config.ts
+
 
 
 
@@ -4658,6 +4683,7 @@ const sdkTypesSchema = z.union([
     z.instanceof(sdkTypes_LatLng),
     z.instanceof(sdkTypes_LatLngBounds),
     z.instanceof(sdkTypes_Money),
+    z.instanceof(sdkTypes_BigDecimal),
     z.instanceof(Date),
 ]);
 const appTypeSchema = z.any();

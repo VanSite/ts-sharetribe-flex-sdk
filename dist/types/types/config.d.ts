@@ -3,11 +3,12 @@ import UUID from '../sdkTypes/UUID';
 import LatLng from '../sdkTypes/LatLng';
 import Money from '../sdkTypes/Money';
 import LatLngBounds from '../sdkTypes/LatLngBounds';
+import BigDecimal from "../sdkTypes/BigDecimal";
 declare const typeHandlerSchema: z.ZodObject<{
-    sdkType: z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<Date, z.ZodTypeDef, Date>]>;
+    sdkType: z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<BigDecimal, z.ZodTypeDef, BigDecimal>, z.ZodType<Date, z.ZodTypeDef, Date>]>;
     appType: z.ZodAny;
-    reader: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<Date, z.ZodTypeDef, Date>]>], z.ZodUnknown>, z.ZodAny>>;
-    writer: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodAny], z.ZodUnknown>, z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<Date, z.ZodTypeDef, Date>]>>>;
+    reader: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<BigDecimal, z.ZodTypeDef, BigDecimal>, z.ZodType<Date, z.ZodTypeDef, Date>]>], z.ZodUnknown>, z.ZodAny>>;
+    writer: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodAny], z.ZodUnknown>, z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<BigDecimal, z.ZodTypeDef, BigDecimal>, z.ZodType<Date, z.ZodTypeDef, Date>]>>>;
     canHandle: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodObject<{
         key: z.ZodString;
         value: z.ZodAny;
@@ -19,19 +20,19 @@ declare const typeHandlerSchema: z.ZodObject<{
         value?: any;
     }>], z.ZodUnknown>, z.ZodBoolean>>;
 }, "strip", z.ZodTypeAny, {
-    sdkType: Date | UUID | LatLng | LatLngBounds | Money;
+    sdkType: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal;
     appType?: any;
-    reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money, ...args: unknown[]) => any) | undefined;
-    writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money) | undefined;
+    reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal, ...args: unknown[]) => any) | undefined;
+    writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money | BigDecimal) | undefined;
     canHandle?: ((args_0: {
         key: string;
         value?: any;
     }, ...args: unknown[]) => boolean) | undefined;
 }, {
-    sdkType: Date | UUID | LatLng | LatLngBounds | Money;
+    sdkType: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal;
     appType?: any;
-    reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money, ...args: unknown[]) => any) | undefined;
-    writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money) | undefined;
+    reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal, ...args: unknown[]) => any) | undefined;
+    writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money | BigDecimal) | undefined;
     canHandle?: ((args_0: {
         key: string;
         value?: any;
@@ -155,10 +156,10 @@ export declare const defaultSdkConfig: z.ZodObject<{
         expiration?: number | undefined;
     }>>;
     typeHandlers: z.ZodDefault<z.ZodArray<z.ZodObject<{
-        sdkType: z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<Date, z.ZodTypeDef, Date>]>;
+        sdkType: z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<BigDecimal, z.ZodTypeDef, BigDecimal>, z.ZodType<Date, z.ZodTypeDef, Date>]>;
         appType: z.ZodAny;
-        reader: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<Date, z.ZodTypeDef, Date>]>], z.ZodUnknown>, z.ZodAny>>;
-        writer: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodAny], z.ZodUnknown>, z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<Date, z.ZodTypeDef, Date>]>>>;
+        reader: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<BigDecimal, z.ZodTypeDef, BigDecimal>, z.ZodType<Date, z.ZodTypeDef, Date>]>], z.ZodUnknown>, z.ZodAny>>;
+        writer: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodAny], z.ZodUnknown>, z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<BigDecimal, z.ZodTypeDef, BigDecimal>, z.ZodType<Date, z.ZodTypeDef, Date>]>>>;
         canHandle: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodObject<{
             key: z.ZodString;
             value: z.ZodAny;
@@ -170,19 +171,19 @@ export declare const defaultSdkConfig: z.ZodObject<{
             value?: any;
         }>], z.ZodUnknown>, z.ZodBoolean>>;
     }, "strip", z.ZodTypeAny, {
-        sdkType: Date | UUID | LatLng | LatLngBounds | Money;
+        sdkType: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal;
         appType?: any;
-        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money, ...args: unknown[]) => any) | undefined;
-        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money) | undefined;
+        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal, ...args: unknown[]) => any) | undefined;
+        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money | BigDecimal) | undefined;
         canHandle?: ((args_0: {
             key: string;
             value?: any;
         }, ...args: unknown[]) => boolean) | undefined;
     }, {
-        sdkType: Date | UUID | LatLng | LatLngBounds | Money;
+        sdkType: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal;
         appType?: any;
-        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money, ...args: unknown[]) => any) | undefined;
-        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money) | undefined;
+        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal, ...args: unknown[]) => any) | undefined;
+        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money | BigDecimal) | undefined;
         canHandle?: ((args_0: {
             key: string;
             value?: any;
@@ -219,10 +220,10 @@ export declare const defaultSdkConfig: z.ZodObject<{
     };
     transitVerbose: boolean;
     typeHandlers: {
-        sdkType: Date | UUID | LatLng | LatLngBounds | Money;
+        sdkType: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal;
         appType?: any;
-        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money, ...args: unknown[]) => any) | undefined;
-        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money) | undefined;
+        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal, ...args: unknown[]) => any) | undefined;
+        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money | BigDecimal) | undefined;
         canHandle?: ((args_0: {
             key: string;
             value?: any;
@@ -263,10 +264,10 @@ export declare const defaultSdkConfig: z.ZodObject<{
     } | undefined;
     transitVerbose?: boolean | undefined;
     typeHandlers?: {
-        sdkType: Date | UUID | LatLng | LatLngBounds | Money;
+        sdkType: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal;
         appType?: any;
-        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money, ...args: unknown[]) => any) | undefined;
-        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money) | undefined;
+        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal, ...args: unknown[]) => any) | undefined;
+        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money | BigDecimal) | undefined;
         canHandle?: ((args_0: {
             key: string;
             value?: any;
@@ -392,10 +393,10 @@ export declare const sdkConfig: z.ZodObject<{
     transitVerbose: z.ZodOptional<z.ZodBoolean>;
     authToken: z.ZodOptional<z.ZodString>;
     typeHandlers: z.ZodOptional<z.ZodArray<z.ZodObject<{
-        sdkType: z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<Date, z.ZodTypeDef, Date>]>;
+        sdkType: z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<BigDecimal, z.ZodTypeDef, BigDecimal>, z.ZodType<Date, z.ZodTypeDef, Date>]>;
         appType: z.ZodAny;
-        reader: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<Date, z.ZodTypeDef, Date>]>], z.ZodUnknown>, z.ZodAny>>;
-        writer: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodAny], z.ZodUnknown>, z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<Date, z.ZodTypeDef, Date>]>>>;
+        reader: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<BigDecimal, z.ZodTypeDef, BigDecimal>, z.ZodType<Date, z.ZodTypeDef, Date>]>], z.ZodUnknown>, z.ZodAny>>;
+        writer: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodAny], z.ZodUnknown>, z.ZodUnion<[z.ZodType<UUID, z.ZodTypeDef, UUID>, z.ZodType<LatLng, z.ZodTypeDef, LatLng>, z.ZodType<LatLngBounds, z.ZodTypeDef, LatLngBounds>, z.ZodType<Money, z.ZodTypeDef, Money>, z.ZodType<BigDecimal, z.ZodTypeDef, BigDecimal>, z.ZodType<Date, z.ZodTypeDef, Date>]>>>;
         canHandle: z.ZodOptional<z.ZodFunction<z.ZodTuple<[z.ZodObject<{
             key: z.ZodString;
             value: z.ZodAny;
@@ -407,19 +408,19 @@ export declare const sdkConfig: z.ZodObject<{
             value?: any;
         }>], z.ZodUnknown>, z.ZodBoolean>>;
     }, "strip", z.ZodTypeAny, {
-        sdkType: Date | UUID | LatLng | LatLngBounds | Money;
+        sdkType: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal;
         appType?: any;
-        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money, ...args: unknown[]) => any) | undefined;
-        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money) | undefined;
+        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal, ...args: unknown[]) => any) | undefined;
+        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money | BigDecimal) | undefined;
         canHandle?: ((args_0: {
             key: string;
             value?: any;
         }, ...args: unknown[]) => boolean) | undefined;
     }, {
-        sdkType: Date | UUID | LatLng | LatLngBounds | Money;
+        sdkType: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal;
         appType?: any;
-        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money, ...args: unknown[]) => any) | undefined;
-        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money) | undefined;
+        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal, ...args: unknown[]) => any) | undefined;
+        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money | BigDecimal) | undefined;
         canHandle?: ((args_0: {
             key: string;
             value?: any;
@@ -460,10 +461,10 @@ export declare const sdkConfig: z.ZodObject<{
     transitVerbose?: boolean | undefined;
     authToken?: string | undefined;
     typeHandlers?: {
-        sdkType: Date | UUID | LatLng | LatLngBounds | Money;
+        sdkType: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal;
         appType?: any;
-        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money, ...args: unknown[]) => any) | undefined;
-        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money) | undefined;
+        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal, ...args: unknown[]) => any) | undefined;
+        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money | BigDecimal) | undefined;
         canHandle?: ((args_0: {
             key: string;
             value?: any;
@@ -504,10 +505,10 @@ export declare const sdkConfig: z.ZodObject<{
     transitVerbose?: boolean | undefined;
     authToken?: string | undefined;
     typeHandlers?: {
-        sdkType: Date | UUID | LatLng | LatLngBounds | Money;
+        sdkType: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal;
         appType?: any;
-        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money, ...args: unknown[]) => any) | undefined;
-        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money) | undefined;
+        reader?: ((args_0: Date | UUID | LatLng | LatLngBounds | Money | BigDecimal, ...args: unknown[]) => any) | undefined;
+        writer?: ((args_0: any, ...args: unknown[]) => Date | UUID | LatLng | LatLngBounds | Money | BigDecimal) | undefined;
         canHandle?: ((args_0: {
             key: string;
             value?: any;

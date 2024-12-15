@@ -55,6 +55,72 @@ sdk.someMethod().then(response => {
 });
 ```
 
+### Migration
+
+#### SDK Loader
+The Sdk loader is not needed anymore, because there is no difference between the node and web sdk
+
+- Remove the sdkLoader file
+- Exchange all sdkTypes with the types from the new sdk
+
+```Javascript
+import { types as sdkTypes } from './sdkLoader';
+const { Money } = sdkTypes;
+```
+
+```Javascript
+import { sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+const { Money } = sdkTypes;
+```
+
+Posting to the backend and receiving from the backend dosn't need to be serialized or deserialized anymore, 
+because typing make sure that we receive sdk types and send sdk types.
+
+#### Transit can be removed
+```Javascript
+import { transit } from './sdkLoader';
+
+const serialize = (data) => {
+  return transit.write(data, { typeHandlers, verbose: config.sdk.transitVerbose });
+};
+
+const deserialize = (str) => {
+  return transit.read(str, { typeHandlers });
+};
+
+```
+
+#### TypeHandlers
+- **Before:**
+```Javascript
+import { types as sdkTypes } from './sdkLoader';
+
+export const typeHandlers = [
+  // Use Decimal type instead of SDK's BigDecimal.
+  {
+    type: sdkTypes.BigDecimal,
+    customType: Decimal,
+    writer: (v) => new sdkTypes.BigDecimal(v.toString()),
+    reader: (v) => new Decimal(v.value),
+  },
+];
+```
+
+- **After:**
+```Javascript
+import { skdTypes, util } from '@vansite/ts-sharetribe-flex-sdk';
+
+export const typeHandlers = [
+  // Use Decimal type instead of SDK's BigDecimal.
+  util.createTypeHandler({
+    type: skdTypes.BigDecimal,
+    customType: Decimal,
+    writer: (v) => new skdTypes.BigDecimal(v.toString()),
+    reader: (v) => new Decimal(v.value),
+  }),
+];
+```
+
 ---
 
 ## Scripts

@@ -10,7 +10,7 @@ import BrowserStore from "./utils/stores/browser-store";
 import ExpressStore from "./utils/stores/express-store";
 import {createTypeHandler, objectQueryString} from "./utils/util";
 
-export const skdTypes = {
+export const sdkTypes = {
   BigDecimal,
   LatLng,
   LatLngBounds,
@@ -36,6 +36,6 @@ export default {
   SharetribeSdk: sharetribeSdk,
   IntegrationSdk: integrationSdk,
   TokenStore,
-  skdTypes,
+  sdkTypes,
   util
 };

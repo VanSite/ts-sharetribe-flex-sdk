@@ -2,12 +2,12 @@ import { z } from 'zod';
 
 // Define the schema using Zod
 export const MoneySchema = z.object({
-  amount: z.number().int(),
-  currency: z.string().length(3),
+  amount: z.number({message: 'Amount must be a number.'}).int({message: 'Amount must be an integer.'}),
+  currency: z.string({message: 'Currency must be a string.'}).min(3, {message: 'Currency must be at least 3 characters long.'}),
 });
 
 // Type definition for the Money class based on the Zod schema
-type MoneyType = z.infer<typeof MoneySchema>;
+export type MoneyType = z.infer<typeof MoneySchema>;
 
 class Money {
   amount: number;

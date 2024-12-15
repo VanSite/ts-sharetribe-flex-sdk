@@ -1,5 +1,5 @@
 import SharetribeSdk from '../../sdk';
-import { AxiosInstance } from 'axios';
+import {AxiosInstance} from 'axios';
 import {
   AssetByAliasParameter,
   AssetByVersionParameter,
@@ -56,7 +56,7 @@ class AssetsApi {
     return await this.axios.get<AssetResponse<'assetsByAlias', P>>(this.endpoint + `/a/${params.alias}/${commonPath}/`, {
       headers: this.headers,
       params: {
-        assets: params.paths
+        assets: assets
       }
     });
   }
@@ -78,7 +78,7 @@ class AssetsApi {
     return await this.axios.get<AssetResponse<'assetsByVersion', P>>(this.endpoint + `/v/${params.version}/${commonPath}/`, {
       headers: this.headers,
       params: {
-        paths: params.paths
+        paths: assets
       }
     });
   }

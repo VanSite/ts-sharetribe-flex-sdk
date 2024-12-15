@@ -1,6 +1,5 @@
-import { AxiosInstance } from 'axios';
+import {AxiosInstance} from 'axios';
 import MarketplaceApi from './index';
-import { BookingsQueryParameter, BookingsResponse } from '../../types/marketplace/bookings';
 import {EventQueryParameter, EventsResponse} from "../../types/integration/events";
 
 class Events {

@@ -1,22 +1,24 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
-    "lib": ["ES2015", "DOM"],
+    "target": "ESNext",
+    "lib": ["es5", "es6", "dom"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": false,
     "ignoreDeprecations": "5.0",
     "declaration": true,
-    "declarationDir": "./types",
+    "declarationDir": "./dist/types",
+    "emitDeclarationOnly": false,
     "outDir": "./dist",
     "esModuleInterop": true,
-    "module": "commonjs",
+    "module": "ESNext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "sourceMap": true,
     "plugins": [{
       "name": "next"
     }],
@@ -26,5 +28,5 @@
     ]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"] // Exclude generated output folders
 }

@@ -1,16 +1,15 @@
-import { AxiosInstance } from 'axios';
+import {AxiosInstance} from 'axios';
 import MarketplaceApi from './index';
 import {
-  ListingsShowParameter,
-  ListingsResponse,
-  ListingsQueryParameter,
-  ListingsCreateParameter,
-  ListingsUpdateParameter,
+  ListingsApproveParameter,
   ListingsCloseParameter,
+  ListingsCreateParameter,
   ListingsOpenParameter,
-  ListingsApproveParameter
+  ListingsQueryParameter,
+  ListingsResponse,
+  ListingsShowParameter,
+  ListingsUpdateParameter
 } from '../../types/marketplace/listings';
-import {OwnListingsCreateParameter, OwnListingsResponse} from "../../types/marketplace/ownListings";
 import {ExtraParameter} from "../../types/sharetribe";
 
 class Listings {

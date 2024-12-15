@@ -1,13 +1,13 @@
-import {ApiMeta, ApiParameter, Relationship, RelationshipTypeMap, UUID} from '../sharetribe';
-import {Listing, ListingWithRelationships} from "../marketplace/listings";
-import {User, UserWithRelationships} from "../marketplace/user";
-import {AvailabilityException, AvailabilityExceptionWithRelationships} from "../marketplace/availabilityExceptions";
-import {Message, MessageWithRelationships} from "../marketplace/messages";
-import {Transaction, TransactionWithRelationships} from "../marketplace/transaction";
-import {Booking, BookingWithRelationShips} from "../marketplace/bookings";
-import {Review, ReviewWithRelationships} from "../marketplace/reviews";
-import {StockAdjustment, StockAdjustmentWithRelationships} from "../marketplace/stockAdjustment";
-import {StockReservation, StockReservationWithRelationships} from "../marketplace/stockReservations";
+import {ApiMeta, UUID} from '../sharetribe';
+import {ListingWithRelationships} from "../marketplace/listings";
+import {UserWithRelationships} from "../marketplace/user";
+import {AvailabilityExceptionWithRelationships} from "../marketplace/availabilityExceptions";
+import {MessageWithRelationships} from "../marketplace/messages";
+import {TransactionWithRelationships} from "../marketplace/transaction";
+import {BookingWithRelationShips} from "../marketplace/bookings";
+import {ReviewWithRelationships} from "../marketplace/reviews";
+import {StockAdjustmentWithRelationships} from "../marketplace/stockAdjustment";
+import {StockReservationWithRelationships} from "../marketplace/stockReservations";
 
 export type EventsEndpoints = 'query'
 export type EventTypes =

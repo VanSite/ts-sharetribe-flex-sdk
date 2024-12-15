@@ -1,5 +1,5 @@
 import SharetribeSdk from '../../sdk';
-import {AxiosInstance, AxiosResponse} from 'axios';
+import {AxiosInstance} from 'axios';
 import AvailabilityExceptions from './AvailabilityExceptions';
 import Listings from './Listings';
 import Bookings from './Bookings';

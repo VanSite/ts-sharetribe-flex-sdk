@@ -1,11 +1,12 @@
-import { AxiosInstance } from 'axios';
+import {AxiosInstance} from 'axios';
 import MarketplaceApi from './index';
 import {
   StripeCustomerAddPaymentMethodParameter,
   StripeCustomerCreateParameter,
-  StripeCustomerDeletePaymentMethodParameter, StripeCustomerResponse
+  StripeCustomerDeletePaymentMethodParameter,
+  StripeCustomerResponse
 } from '../../types/marketplace/stripeCustomer';
-import { ExtraParameter } from '../../types/sharetribe';
+import {ExtraParameter} from '../../types/sharetribe';
 
 class StripeCustomer {
   private readonly endpoint: string;
@@ -27,8 +28,8 @@ class StripeCustomer {
     return this.axios.post<StripeCustomerResponse<'addPaymentMethod', P, EP>>(`${this.endpoint}/add_payment_method`, {...params, ...extraParams}, this.headers);
   }
 
-  async deletePaymentMethod<P extends StripeCustomerDeletePaymentMethodParameter, EP extends ExtraParameter>(params: P, extraParams: EP | void) {
-    return this.axios.post<StripeCustomerResponse<'deletePaymentMethod', P, EP>>(`${this.endpoint}/delete_payment_method`, params, this.headers);
+  async deletePaymentMethod<P extends StripeCustomerDeletePaymentMethodParameter>(params: P) {
+    return this.axios.post<StripeCustomerResponse<'deletePaymentMethod', P>>(`${this.endpoint}/delete_payment_method`, params, this.headers);
   }
 }
 

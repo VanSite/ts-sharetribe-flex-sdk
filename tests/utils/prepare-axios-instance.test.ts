@@ -5,7 +5,7 @@ import {
   isTokenExpired,
   prepareAuthorizationHeader
 } from '../../src/utils/prepare-axios-instance'
-import SharetribeSdk from '../../src/sharetribe-sdk';
+import SharetribeSdk from '../../src/sdk';
 import { dataToType, typeToData } from '../../src/utils/convert-types';
 import { AxiosError } from 'axios';
 
@@ -103,7 +103,7 @@ describe('handleResponseFailure', () => {
   });
 
   it('should retry the request with a new token', async () => {
-    const response = await handleResponseFailure(sdk, error);
+    await handleResponseFailure(sdk, error);
     expect(sdk.auth.token).toHaveBeenCalledWith({
       client_id: sdk.sdkConfig.clientId,
       grant_type: 'refresh_token',

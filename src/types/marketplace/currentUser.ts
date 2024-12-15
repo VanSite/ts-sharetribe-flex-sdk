@@ -1,5 +1,4 @@
-import { ApiParameter, ExtraParameter, UUID, Relationship, RelationshipTypeMap } from '../sharetribe';
-import {unknown} from "zod";
+import {ApiParameter, ExtraParameter, Relationship, RelationshipTypeMap, UUID} from '../sharetribe';
 
 export type CurrentUserEndpoints =
   'show'
@@ -134,14 +133,33 @@ export interface CurrentUserVerifyEmailParameter extends CurrentUserParameter {
   verificationToken: string
 }
 
-export interface CurrentUserProfilePublicData { [key: string]: any }
-export interface CurrentUserCustomProfilePublicData {}
-export interface CurrentUserProfileProtectedData { [key: string]: any }
-export interface CurrentUserCustomProfileProtectedData {}
-export interface CurrentUserProfilePrivateData { [key: string]: any }
-export interface CurrentUserCustomProfilePrivateData {}
-export interface CurrentUserProfileMetadata { [key: string]: any }
-export interface CurrentUserCustomProfileMetadata {}
+export interface CurrentUserProfilePublicData {
+  [key: string]: any
+}
+
+export interface CurrentUserCustomProfilePublicData {
+}
+
+export interface CurrentUserProfileProtectedData {
+  [key: string]: any
+}
+
+export interface CurrentUserCustomProfileProtectedData {
+}
+
+export interface CurrentUserProfilePrivateData {
+  [key: string]: any
+}
+
+export interface CurrentUserCustomProfilePrivateData {
+}
+
+export interface CurrentUserProfileMetadata {
+  [key: string]: any
+}
+
+export interface CurrentUserCustomProfileMetadata {
+}
 
 type AllCurrentUserParameter =
   CurrentUserShowParameter

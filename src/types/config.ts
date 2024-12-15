@@ -5,12 +5,14 @@ import UUID from '../sdkTypes/UUID';
 import LatLng from '../sdkTypes/LatLng';
 import Money from '../sdkTypes/Money';
 import LatLngBounds from '../sdkTypes/LatLngBounds';
+import BigDecimal from "../sdkTypes/BigDecimal";
 
 const sdkTypesSchema = z.union([
   z.instanceof(UUID),
   z.instanceof(LatLng),
   z.instanceof(LatLngBounds),
   z.instanceof(Money),
+  z.instanceof(BigDecimal),
   z.instanceof(Date),
 ])
 

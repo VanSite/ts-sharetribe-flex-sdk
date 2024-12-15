@@ -2,12 +2,12 @@ import { z } from 'zod';
 
 // Define the schema using Zod
 export const LatLngSchema = z.object({
-  lat: z.union([z.number(), z.string().regex(/^\d+(\.\d+)?$/)]),
-  lng: z.union([z.number(), z.string().regex(/^\d+(\.\d+)?$/)])
+  lat: z.union([z.number(), z.string().regex(/^\d+(\.\d+)?$/)], { message: "Latitude must be a number or a string that represents a number" }),
+  lng: z.union([z.number(), z.string().regex(/^\d+(\.\d+)?$/)], { message: "Longitude must be a number or a string that represents a number" }),
 });
 
 // Type definition for the LatLng class based on the Zod schema
-type LatLngType = z.infer<typeof LatLngSchema>;
+export type LatLngType = z.infer<typeof LatLngSchema>;
 
 class LatLng {
   lat: number | string;

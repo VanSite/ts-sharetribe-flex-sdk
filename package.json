@@ -1,15 +1,25 @@
 {
   "name": "@vansite/ts-sharetribe-flex-sdk",
   "version": "1.0.0",
-  "description": "Sharetribe api handled with redux toolkit query",
-  "main": "dist/ts-sharetribe-flex-sdk.node.js",
-  "types": "types/index.d.ts",
+  "description": "This is a TypeScript SDK for Sharetribe Flex API. It reduces the complexity of the API and provides a more user-friendly interface.",
+  "main": "./dist/ts-sharetribe-flex-sdk.cjs.js",
+  "module": "./dist/ts-sharetribe-flex-sdk.mjs",
+  "exports": {
+    ".": {
+      "require": "./dist/ts-sharetribe-flex-sdk.cjs.js",
+      "default": "./dist/ts-sharetribe-flex-sdk.cjs.js",
+      "import": "./dist/ts-sharetribe-flex-sdk.mjs",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
+  "types": "./dist/types/index.d.ts",
   "author": "DKogan90 <david_kogan@hotmail.de>",
   "license": "MIT",
   "private": false,
   "files": [
     "dist",
-    "types"
+    "types",
+    "src"
   ],
   "scripts": {
     "clean": "rm -rf dist lib types",
@@ -69,7 +79,7 @@
       "ts",
       "js"
     ],
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.ts?$",
+    "testRegex": "(/tests/.*|(\\.|/)(test|spec))\\.ts?$",
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },

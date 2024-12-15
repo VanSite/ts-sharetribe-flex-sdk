@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {TypeHandler, typeHandlerSchema} from "../types/config";
 
 
 const ObjectSchema = z.record(z.string(), z.any(), {
@@ -24,4 +25,8 @@ export const objectQueryString = (obj: ObjectQueryStringParam) => {
     .filter(([key, value]) => value !== undefined && value !== null)
     .map(([key, value]) => `${key}:${serializeAttribute(value)}`)
     .join(';')
+}
+
+export const createTypeHandler = (handler: TypeHandler) => {
+  return typeHandlerSchema.parse(handler);
 }

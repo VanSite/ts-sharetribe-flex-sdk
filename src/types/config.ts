@@ -18,7 +18,7 @@ const sdkTypesSchema = z.union([
 
 const appTypeSchema = z.any()
 
-const typeHandlerSchema = z.object({
+export const typeHandlerSchema = z.object({
   sdkType: sdkTypesSchema,
   appType: appTypeSchema,
   reader: z

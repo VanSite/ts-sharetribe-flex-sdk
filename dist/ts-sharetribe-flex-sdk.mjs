@@ -39,7 +39,7 @@ __webpack_require__.d(__webpack_exports__, {
   mc: () => (/* binding */ src_SharetribeSdk),
   JH: () => (/* binding */ TokenStore),
   Ay: () => (/* binding */ src),
-  aP: () => (/* binding */ skdTypes),
+  yS: () => (/* binding */ sdkTypes),
   ZS: () => (/* binding */ src_util)
 });
 
@@ -10459,7 +10459,7 @@ const createTypeHandler = (handler) => {
 
 
 
-const skdTypes = {
+const sdkTypes = {
     BigDecimal: sdkTypes_BigDecimal,
     LatLng: sdkTypes_LatLng,
     LatLngBounds: sdkTypes_LatLngBounds,
@@ -10481,7 +10481,7 @@ const IntegrationSdk = integrationSdk;
     SharetribeSdk: sdk,
     IntegrationSdk: integrationSdk,
     TokenStore,
-    skdTypes,
+    sdkTypes,
     util: src_util
 });
 
@@ -10489,8 +10489,8 @@ var __webpack_exports__IntegrationSdk = __webpack_exports__.v_;
 var __webpack_exports__SharetribeSdk = __webpack_exports__.mc;
 var __webpack_exports__TokenStore = __webpack_exports__.JH;
 var __webpack_exports__default = __webpack_exports__.Ay;
-var __webpack_exports__skdTypes = __webpack_exports__.aP;
+var __webpack_exports__sdkTypes = __webpack_exports__.yS;
 var __webpack_exports__util = __webpack_exports__.ZS;
-export { __webpack_exports__IntegrationSdk as IntegrationSdk, __webpack_exports__SharetribeSdk as SharetribeSdk, __webpack_exports__TokenStore as TokenStore, __webpack_exports__default as default, __webpack_exports__skdTypes as skdTypes, __webpack_exports__util as util };
+export { __webpack_exports__IntegrationSdk as IntegrationSdk, __webpack_exports__SharetribeSdk as SharetribeSdk, __webpack_exports__TokenStore as TokenStore, __webpack_exports__default as default, __webpack_exports__sdkTypes as sdkTypes, __webpack_exports__util as util };
 
 //# sourceMappingURL=ts-sharetribe-flex-sdk.mjs.map

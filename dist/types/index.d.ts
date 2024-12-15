@@ -8,7 +8,7 @@ import Money from "./sdkTypes/Money";
 import MemoryStore from "./utils/stores/memory-store";
 import BrowserStore from "./utils/stores/browser-store";
 import ExpressStore from "./utils/stores/express-store";
-export declare const skdTypes: {
+export declare const sdkTypes: {
     BigDecimal: typeof BigDecimal;
     LatLng: typeof LatLng;
     LatLngBounds: typeof LatLngBounds;
@@ -43,7 +43,7 @@ declare const _default: {
         BrowserStore: typeof BrowserStore;
         ExpressStore: typeof ExpressStore;
     };
-    skdTypes: {
+    sdkTypes: {
         BigDecimal: typeof BigDecimal;
         LatLng: typeof LatLng;
         LatLngBounds: typeof LatLngBounds;

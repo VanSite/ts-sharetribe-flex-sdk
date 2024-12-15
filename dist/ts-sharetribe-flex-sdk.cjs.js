@@ -43,7 +43,7 @@ __webpack_require__.d(__webpack_exports__, {
   SharetribeSdk: () => (/* binding */ src_SharetribeSdk),
   TokenStore: () => (/* binding */ TokenStore),
   "default": () => (/* binding */ src),
-  skdTypes: () => (/* binding */ skdTypes),
+  sdkTypes: () => (/* binding */ sdkTypes),
   util: () => (/* binding */ src_util)
 });
 
@@ -10463,7 +10463,7 @@ const createTypeHandler = (handler) => {
 
 
 
-const skdTypes = {
+const sdkTypes = {
     BigDecimal: sdkTypes_BigDecimal,
     LatLng: sdkTypes_LatLng,
     LatLngBounds: sdkTypes_LatLngBounds,
@@ -10485,7 +10485,7 @@ const IntegrationSdk = integrationSdk;
     SharetribeSdk: sdk,
     IntegrationSdk: integrationSdk,
     TokenStore,
-    skdTypes,
+    sdkTypes,
     util: src_util
 });
 

@@ -1,5 +1,5 @@
-import SharetribeSdk from './sdk';
-import IntegrationSdk from './integrationSdk';
+import sharetribeSdk from './sdk';
+import integrationSdk from './integrationSdk';
 import BigDecimal from "./sdkTypes/BigDecimal";
 import UUID from "./sdkTypes/UUID";
 import LatLng from "./sdkTypes/LatLng";
@@ -10,7 +10,7 @@ import BrowserStore from "./utils/stores/browser-store";
 import ExpressStore from "./utils/stores/express-store";
 import {objectQueryString} from "./utils/util";
 
-const skdTypes = {
+export const skdTypes = {
   BigDecimal,
   LatLng,
   LatLngBounds,
@@ -18,19 +18,22 @@ const skdTypes = {
   UUID,
 }
 
-const TokenStore = {
+export const TokenStore = {
   MemoryStore,
   BrowserStore,
   ExpressStore,
 }
 
-const util = {
+export const util = {
   objectQueryString
 }
 
+export const SharetribeSdk = sharetribeSdk;
+export const IntegrationSdk = integrationSdk;
+
 export default {
-  SharetribeSdk,
-  IntegrationSdk,
+  SharetribeSdk: sharetribeSdk,
+  IntegrationSdk: integrationSdk,
   TokenStore,
   skdTypes,
   util

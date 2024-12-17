@@ -1,67 +1,64 @@
-import { z } from 'zod';
-import { tokenStore } from './store';
-import MemoryStore from '../utils/stores/memory-store';
 import UUID from '../sdkTypes/UUID';
 import LatLng from '../sdkTypes/LatLng';
 import Money from '../sdkTypes/Money';
 import LatLngBounds from '../sdkTypes/LatLngBounds';
 import BigDecimal from "../sdkTypes/BigDecimal";
+import MemoryStore from "../utils/stores/memory-store";
 
-const sdkTypesSchema = z.union([
-  z.instanceof(UUID),
-  z.instanceof(LatLng),
-  z.instanceof(LatLngBounds),
-  z.instanceof(Money),
-  z.instanceof(BigDecimal),
-  z.instanceof(Date),
-])
+type SdkType = UUID | LatLng | Money | LatLngBounds | BigDecimal;
 
-const appTypeSchema = z.any()
+// Similarly, appTypeSchema was z.any(), so we just use `any`.
+type AppType = any;
 
-export const typeHandlerSchema = z.object({
-  sdkType: sdkTypesSchema,
-  appType: appTypeSchema,
-  reader: z
-    .function()
-    .args(sdkTypesSchema)
-    .returns(appTypeSchema)
-    .optional(),
-  writer: z
-    .function()
-    .args(appTypeSchema)
-    .returns(sdkTypesSchema)
-    .optional(),
-  canHandle: z
-    .function()
-    .args(z.object({key: z.string(), value: z.any()}))
-    .returns(z.boolean())
-    .optional(),
-})
+// Previously, typeHandlerSchema was a Zod schema defining TypeHandler shape.
+export interface TypeHandler {
+  sdkType: SdkType;
+  appType: AppType;
+  reader?: (value: SdkType) => AppType;
+  writer?: (value: AppType) => SdkType;
+  canHandle?: (args: { key: string; value: any }) => boolean;
+}
 
-export type TypeHandler = z.infer<typeof typeHandlerSchema>;
+// The tokenStore and other configurations were also defined via Zod. We now define them as interfaces.
+// Note: Without Zod, we don't enforce defaults or refinements automatically.
+// For example, "baseUrl should not finish with a '/'." must be checked at runtime if needed.
 
-export const defaultSdkConfig = z.object({
-  clientId: z.string().optional(),
-  clientSecret: z.string().optional(),
-  baseUrl: z.string().default('https://flex-api.sharetribe.com'),
-  assetCdnBaseUrl: z.string().default('https://cdn.st-api.com'),
-  version: z.string().default('v1'),
-  transitVerbose: z.boolean().default(false),
-  tokenStore: tokenStore.default(new MemoryStore()),
-  typeHandlers: z.array(typeHandlerSchema).default([]),
-})
+export interface TokenStore {
+  token?: {
+    access_token: string;
+    token_type: 'bearer';
+    expires_in: number;
+    scope?: 'public-read' | 'trusted:user' | 'user' | 'integ';
+    refresh_token?: string;
+  } | null;
+  expiration?: number;
+  getToken: () => Promise<{
+    access_token: string;
+    token_type: 'bearer';
+    expires_in: number;
+    scope?: 'public-read' | 'trusted:user' | 'user' | 'integ';
+    refresh_token?: string;
+  } | null>;
+  setToken: (args: {
+    access_token: string;
+    token_type: 'bearer';
+    expires_in: number;
+    scope?: 'public-read' | 'trusted:user' | 'user' | 'integ';
+    refresh_token?: string;
+  }) => void;
+  removeToken: () => void;
+}
 
-export const sdkConfig = z.object({
-  clientId: z.string().refine(v => v.length > 0, "clientId is required'"),
-  clientSecret: z.string().optional(),
-  baseUrl: z.string().refine(v => v.charAt(v.length - 1) !== "/", "baseUrl should not finish with a \"/\".").optional(),
-  assetCdnBaseUrl: z.string().refine(v => v.charAt(v.length - 1) !== "/", "assetCdnBaseUrl should not finish with a \"/\".").optional(),
-  version: z.string().optional(),
-  tokenStore: tokenStore.optional(),
-  secure: z.boolean().optional(),
-  transitVerbose: z.boolean().optional(),
-  authToken: z.string().optional(),
-  typeHandlers: z.array(typeHandlerSchema).optional()
-})
-
-export type SdkConfig = z.infer<typeof sdkConfig>;
+// Similarly, for sdkConfig:
+export interface SdkConfig {
+  clientId: string; // must be non-empty (runtime check needed)
+  clientSecret?: string;
+  baseUrl?: string;          // runtime check: should not end with '/'
+  assetCdnBaseUrl?: string;  // runtime check: should not end with '/'
+  version?: string;
+  tokenStore?: TokenStore;
+  secure?: boolean;
+  transitVerbose?: boolean;
+  authToken?: string;
+  typeHandlers?: TypeHandler[];
+}

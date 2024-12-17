@@ -1,4 +1,4 @@
-import { defaultSdkConfig, sdkConfig, SdkConfig } from './types/config';
+import {SdkConfig} from './types/config';
 import axios, { AxiosInstance } from 'axios';
 import {ApiConfigs} from "./types/apiConfigs";
 import IntegrationApi from "./endpoints/integrationApi";
@@ -15,6 +15,7 @@ import StockAdjustments from "./endpoints/integrationApi/StockAdjustments";
 import StockReservation from "./endpoints/integrationApi/StockReservation";
 import Transactions from "./endpoints/integrationApi/Transactions";
 import Users from "./endpoints/integrationApi/Users";
+import {DefaultSdkConfig} from "./utils/config";
 
 class SharetribeIntegrationSdk {
   sdkConfig: SdkConfig;
@@ -38,10 +39,8 @@ class SharetribeIntegrationSdk {
   users: Users;
 
   constructor(config: SdkConfig) {
-    sdkConfig.parse(config);
-
     this.sdkConfig = {
-      ...defaultSdkConfig.parse({}),
+      ...DefaultSdkConfig,
       ...config
     };
 

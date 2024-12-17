@@ -1,4 +1,4 @@
-import { defaultSdkConfig, sdkConfig, SdkConfig } from './types/config';
+import { SdkConfig } from './types/config';
 import { createApisConfigs } from './utils/apis';
 import { ApiConfigs } from './types/apiConfigs';
 import axios, { AxiosInstance } from 'axios';
@@ -28,6 +28,7 @@ import Transactions from './endpoints/marketplace/Transactions';
 import Users from './endpoints/marketplace/Users';
 import { AuthInfoResponse, LoginParameter, LoginWithIdpParameter, Scope } from './types/authentication';
 import AssetsApi from './endpoints/assets';
+import {DefaultSdkConfig} from "./utils/config";
 
 class SharetribeSdk {
   sdkConfig: SdkConfig;
@@ -58,7 +59,7 @@ class SharetribeSdk {
   stripeCustomer: StripeCustomer;
   stripePersons: StripePersons;
   stripeSetupIntents: StripeSetupIntents;
-  timeSlots: TimeSlots;
+  timeslots: TimeSlots;
   transactions: Transactions;
   users: Users;
 
@@ -70,10 +71,8 @@ class SharetribeSdk {
 
 
   constructor(config: SdkConfig) {
-    sdkConfig.parse(config);
-
     this.sdkConfig = {
-      ...defaultSdkConfig.parse({}),
+      ...DefaultSdkConfig,
       ...config
     };
     this.apisConfigs = createApisConfigs();
@@ -105,7 +104,7 @@ class SharetribeSdk {
     this.stripeCustomer = this.api.stripeCustomer
     this.stripePersons = this.api.stripePersons
     this.stripeSetupIntents = this.api.stripeSetupIntents
-    this.timeSlots = this.api.timeSlots
+    this.timeslots = this.api.timeslots
     this.transactions = this.api.transactions
     this.users = this.api.users
 

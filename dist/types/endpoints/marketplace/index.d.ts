@@ -44,7 +44,7 @@ declare class MarketplaceApi {
     stripeCustomer: StripeCustomer;
     stripePersons: StripePersons;
     stripeSetupIntents: StripeSetupIntents;
-    timeSlots: TimeSlots;
+    timeslots: TimeSlots;
     transactions: Transactions;
     users: Users;
     constructor(sdk: SharetribeSdk);

@@ -9,13 +9,7 @@ declare class BrowserStore implements TokenStore {
     private readonly key;
     private readonly secure;
     constructor({ clientId, secure }: BrowserStoreOptions);
-    getToken(): Promise<{
-        access_token: string;
-        token_type: "bearer";
-        expires_in: number;
-        scope?: "public-read" | "trusted:user" | "user" | "integ" | undefined;
-        refresh_token?: string | undefined;
-    } | null>;
+    getToken(): Promise<AuthToken | null>;
     setToken(token: AuthToken): void;
     removeToken(): void;
 }

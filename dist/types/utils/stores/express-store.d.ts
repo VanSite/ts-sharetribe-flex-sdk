@@ -16,13 +16,7 @@ declare class ExpressStore implements TokenStore {
     private currentToken;
     constructor({ clientId, req, res, secure }: ExpressStoreOptions);
     private readCookie;
-    getToken(): Promise<{
-        access_token: string;
-        token_type: "bearer";
-        expires_in: number;
-        scope?: "public-read" | "trusted:user" | "user" | "integ" | undefined;
-        refresh_token?: string | undefined;
-    } | null>;
+    getToken(): Promise<AuthToken | null>;
     setToken(token: AuthToken): void;
     removeToken(): void;
 }

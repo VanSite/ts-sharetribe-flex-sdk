@@ -5,7 +5,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const isAnalyze = process.env.ANALYZE === 'true';
 
 const commonConfig = {
-  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+  mode: 'development',
   entry: './src/index.ts',
   resolve: {
     extensions: ['.ts', '.js'],
@@ -23,6 +23,9 @@ const commonConfig = {
   plugins: [
     ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
   ],
+  optimization: {
+    minimize: true,
+  },
 };
 
 const cjsConfig = {
@@ -33,9 +36,6 @@ const cjsConfig = {
     library: {
       type: 'commonjs2',
     },
-  },
-  optimization: {
-    minimize: false, // No minification for CommonJS
   },
 };
 
@@ -51,9 +51,6 @@ const esmConfig = {
   experiments: {
     outputModule: true,
   },
-  optimization: {
-    minimize: false, // No minification for ES modules
-  },
 };
 
 const umdConfig = {
@@ -67,9 +64,6 @@ const umdConfig = {
       export: 'named',
     },
     globalObject: 'this',
-  },
-  optimization: {
-    minimize: true, // Minification for the UMD bundle
   },
 };
 

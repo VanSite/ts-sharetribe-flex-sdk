@@ -8,7 +8,7 @@ import Money from "./sdkTypes/Money";
 import MemoryStore from "./utils/stores/memory-store";
 import BrowserStore from "./utils/stores/browser-store";
 import ExpressStore from "./utils/stores/express-store";
-import {createTypeHandler, objectQueryString} from "./utils/util";
+import {objectQueryString} from "./utils/util";
 
 export const sdkTypes = {
   BigDecimal,
@@ -25,8 +25,7 @@ export const TokenStore = {
 }
 
 export const util = {
-  objectQueryString,
-  createTypeHandler
+  objectQueryString
 }
 
 export const SharetribeSdk = sharetribeSdk;

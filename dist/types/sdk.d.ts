@@ -51,7 +51,7 @@ declare class SharetribeSdk {
     stripeCustomer: StripeCustomer;
     stripePersons: StripePersons;
     stripeSetupIntents: StripeSetupIntents;
-    timeSlots: TimeSlots;
+    timeslots: TimeSlots;
     transactions: Transactions;
     users: Users;
     assetByAlias: AssetsApi['assetByAlias'];

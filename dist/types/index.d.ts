@@ -21,17 +21,9 @@ export declare const TokenStore: {
     ExpressStore: typeof ExpressStore;
 };
 export declare const util: {
-    objectQueryString: (obj: Record<string, any>) => string;
-    createTypeHandler: (handler: import("./types/config").TypeHandler) => {
-        sdkType: BigDecimal | LatLng | LatLngBounds | Money | UUID | Date;
-        appType?: any;
-        reader?: ((args_0: BigDecimal | LatLng | LatLngBounds | Money | UUID | Date, ...args: unknown[]) => any) | undefined;
-        writer?: ((args_0: any, ...args: unknown[]) => BigDecimal | LatLng | LatLngBounds | Money | UUID | Date) | undefined;
-        canHandle?: ((args_0: {
-            key: string;
-            value?: any;
-        }, ...args: unknown[]) => boolean) | undefined;
-    };
+    objectQueryString: (obj: {
+        [x: string]: any;
+    }) => string;
 };
 export declare const SharetribeSdk: typeof sharetribeSdk;
 export declare const IntegrationSdk: typeof integrationSdk;
@@ -51,17 +43,9 @@ declare const _default: {
         UUID: typeof UUID;
     };
     util: {
-        objectQueryString: (obj: Record<string, any>) => string;
-        createTypeHandler: (handler: import("./types/config").TypeHandler) => {
-            sdkType: BigDecimal | LatLng | LatLngBounds | Money | UUID | Date;
-            appType?: any;
-            reader?: ((args_0: BigDecimal | LatLng | LatLngBounds | Money | UUID | Date, ...args: unknown[]) => any) | undefined;
-            writer?: ((args_0: any, ...args: unknown[]) => BigDecimal | LatLng | LatLngBounds | Money | UUID | Date) | undefined;
-            canHandle?: ((args_0: {
-                key: string;
-                value?: any;
-            }, ...args: unknown[]) => boolean) | undefined;
-        };
+        objectQueryString: (obj: {
+            [x: string]: any;
+        }) => string;
     };
 };
 export default _default;

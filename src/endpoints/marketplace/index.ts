@@ -47,7 +47,7 @@ class MarketplaceApi {
   stripeCustomer: StripeCustomer;
   stripePersons: StripePersons;
   stripeSetupIntents: StripeSetupIntents;
-  timeSlots: TimeSlots;
+  timeslots: TimeSlots;
   transactions: Transactions;
   users: Users;
 
@@ -76,7 +76,7 @@ class MarketplaceApi {
     this.stripeCustomer = new StripeCustomer(this);
     this.stripePersons = new StripePersons(this);
     this.stripeSetupIntents = new StripeSetupIntents(this);
-    this.timeSlots = new TimeSlots(this);
+    this.timeslots = new TimeSlots(this);
     this.transactions = new Transactions(this);
     this.users = new Users(this);
   }

@@ -1,9 +1,6 @@
-import { z } from "zod";
-export declare const BigDecimalSchema: z.ZodString;
-export type BigDecimalType = z.infer<typeof BigDecimalSchema>;
 declare class BigDecimal {
     value: string;
-    constructor(value: string);
+    constructor(value: any);
     toString(): string;
 }
 export default BigDecimal;

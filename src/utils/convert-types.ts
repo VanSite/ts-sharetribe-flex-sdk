@@ -134,12 +134,16 @@ export function dataToType(data: any, sdk: SharetribeSdk | IntegrationSdk) {
           // @ts-ignore
           if (value instanceof handler.sdkType) {
             return handler.reader!(value) as typeof handler.appType;
+          } else {
+            return value;
           }
         }
 
         if (handler.canHandle && handler.appType && handler.reader) {
           if (handler.canHandle({key, value})) {
             return handler.reader!(value) as typeof handler.appType;
+          } else {
+            return value;
           }
         }
       });

@@ -57,7 +57,9 @@ sdk.someMethod().then(response => {
 
 ### Migration
 
-#### SDK Loader
+#### Client
+
+##### SDK Loader
 The Sdk loader is not needed anymore, because there is no difference between the node and web sdk
 
 - Remove the sdkLoader file
@@ -76,7 +78,7 @@ const { Money } = sdkTypes;
 Posting to the backend and receiving from the backend dosn't need to be serialized or deserialized anymore, 
 because typing make sure that we receive sdk types and send sdk types.
 
-#### Transit can be removed
+##### Transit can be removed
 ```Javascript
 import { transit } from './sdkLoader';
 
@@ -90,7 +92,7 @@ const deserialize = (str) => {
 
 ```
 
-#### TypeHandlers
+##### TypeHandlers
 - **Before:**
 ```Javascript
 import { types as sdkTypes } from './sdkLoader';
@@ -113,12 +115,86 @@ import { skdTypes, util } from '@vansite/ts-sharetribe-flex-sdk';
 export const typeHandlers = [
   // Use Decimal type instead of SDK's BigDecimal.
   util.createTypeHandler({
-    type: skdTypes.BigDecimal,
-    customType: Decimal,
+    sdkType: skdTypes.BigDecimal,
+    appType: Decimal,
     writer: (v) => new skdTypes.BigDecimal(v.toString()),
     reader: (v) => new Decimal(v.value),
   }),
 ];
+```
+
+#### Server
+
+##### TokenStores
+
+- **Before:**
+```Javascript
+const sharetribeSdk = require('sharetribe-flex-sdk');
+const store = sharetribeSdk.tokenStore.memoryStore();
+```
+
+- **After:**
+```Javascript
+const { sdkTypes, util, TokenStore } = require('@vansite/ts-sharetribe-flex-sdk');
+const store = new TokenStore.MemoryStore();
+```
+or
+```Javascript
+const { sdkTypes, util, TokenStore } = require('@vansite/ts-sharetribe-flex-sdk');
+const cookieTokenStore = new TokenStore.ExpressStore({
+  clientId: CLIENT_ID,
+  req,
+  secure: USING_SSL,
+});
+```
+
+##### Remove serialize and deserialize
+
+```Javascript
+exports.serialize = (data) => {
+  return sharetribeSdk.transit.write(data, { typeHandlers, verbose: TRANSIT_VERBOSE });
+};
+
+exports.deserialize = (str) => {
+  return sharetribeSdk.transit.read(str, { typeHandlers });
+};
+```
+
+###### Remove types Replacer
+
+- **Before:**
+```Javascript
+const replacer = (key = null, value) => {
+  const cleanedValue = cleanErrorValue(value);
+  return types.replacer(key, cleanedValue);
+};
+```
+
+- **After:**
+```Javascript
+const replacer = (key = null, value) => {
+  return cleanErrorValue(value);
+};
+```
+
+###### Change bodyParser to json
+
+- **Before:**
+```Javascript
+router.use(
+  bodyParser.text({
+    type: 'application/transit+json',
+  })
+);
+```
+
+- **After:**
+```Javascript
+  router.use(
+  bodyParser.text({
+    type: 'application/transit+json',
+  })
+);
 ```
 
 ---

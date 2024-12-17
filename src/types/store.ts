@@ -1,27 +1,29 @@
-import { z } from 'zod';
+// The scope can be one of these strings
+type Scope = "public-read" | "trusted:user" | "user" | "integ";
 
-const authToken = z.object({
-  access_token: z.string(),
-  token_type: z.literal("bearer"),
-  expires_in: z.number(),
-  scope: z.enum(["public-read", "trusted:user", "user", 'integ']).optional(),
-  refresh_token: z.string().optional(),
-});
+export interface AuthToken {
+  access_token: string;
+  token_type: "bearer";
+  expires_in: number;
+  scope?: Scope;
+  refresh_token?: string;
+}
 
-export type AuthToken = z.infer<typeof authToken>;
+export interface TokenStore {
+  token?: AuthToken | null;
+  expiration?: number;
 
-export const tokenStore = z.object({
-  token: authToken.optional().nullable(),
-  expiration: z.number().optional(),
-  getToken: z.function().returns(z.promise(authToken.nullable())),
-  setToken: z.function().args(z.object({
-    access_token: z.string(),
-    token_type: z.literal("bearer"),
-    expires_in: z.number(),
-    scope: z.enum(["public-read", "trusted:user", "user", 'integ']).optional(),
-    refresh_token: z.string().optional()
-  })).returns(z.void()),
-  removeToken: z.function().returns(z.void()),
-});
+  // Returns a Promise that resolves to either an AuthToken or null
+  getToken: () => Promise<AuthToken | null>;
 
-export type TokenStore = z.infer<typeof tokenStore>;
+  // Accepts an object that matches the AuthToken fields
+  setToken: (args: {
+    access_token: string;
+    token_type: "bearer";
+    expires_in: number;
+    scope?: Scope;
+    refresh_token?: string;
+  }) => void;
+
+  removeToken: () => void;
+}

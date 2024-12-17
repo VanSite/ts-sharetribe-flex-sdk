@@ -12,8 +12,7 @@ import { StripeCustomer } from './marketplace/stripeCustomer';
 import { Stock } from './marketplace/stock';
 import { StripePaymentMethod } from './marketplace/stripePaymentMethod';
 import { Transaction } from './marketplace/transaction';
-import { z } from 'zod';
-import { UUIDSchema } from '../sdkTypes/UUID';
+import UUIDClass from '../sdkTypes/UUID';
 export type RelationshipTypeMap = {
     'author': User;
     'booking': Booking;
@@ -72,7 +71,7 @@ export type ApiError = {
         };
     };
 };
-export type UUID = z.infer<typeof UUIDSchema>;
+export type UUID = typeof UUIDClass;
 export type ApiMeta = {
     totalItems: number;
     totalPages: number;

@@ -1,10 +1,16 @@
+/**
+ * @fileoverview Type definitions for authentication in the Sharetribe Marketplace API.
+ * These types define the structure of authentication-related parameters, endpoints, and responses.
+ */
+
 // Basic Types
 export type TokenTypes = "access_token" | "refresh_token";
 export type GrantType = "client_credentials" | "password" | "refresh_token" | "token_exchange";
 export type Scope = "public-read" | "user" | "trusted:user" | "integ";
-export type ScopeType = "public-read" | "user" | "trusted:user" | "integ" | "details" | "refresh-token"
+export type ScopeType = "public-read" | "user" | "trusted:user" | "integ" | "details" | "refresh-token";
 export type IdentityProviderType = "facebook" | "google" | string;
 
+// Login Parameters
 export type LoginParameter = {
   username: string;
   password: string;
@@ -14,7 +20,7 @@ export type LoginWithIdpParameter = {
   idpId: string;
   idpClientId: string;
   idpToken: string;
-}
+};
 
 export type AuthWithIdpParameter = {
   client_id: string;
@@ -26,7 +32,6 @@ export type IdentityProvider<P extends IdentityProviderType> = {
   idpId: P;
   idpToken: string;
 };
-
 
 // Base Endpoint
 type BaseEndpoint = {
@@ -57,7 +62,7 @@ export type TrustedUserEndpoint = BaseEndpoint & {
   scope: "trusted:user";
 };
 
-// integrationApi Endpoints
+// Integration API Endpoints
 type IntegEndpoint = BaseEndpoint & {
   scope: "integ";
 };
@@ -89,31 +94,38 @@ export type Endpoint<S extends ScopeType> = S extends "public-read"
             ? RefreshTokenEndpoint
             : never;
 
+// Authentication Token
 export type AuthToken = {
-  access_token: string,
-  token_type: 'bearer',
-  expires_in: number,
-  scope?: Scope,
-  refresh_token?: string
-}
+  access_token: string;
+  token_type: "bearer";
+  expires_in: number;
+  scope?: Scope;
+  refresh_token?: string;
+};
 
+// Token Details
 export type TokenDetails = {
-  "client-id": string,
-  exp: number,
-  scope: Scope
-}
+  "client-id": string;
+  exp: number;
+  scope: Scope;
+};
 
+// Token Response Type
 export type TokenResponse<S extends ScopeType> = S extends "public-read" | "user" | "trusted:user" | "integ" | "refresh-token"
-  ? AuthToken : S extends "details"
-    ? TokenDetails : never;
+  ? AuthToken
+  : S extends "details"
+    ? TokenDetails
+    : never;
 
+// Revoke Response
 export type RevokeResponse = {
-  revoked: boolean
-}
+  revoked: boolean;
+};
 
+// Authentication Info Response
 export type AuthInfoResponse = {
-  scopes?: Scope[],
-  isAnonymous?: boolean,
-  grantType?: GrantType
-  isLoggedInAs?: string
-}
+  scopes?: Scope[];
+  isAnonymous?: boolean;
+  grantType?: GrantType;
+  isLoggedInAs?: string;
+};

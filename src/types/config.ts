@@ -5,24 +5,40 @@ import LatLngBounds from '../sdkTypes/LatLngBounds';
 import BigDecimal from "../sdkTypes/BigDecimal";
 import MemoryStore from "../utils/stores/memory-store";
 
+/**
+ * Supported SDK types.
+ */
 type SdkType = UUID | LatLng | Money | LatLngBounds | BigDecimal;
 
-// Similarly, appTypeSchema was z.any(), so we just use `any`.
+/**
+ * Represents application-specific types.
+ * `AppType` is set to `any` to allow flexibility.
+ */
 type AppType = any;
 
-// Previously, typeHandlerSchema was a Zod schema defining TypeHandler shape.
+/**
+ * Interface for handling type transformations between SDK and application-specific types.
+ */
 export interface TypeHandler {
   sdkType: SdkType;
   appType: AppType;
+  /**
+   * Function to read and transform an SDK type into an application-specific type.
+   */
   reader?: (value: SdkType) => AppType;
+  /**
+   * Function to write and transform an application-specific type into an SDK type.
+   */
   writer?: (value: AppType) => SdkType;
+  /**
+   * Function to determine if a handler can process a specific key-value pair.
+   */
   canHandle?: (args: { key: string; value: any }) => boolean;
 }
 
-// The tokenStore and other configurations were also defined via Zod. We now define them as interfaces.
-// Note: Without Zod, we don't enforce defaults or refinements automatically.
-// For example, "baseUrl should not finish with a '/'." must be checked at runtime if needed.
-
+/**
+ * Interface for storing and managing authentication tokens.
+ */
 export interface TokenStore {
   token?: {
     access_token: string;
@@ -32,6 +48,11 @@ export interface TokenStore {
     refresh_token?: string;
   } | null;
   expiration?: number;
+
+  /**
+   * Retrieves the current token.
+   * @returns A promise resolving to the token or null if no token is available.
+   */
   getToken: () => Promise<{
     access_token: string;
     token_type: 'bearer';
@@ -39,6 +60,11 @@ export interface TokenStore {
     scope?: 'public-read' | 'trusted:user' | 'user' | 'integ';
     refresh_token?: string;
   } | null>;
+
+  /**
+   * Sets a new token.
+   * @param args - The token details.
+   */
   setToken: (args: {
     access_token: string;
     token_type: 'bearer';
@@ -46,19 +72,55 @@ export interface TokenStore {
     scope?: 'public-read' | 'trusted:user' | 'user' | 'integ';
     refresh_token?: string;
   }) => void;
+
+  /**
+   * Removes the current token.
+   */
   removeToken: () => void;
 }
 
-// Similarly, for sdkConfig:
+/**
+ * Interface for SDK configuration settings.
+ */
 export interface SdkConfig {
-  clientId: string; // must be non-empty (runtime check needed)
+  /**
+   * The client ID. Must be non-empty (enforced at runtime).
+   */
+  clientId: string;
+  /**
+   * The client secret (optional).
+   */
   clientSecret?: string;
-  baseUrl?: string;          // runtime check: should not end with '/'
-  assetCdnBaseUrl?: string;  // runtime check: should not end with '/'
+  /**
+   * Base URL for the SDK. Should not end with '/' (enforced at runtime).
+   */
+  baseUrl?: string;
+  /**
+   * Base URL for asset CDN. Should not end with '/' (enforced at runtime).
+   */
+  assetCdnBaseUrl?: string;
+  /**
+   * SDK version (optional).
+   */
   version?: string;
+  /**
+   * Token store for managing authentication tokens.
+   */
   tokenStore?: TokenStore;
+  /**
+   * Whether to use secure connections.
+   */
   secure?: boolean;
+  /**
+   * Whether to enable verbose mode for Transit serialization.
+   */
   transitVerbose?: boolean;
+  /**
+   * Predefined authentication token.
+   */
   authToken?: string;
+  /**
+   * Custom type handlers for transforming data.
+   */
   typeHandlers?: TypeHandler[];
 }

@@ -1,10 +1,17 @@
-import { ApiParameter, ExtraParameter, UUID } from '../sharetribe';
+/**
+ * @fileoverview Type definitions for managing images in the Sharetribe Marketplace API.
+ * These types define the structure for image parameters, responses, and variants.
+ */
 
-export type ImagesEndpoints = 'upload'
+import {ApiParameter, ExtraParameter, ExtraParameterType, UUID} from '../sharetribe';
 
+// Supported API endpoints for images operations.
+export type ImagesEndpoints = 'upload';
+
+// Available image variant names.
 export type ImageVariantNames =
-  'default'
-  | 'landscape-crop	crop'
+  | 'default'
+  | 'landscape-crop'
   | 'landscape-crop2x'
   | 'landscape-crop4x'
   | 'landscape-crop6x'
@@ -15,53 +22,56 @@ export type ImageVariantNames =
   | 'square-small'
   | 'square-small2x'
   | 'facebook'
-  | 'twitter'
+  | 'twitter';
 
+// Image variant details.
 export type ImageVariants = {
-  height: number,
-  width: number,
-  url: string,
-  name: ImageVariantNames
-}
+  height: number;
+  width: number;
+  url: string;
+  name: ImageVariantNames;
+};
 
+// Image object structure.
 export interface Image {
-  id: UUID
-  type: 'image'
+  id: UUID;
+  type: 'image';
   attributes: {
     variants: {
-      [key in ImageVariantNames]?: ImageVariants
+      [key in ImageVariantNames]?: ImageVariants;
     } & {
-      [key: string]: ImageVariants | undefined;  // Allows any string as a key, values are ImageVariants or undefined
-    }
-  }
+      [key: string]: ImageVariants | undefined; // Allows custom string keys for additional variants.
+    };
+  };
 }
 
+// Parameters for image-related operations.
+export interface ImagesParameter extends ApiParameter {}
 
-
-export interface ImagesParameter extends ApiParameter {
-}
-
+// Parameters for uploading an image.
 export interface ImagesUploadParameter extends ImagesParameter {
-  image: File
+  image: File;
 }
 
+// Expand the return type based on the expand parameter.
 type ExpandReturnType<EP> =
-  EP extends { expand: true } ? Image :
-    EP extends { expand: false } ? Omit<Image, 'attributes'> :
-      Omit<Image, 'attributes'>
+  EP extends { expand: true }
+    ? Image
+    : EP extends { expand: false }
+      ? Omit<Image, 'attributes'>
+      : Omit<Image, 'attributes'>;
 
+// Define the possible data type for images based on the endpoint and parameters.
 type DataType<
   E extends ImagesEndpoints,
   EP extends ExtraParameter | undefined
-> =
-  E extends 'upload' ? ExpandReturnType<EP> :
-    never
+> = E extends 'upload' ? ExpandReturnType<EP> : never;
 
-type ExtraParameterType = ExtraParameter | undefined
 
+// Response structure for image-related endpoints.
 export type ImagesResponse<
   E extends ImagesEndpoints,
   EP extends ExtraParameterType = undefined
 > = {
-  data: DataType<E, EP>
-}
+  data: DataType<E, EP>;
+};

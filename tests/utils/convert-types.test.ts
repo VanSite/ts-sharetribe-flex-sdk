@@ -43,8 +43,8 @@ describe('Conversion Functions', () => {
     const sw = { lat: 34.0522, lng: -118.2437 };
     const result = convertToLatLngBounds(ne, sw);
     expect(result).toBeInstanceOf(LatLngBounds);
-    expect(result.ne).toEqual(ne);
-    expect(result.sw).toEqual(sw);
+    expect(result.ne).toEqual({...ne, value: '40.7128,-74.006'});
+    expect(result.sw).toEqual({...sw, value: '34.0522,-118.2437'});
   });
 
   it('should convert to Date', () => {

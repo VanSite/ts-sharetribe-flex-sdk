@@ -2,32 +2,53 @@ import Cookies from 'js-cookie';
 import { generateKey } from './store';
 import { AuthToken, TokenStore } from '../../types/store';
 
+/**
+ * Configuration options for the `BrowserStore`.
+ */
 export type BrowserStoreOptions = {
-  clientId: string;
-  secure?: boolean;
-}
+  clientId: string; // Unique identifier for the client
+  secure?: boolean; // Whether to use secure cookies (HTTPS only)
+};
 
+/**
+ * `BrowserStore` is an implementation of the `TokenStore` interface for storing authentication tokens in browser cookies.
+ */
 class BrowserStore implements TokenStore {
-  expiration: number = 30;
-  private namespace: string = 'st';
-  private readonly key: string;
-  private readonly secure: boolean | undefined
+  expiration: number = 30; // Default cookie expiration in days
+  private namespace: string = 'st'; // Namespace for cookie keys
+  private readonly key: string; // Generated key for the cookie
+  private readonly secure: boolean | undefined; // Indicates if cookies should be marked as secure
 
-  constructor({clientId, secure}: BrowserStoreOptions) {
+  /**
+   * Initializes the `BrowserStore` with client-specific options.
+   * @param options - Configuration options for the store.
+   */
+  constructor({ clientId, secure }: BrowserStoreOptions) {
     this.secure = secure;
     this.key = generateKey(clientId, this.namespace);
   }
 
-  async getToken() {
+  /**
+   * Retrieves the authentication token from browser cookies.
+   * @returns A promise that resolves to the `AuthToken` or null if no token exists.
+   */
+  async getToken(): Promise<AuthToken | null> {
     const cookie = Cookies.get(this.key);
-    return cookie ? JSON.parse(cookie) as AuthToken : null;
+    return cookie ? (JSON.parse(cookie) as AuthToken) : null;
   }
 
+  /**
+   * Stores the authentication token in a browser cookie.
+   * @param token - The authentication token to store.
+   */
   setToken(token: AuthToken): void {
-    const secureFlag = this.secure ? {secure: true} : {};
-    Cookies.set(this.key, JSON.stringify(token), {expires: this.expiration, ...secureFlag});
+    const secureFlag = this.secure ? { secure: true } : {};
+    Cookies.set(this.key, JSON.stringify(token), { expires: this.expiration, ...secureFlag });
   }
 
+  /**
+   * Removes the authentication token from browser cookies.
+   */
   removeToken(): void {
     Cookies.remove(this.key);
   }

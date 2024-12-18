@@ -1,81 +1,108 @@
-import { ApiMeta, ApiParameter, ExtraParameter, UUID, Relationship, RelationshipTypeMap } from '../sharetribe';
+/**
+ * @fileoverview Type definitions for Reviews functionality in the Sharetribe Marketplace API.
+ * This file defines the structure of review parameters and responses for the API endpoints.
+ */
 
-export type ReviewsEndpoints = 'show' | 'query'
-export type ReviewsRelationshipsFields = 'user' | 'listing' | 'subject'
+import {
+  ApiMeta,
+  ApiParameter,
+  ExtraParameter,
+  UUID,
+  Relationship,
+  RelationshipTypeMap,
+  ExtraParameterType
+} from '../sharetribe';
 
-export type ReviewTypes = 'ofProvider' | 'ofCustomer'
-export type ReviewStates = 'public' | 'pending'
+// Supported API endpoints for reviews operations.
+export type ReviewsEndpoints = 'show' | 'query';
 
+// Fields that can be included in reviews relationships.
+export type ReviewsRelationshipsFields = 'user' | 'listing' | 'subject';
+
+// Types and states applicable to reviews.
+export type ReviewTypes = 'ofProvider' | 'ofCustomer';
+export type ReviewStates = 'public' | 'pending';
+
+// Structure of a Review object.
 export interface Review {
-  id: UUID
-  type: 'reviews'
+  id: UUID;
+  type: 'reviews';
   attributes: {
-    type: string,
-    rating: number,
-    content: string,
-    createdAt: Date,
-    deleted: boolean,
-  }
+    type: string;
+    rating: number;
+    content: string;
+    createdAt: Date;
+    deleted: boolean;
+  };
 }
 
+// Structure of a Review object with relationships.
 export interface ReviewWithRelationships extends Review {
   relationships: {
-    user?: Relationship<false, 'user'>,
-    listing?: Relationship<false, 'listing'>,
-    subject?: Relationship<false, 'user'>
-  }
+    user?: Relationship<false, 'user'>;
+    listing?: Relationship<false, 'listing'>;
+    subject?: Relationship<false, 'user'>;
+  };
 }
 
+// Utility type for determining if relationships should be included in the response.
 export type ReviewType<R extends boolean> = R extends true ? ReviewWithRelationships : Review;
 
+// Base parameters for reviews operations.
 export interface ReviewsParameter extends ApiParameter {
-  include?: ReviewsRelationshipsFields[]
+  include?: ReviewsRelationshipsFields[];
 }
 
+// Parameters for retrieving a specific review.
 export interface ReviewsShowParameter extends ReviewsParameter {
-  id: UUID | string
+  id: UUID | string;
 }
 
+// Parameters for querying reviews.
 export interface ReviewsQueryParameter extends ReviewsParameter {
-  transactionId?: UUID | string
-  listingId?: UUID | string
-  subjectId?: UUID | string
-  type?: ReviewTypes
-  state?: ReviewStates
+  transactionId?: UUID | string;
+  listingId?: UUID | string;
+  subjectId?: UUID | string;
+  type?: ReviewTypes;
+  state?: ReviewStates;
 }
 
-type AllReviewsParameter = ReviewsShowParameter | ReviewsQueryParameter
+// Utility type for handling relationships in review parameters.
+type AllReviewsParameter = ReviewsShowParameter | ReviewsQueryParameter;
 
+// Type to determine if relationships are included.
 type ReviewsType<P extends AllReviewsParameter> =
   'include' extends keyof P ? (P['include'] extends ReviewsRelationshipsFields[] ? true : false) : false;
 
+// Included relationship types based on review parameters.
 type IncludedType<P extends AllReviewsParameter> =
   'include' extends keyof P ? (
     P['include'] extends (keyof RelationshipTypeMap)[] ?
       Array<RelationshipTypeMap[P['include'][number]]> : never
     ) : never;
 
+// Expanded return type based on extra parameters.
 type ExpandReturnType<P extends AllReviewsParameter, EP> =
   EP extends { expand: true } ? ReviewType<ReviewsType<P>> :
     EP extends { expand: false } ? Omit<ReviewType<ReviewsType<P>>, 'attributes'> :
-      Omit<ReviewType<ReviewsType<P>>, 'attributes'>
+      Omit<ReviewType<ReviewsType<P>>, 'attributes'>;
 
+// Data type based on endpoint and parameters.
 type DataType<
   E extends ReviewsEndpoints,
   P extends AllReviewsParameter,
   EP extends ExtraParameter | undefined
 > =
   E extends 'query' ? ReviewType<ReviewsType<P>>[] :
-    E extends 'create' ? ExpandReturnType<P, EP> :
-      E extends 'delete' ? Pick<Review, 'id' | 'type'> : never;
+    E extends 'show' ? ExpandReturnType<P, EP> :
+      never;
 
-type ExtraParameterType = ExtraParameter | undefined
-
+// Response structure for reviews operations.
 export type ReviewsResponse<
   E extends ReviewsEndpoints,
   P extends AllReviewsParameter,
   EP extends ExtraParameterType = undefined
 > = {
-  data: DataType<E, P, EP>
+  data: DataType<E, P, EP>;
 } & ('include' extends keyof P ? { included: IncludedType<P> } : {})
-  & (E extends 'query' ? { meta: ApiMeta } : {})
+  & (E extends 'query' ? { meta: ApiMeta } : {});

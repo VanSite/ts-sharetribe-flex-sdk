@@ -1,5 +1,13 @@
+/**
+ * @fileoverview Provides the AssetsApi class for interacting with the Sharetribe Asset Delivery API.
+ * This class includes methods to retrieve assets by alias or version.
+ *
+ * For more information, refer to the Asset Delivery API reference:
+ * https://www.sharetribe.com/api-reference/asset-delivery-api.html
+ */
+
 import SharetribeSdk from '../../sdk';
-import {AxiosInstance} from 'axios';
+import {AxiosInstance, AxiosResponse} from 'axios';
 import {
   AssetByAliasParameter,
   AssetByVersionParameter,
@@ -8,6 +16,13 @@ import {
   AssetsByVersionParameter,
 } from '../../types/assets';
 
+/**
+ * Extracts the common path and asset names from a list of paths.
+ *
+ * @param {string[]} paths - The list of asset paths.
+ * @returns {{commonPath: string, assets: string[]}} - An object containing the common path and an array of asset names.
+ * @throws {Error} If the paths do not share a common prefix.
+ */
 const extractCommonPathAndAssets = (paths: string[]) => {
   let commonPath: string = '';
   const assets: string[] = [];
@@ -24,11 +39,19 @@ const extractCommonPathAndAssets = (paths: string[]) => {
   return {commonPath, assets};
 }
 
+/**
+ * Class representing the Assets API for interacting with the Sharetribe Asset Delivery API.
+ */
 class AssetsApi {
   axios: AxiosInstance;
   endpoint: string;
   headers: Record<string, string>;
 
+  /**
+   * Creates an instance of AssetsApi.
+   *
+   * @param {SharetribeSdk} sdk - The Sharetribe SDK instance for configuration and request handling.
+   */
   constructor(sdk: SharetribeSdk) {
     const config = sdk.apisConfigs.api(sdk.sdkConfig);
     this.endpoint = config.baseUrl + `/pub/${sdk.sdkConfig.clientId}`;
@@ -36,7 +59,15 @@ class AssetsApi {
     this.axios = sdk.axios;
   }
 
-  async assetByAlias<P extends AssetByAliasParameter>(params: P) {
+  /**
+   * Retrieves a single asset by alias.
+   *
+   * @template P
+   * @param {P & AssetByAliasParameter} params - Parameters including alias and path for the asset.
+   * @returns {Promise<AssetResponse<'assetByAlias', P>>} - A promise resolving to the asset response.
+   * @throws {Error} If the path starts with a leading slash.
+   */
+  async assetByAlias<P extends AssetByAliasParameter>(params: P): Promise<AxiosResponse<AssetResponse<'assetByAlias', P>>> {
     if (params.path.startsWith('/')) {
       throw new Error('Path should not start with /');
     }
@@ -45,7 +76,15 @@ class AssetsApi {
     });
   }
 
-  async assetsByAlias<P extends AssetsByAliasParameter>(params: P) {
+  /**
+   * Retrieves multiple assets by alias.
+   *
+   * @template P
+   * @param {P & AssetsByAliasParameter} params - Parameters including alias and paths for the assets.
+   * @returns {Promise<AssetResponse<'assetsByAlias', P>>} - A promise resolving to the assets response.
+   * @throws {Error} If any path starts with a leading slash or if paths are empty.
+   */
+  async assetsByAlias<P extends AssetsByAliasParameter>(params: P): Promise<AxiosResponse<AssetResponse<'assetsByAlias', P>>> {
     if (params.paths.some(path => path.startsWith('/'))) {
       throw new Error('Path should not start with /');
     }
@@ -61,7 +100,15 @@ class AssetsApi {
     });
   }
 
-  async assetByVersion<P extends AssetByVersionParameter>(params: P) {
+  /**
+   * Retrieves a single asset by version.
+   *
+   * @template P
+   * @param {P & AssetByVersionParameter} params - Parameters including version and path for the asset.
+   * @returns {Promise<AssetResponse<'assetByVersion', P>>} - A promise resolving to the asset response.
+   * @throws {Error} If the path starts with a leading slash.
+   */
+  async assetByVersion<P extends AssetByVersionParameter>(params: P): Promise<AxiosResponse<AssetResponse<'assetByVersion', P>>> {
     if (params.path.startsWith('/')) {
       throw new Error('Path should not start with /');
     }
@@ -70,7 +117,15 @@ class AssetsApi {
     });
   }
 
-  async assetsByVersion<P extends AssetsByVersionParameter>(params: P) {
+  /**
+   * Retrieves multiple assets by version.
+   *
+   * @template P
+   * @param {P & AssetsByVersionParameter} params - Parameters including version and paths for the assets.
+   * @returns {Promise<AssetResponse<'assetsByVersion', P>>} - A promise resolving to the assets response.
+   * @throws {Error} If any path starts with a leading slash.
+   */
+  async assetsByVersion<P extends AssetsByVersionParameter>(params: P): Promise<AxiosResponse<AssetResponse<'assetsByVersion', P>>> {
     if (params.paths.some(path => path.startsWith('/'))) {
       throw new Error('Path should not start with /');
     }

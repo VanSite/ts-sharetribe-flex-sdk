@@ -17,54 +17,153 @@ import Transactions from "./endpoints/integrationApi/Transactions";
 import Users from "./endpoints/integrationApi/Users";
 import {DefaultSdkConfig} from "./utils/config";
 
+/**
+ * The main Sharetribe Integration SDK for interacting with the Sharetribe Integration API.
+ *
+ * @class
+ */
 class SharetribeIntegrationSdk {
+  /**
+   * Configuration for the SDK.
+   *
+   * @type {SdkConfig}
+   */
   sdkConfig: SdkConfig;
-  apisConfigs: ApiConfigs;
+
+  /**
+   * Configuration for the API endpoints.
+   *
+   * @type {ApiConfigs<true>}
+   */
+  apisConfigs: ApiConfigs<true>;
+
+  /**
+   * Axios instance used for making API requests.
+   *
+   * @type {AxiosInstance}
+   */
   axios: AxiosInstance;
 
   // Endpoints
+  /**
+   * Endpoint for handling authentication.
+   *
+   * @type {AuthenticationApi}
+   */
   auth: AuthenticationApi;
+
+  /**
+   * Main integration API.
+   *
+   * @type {IntegrationApi}
+   */
   integration_api: IntegrationApi;
 
-  // Api Endpoints
+  // API Endpoints
+  /**
+   * Endpoint for managing availability exceptions.
+   *
+   * @type {AvailabilityExceptions}
+   */
   availabilityExceptions: AvailabilityExceptions;
+
+  /**
+   * Endpoint for retrieving and managing events.
+   *
+   * @type {Events}
+   */
   events: Events;
+
+  /**
+   * Endpoint for handling image-related operations.
+   *
+   * @type {Images}
+   */
   images: Images;
+
+  /**
+   * Endpoint for managing listings.
+   *
+   * @type {Listings}
+   */
   listings: Listings;
+
+  /**
+   * Endpoint for accessing marketplace details.
+   *
+   * @type {Marketplace}
+   */
   marketplace: Marketplace;
+
+  /**
+   * Endpoint for managing stock.
+   *
+   * @type {Stock}
+   */
   stock: Stock;
+
+  /**
+   * Endpoint for handling stock adjustments.
+   *
+   * @type {StockAdjustments}
+   */
   stockAdjustments: StockAdjustments;
+
+  /**
+   * Endpoint for managing stock reservations.
+   *
+   * @type {StockReservation}
+   */
   stockReservations: StockReservation;
+
+  /**
+   * Endpoint for managing transactions.
+   *
+   * @type {Transactions}
+   */
   transactions: Transactions;
+
+  /**
+   * Endpoint for managing user data.
+   *
+   * @type {Users}
+   */
   users: Users;
 
+  /**
+   * Initializes a new instance of the SharetribeIntegrationSdk class.
+   *
+   * @constructor
+   * @param {SdkConfig} config - The configuration object for the SDK.
+   */
   constructor(config: SdkConfig) {
     this.sdkConfig = {
       ...DefaultSdkConfig,
-      ...config
+      ...config,
     };
 
-    this.apisConfigs = createApisConfigs();
+    this.apisConfigs = createApisConfigs(true);
     this.axios = axios.create({
       baseURL: `${this.sdkConfig.baseUrl}/${this.sdkConfig.version}/`,
     });
     prepareAxiosInstance(this);
 
-    this.auth = new AuthenticationApi(this)
-    this.integration_api = new IntegrationApi(this)
+    this.auth = new AuthenticationApi(this);
+    this.integration_api = new IntegrationApi(this);
 
     // Api Endpoints
-    this.availabilityExceptions = this.integration_api.availabilityExceptions
-    this.events = this.integration_api.events
-    this.images = this.integration_api.images
-    this.listings = this.integration_api.listings
-    this.marketplace = this.integration_api.marketplace
-    this.stock = this.integration_api.stock
-    this.stockAdjustments = this.integration_api.stockAdjustments
-    this.stockReservations = this.integration_api.stockReservations
-    this.transactions = this.integration_api.transactions
-    this.users = this.integration_api.users
+    this.availabilityExceptions = this.integration_api.availabilityExceptions;
+    this.events = this.integration_api.events;
+    this.images = this.integration_api.images;
+    this.listings = this.integration_api.listings;
+    this.marketplace = this.integration_api.marketplace;
+    this.stock = this.integration_api.stock;
+    this.stockAdjustments = this.integration_api.stockAdjustments;
+    this.stockReservations = this.integration_api.stockReservations;
+    this.transactions = this.integration_api.transactions;
+    this.users = this.integration_api.users;
   }
 }
 
-export default SharetribeIntegrationSdk
+export default SharetribeIntegrationSdk;
+

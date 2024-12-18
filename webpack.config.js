@@ -5,7 +5,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const isAnalyze = process.env.ANALYZE === 'true';
 
 const commonConfig = {
-  mode: 'development',
+  mode: 'production',
   entry: './src/index.ts',
   resolve: {
     extensions: ['.ts', '.js'],

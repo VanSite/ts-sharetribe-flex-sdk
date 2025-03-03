@@ -1,4 +1,10 @@
+/**
+ * Represents the possible scopes for authentication tokens.
+ */
 type Scope = "public-read" | "trusted:user" | "user" | "integ";
+/**
+ * Represents an authentication token used for API requests.
+ */
 export interface AuthToken {
     access_token: string;
     token_type: "bearer";
@@ -6,10 +12,21 @@ export interface AuthToken {
     scope?: Scope;
     refresh_token?: string;
 }
+/**
+ * Interface for managing authentication tokens in a store.
+ */
 export interface TokenStore {
     token?: AuthToken | null;
     expiration?: number;
+    /**
+     * Retrieves the current authentication token.
+     * @returns A promise resolving to the current token or null if no token exists.
+     */
     getToken: () => Promise<AuthToken | null>;
+    /**
+     * Sets a new authentication token.
+     * @param args - Object containing the token's details.
+     */
     setToken: (args: {
         access_token: string;
         token_type: "bearer";
@@ -17,6 +34,9 @@ export interface TokenStore {
         scope?: Scope;
         refresh_token?: string;
     }) => void;
+    /**
+     * Removes the current authentication token.
+     */
     removeToken: () => void;
 }
 export {};

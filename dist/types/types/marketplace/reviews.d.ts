@@ -1,4 +1,8 @@
-import { ApiMeta, ApiParameter, ExtraParameter, UUID, Relationship, RelationshipTypeMap } from '../sharetribe';
+/**
+ * @fileoverview Type definitions for Reviews functionality in the Sharetribe Marketplace API.
+ * This file defines the structure of review parameters and responses for the API endpoints.
+ */
+import { ApiMeta, ApiParameter, ExtraParameter, UUID, Relationship, RelationshipTypeMap, ExtraParameterType } from '../sharetribe';
 export type ReviewsEndpoints = 'show' | 'query';
 export type ReviewsRelationshipsFields = 'user' | 'listing' | 'subject';
 export type ReviewTypes = 'ofProvider' | 'ofCustomer';
@@ -43,8 +47,7 @@ type ExpandReturnType<P extends AllReviewsParameter, EP> = EP extends {
 } ? ReviewType<ReviewsType<P>> : EP extends {
     expand: false;
 } ? Omit<ReviewType<ReviewsType<P>>, 'attributes'> : Omit<ReviewType<ReviewsType<P>>, 'attributes'>;
-type DataType<E extends ReviewsEndpoints, P extends AllReviewsParameter, EP extends ExtraParameter | undefined> = E extends 'query' ? ReviewType<ReviewsType<P>>[] : E extends 'create' ? ExpandReturnType<P, EP> : E extends 'delete' ? Pick<Review, 'id' | 'type'> : never;
-type ExtraParameterType = ExtraParameter | undefined;
+type DataType<E extends ReviewsEndpoints, P extends AllReviewsParameter, EP extends ExtraParameter | undefined> = E extends 'query' ? ReviewType<ReviewsType<P>>[] : E extends 'show' ? ExpandReturnType<P, EP> : never;
 export type ReviewsResponse<E extends ReviewsEndpoints, P extends AllReviewsParameter, EP extends ExtraParameterType = undefined> = {
     data: DataType<E, P, EP>;
 } & ('include' extends keyof P ? {

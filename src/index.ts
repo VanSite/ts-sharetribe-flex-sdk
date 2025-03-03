@@ -4,8 +4,8 @@
  * @module SharetribeSdkExports
  */
 
-import sharetribeSdk from './sdk';
-import integrationSdk from './integrationSdk';
+import sharetribeSdk from "./sdk";
+import integrationSdk from "./integrationSdk";
 import BigDecimal from "./sdkTypes/BigDecimal";
 import UUID from "./sdkTypes/UUID";
 import LatLng from "./sdkTypes/LatLng";
@@ -14,7 +14,7 @@ import Money from "./sdkTypes/Money";
 import MemoryStore from "./utils/stores/memory-store";
 import BrowserStore from "./utils/stores/browser-store";
 import ExpressStore from "./utils/stores/express-store";
-import { objectQueryString } from "./utils/util";
+import { objectQueryString, transitToJson } from "./utils/util";
 
 /**
  * SDK-specific types provided for advanced usage.
@@ -50,6 +50,8 @@ export const TokenStore = {
 export const util = {
   /** Serializes an object into a custom query string format. */
   objectQueryString,
+  /** Converts a value based on _sdkType property to a SDK type. */
+  transitToJson,
 };
 
 /**

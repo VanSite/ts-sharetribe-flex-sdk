@@ -59,7 +59,7 @@ class IntegrationApi {
    * @param {IntegrationSdk} sdk - The Integration SDK instance providing configuration and request handling.
    */
   constructor(sdk: IntegrationSdk) {
-    const config = sdk.apisConfigs.api(sdk.sdkConfig);
+    const config = sdk.apisConfigs.integrationApi(sdk.sdkConfig);
     this.endpoint = config.baseUrl;
     this.headers = config.headers;
     this.axios = sdk.axios;

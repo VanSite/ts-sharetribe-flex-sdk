@@ -12,6 +12,7 @@ class LatLngBounds {
   ne: LatLng | { lat: number | string; lng: number | string };
   sw: LatLng | { lat: number | string; lng: number | string };
   value: string;
+  readonly _sdkType: 'LatLngBounds';
 
   /**
    * Creates an instance of the LatLngBounds class.
@@ -28,6 +29,8 @@ class LatLngBounds {
     ne: LatLng | { lat: number; lng: number },
     sw: LatLng | { lat: number; lng: number }
   ) {
+    this._sdkType = 'LatLngBounds';
+
     let isValid = true;
 
     // Helper function to check if a value is an object with numeric lat/lng.

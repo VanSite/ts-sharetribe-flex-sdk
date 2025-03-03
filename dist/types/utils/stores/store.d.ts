@@ -1,4 +1,8 @@
-import BrowserStore from './browser-store';
-import MemoryStore from './memory-store';
+/**
+ * Generates a unique key for storing tokens.
+ *
+ * @param clientId - The unique identifier for the client.
+ * @param namespace - The namespace to organize and scope the key.
+ * @returns A string combining the namespace, client ID, and a token suffix.
+ */
 export declare const generateKey: (clientId: string, namespace: string) => string;
-export declare const createDefaultTokenStore: (clientId: string, secure: boolean | undefined) => MemoryStore | BrowserStore;

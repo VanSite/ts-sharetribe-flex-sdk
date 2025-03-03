@@ -6,6 +6,7 @@
  */
 class BigDecimal {
   value: string;
+  readonly _sdkType: 'BigDecimal';
 
   /**
    * Creates an instance of the BigDecimal class.
@@ -15,6 +16,8 @@ class BigDecimal {
    * const bigDecimal = new BigDecimal('123456789.123456789');
    */
   constructor(value: any) {
+    this._sdkType = 'BigDecimal';
+
     if (typeof value !== 'string') {
       console.warn("BigDecimal must be initialized with a string to ensure precision.");
     }

@@ -1,7 +1,11 @@
+/**
+ * @fileoverview Type definitions for Process Transitions functionality in the Sharetribe Marketplace API.
+ * This file defines the structure of process transition parameters and responses for the API endpoints.
+ */
 import { ApiParameter, UUID } from '../sharetribe';
 export type ProcessTransitionsEndpoints = 'query';
 type Actors = 'customer' | 'provider' | 'operator' | 'system';
-type RequestTypes = 'uuid' | 'string' | 'integer' | 'timestamp' | 'boolean' | 'object' | 'money' | ["lineItem"];
+type RequestTypes = 'uuid' | 'string' | 'integer' | 'timestamp' | 'boolean' | 'object' | 'money' | ['lineItem'];
 export interface ProcessTransition {
     id: UUID;
     type: 'processTransition';

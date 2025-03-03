@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Type definitions for managing bookings in the Sharetribe Marketplace API.
+ * These types define the structure of booking-related parameters, responses, and relationships.
+ */
 import { ApiMeta, ApiParameter, UUID, Relationship, RelationshipTypeMap } from '../sharetribe';
 export type BookingsEndpoints = 'query';
 export type BookingsRelationshipsFields = 'transaction';
@@ -30,7 +34,7 @@ export interface BookingsQueryParameter extends BookingsParameter {
     state?: BookingState;
 }
 type BookingsType<P extends BookingsQueryParameter> = 'include' extends keyof P ? (P['include'] extends BookingsRelationshipsFields[] ? true : false) : false;
-type IncludedType<P extends BookingsParameter> = 'include' extends keyof P ? (P['include'] extends (keyof RelationshipTypeMap)[] ? Array<RelationshipTypeMap[P['include'][number]]> : never) : never;
+type IncludedType<P extends BookingsParameter> = 'include' extends keyof P ? P['include'] extends (keyof RelationshipTypeMap)[] ? Array<RelationshipTypeMap[P['include'][number]]> : never : never;
 type DataType<E extends BookingsEndpoints, P extends BookingsQueryParameter> = E extends 'query' ? BookingType<BookingsType<P>>[] : never;
 export type BookingsResponse<E extends BookingsEndpoints, P extends BookingsQueryParameter> = {
     data: DataType<E, P>;

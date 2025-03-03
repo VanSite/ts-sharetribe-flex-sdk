@@ -1,4 +1,8 @@
-import { ApiParameter, ExtraParameter, UUID } from '../sharetribe';
+/**
+ * @fileoverview Type definitions for Password Reset functionality in the Sharetribe Marketplace API.
+ * This file defines the structure of password reset parameters and responses for the API endpoints.
+ */
+import { ApiParameter, ExtraParameterType, UUID } from '../sharetribe';
 export type PasswordResetEndpoints = 'request' | 'reset';
 export interface PasswordReset {
     id: UUID;
@@ -15,7 +19,6 @@ export interface PasswordResetResetParams extends PasswordResetParameter {
     passwordResetToken: string;
     newPassword: string;
 }
-type ExtraParameterType = ExtraParameter | undefined;
 type ExpandReturnType<EP> = EP extends {
     expand: true;
 } ? PasswordReset : EP extends {

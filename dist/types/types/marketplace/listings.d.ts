@@ -1,4 +1,8 @@
-import { ApiMeta, ApiParameter, ExtraParameter, LatLng, Money, QueryMeta, QueryPub, Relationship, RelationshipTypeMap, UUID } from '../sharetribe';
+/**
+ * @fileoverview Type definitions for managing listings in the Sharetribe Marketplace API.
+ * These types define the structure for listing parameters, attributes, relationships, and responses.
+ */
+import { ApiMeta, ApiParameter, ExtraParameter, ExtraParameterType, LatLng, Money, QueryMeta, QueryPub, Relationship, RelationshipTypeMap, UUID } from '../sharetribe';
 import LatLngBounds from '../../sdkTypes/LatLngBounds';
 export type ListingsEndpoints = 'show' | 'query' | 'create' | 'update' | 'close' | 'open' | 'approve';
 export type ListingsRelationshipsFields = 'marketplace' | 'author' | 'images' | 'currentStock';
@@ -27,10 +31,10 @@ type ListingAvailabilityPlanTypes = 'availability-plan/day' | 'availability-plan
 type ListingAvailabilityPlanEntry<T extends ListingAvailabilityPlanTypes> = {
     dayOfWeek: 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
     seats: number;
-} & T extends 'availability-plan/time' ? {
+} & (T extends 'availability-plan/time' ? {
     startTime: string;
     endTime: string;
-} : {};
+} : {});
 type ListingAvailabilityPlan<T extends ListingAvailabilityPlanTypes = 'availability-plan/day'> = {
     type: string;
     timezone: string;
@@ -124,8 +128,7 @@ type ExpandReturnType<P extends AllListingsParameter, EP> = EP extends {
 } ? ListingType<ListingsType<P>> : EP extends {
     expand: false;
 } ? Omit<ListingType<ListingsType<P>>, 'attributes'> : Omit<ListingType<ListingsType<P>>, 'attributes'>;
-type DataType<E extends ListingsEndpoints, P extends AllListingsParameter, EP extends ExtraParameter | undefined> = E extends 'query' ? ListingType<ListingsType<P>>[] : E extends 'show' ? ExpandReturnType<P, EP> : E extends 'create' ? ExpandReturnType<P, EP> : E extends 'update' ? ExpandReturnType<P, EP> : E extends 'close' ? ExpandReturnType<P, EP> : E extends 'open' ? ExpandReturnType<P, EP> : E extends 'approve' ? ExpandReturnType<P, EP> : never;
-type ExtraParameterType = ExtraParameter | undefined;
+type DataType<E extends ListingsEndpoints, P extends AllListingsParameter, EP extends ExtraParameter | undefined> = E extends 'query' ? ListingType<ListingsType<P>>[] : E extends 'show' ? ListingsType<P> : E extends 'create' ? ExpandReturnType<P, EP> : E extends 'update' ? ExpandReturnType<P, EP> : E extends 'close' ? ExpandReturnType<P, EP> : E extends 'open' ? ExpandReturnType<P, EP> : E extends 'approve' ? ExpandReturnType<P, EP> : never;
 export type ListingsResponse<E extends ListingsEndpoints, P extends AllListingsParameter, EP extends ExtraParameterType = undefined> = {
     data: DataType<E, P, EP>;
 } & ('include' extends keyof P ? {

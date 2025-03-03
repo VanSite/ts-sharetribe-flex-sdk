@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Type definitions for managing assets in the Sharetribe Marketplace API.
+ * These types define the structure and relationships of assets such as JSON data and image assets,
+ * as well as the request and response formats for the asset-related endpoints.
+ */
 import { ImageVariantNames, ImageVariants } from '../marketplace/images';
 import { ApiParameter, Relationship, UUID } from '../sharetribe';
 type RelationshipTypeMap = {
@@ -26,7 +31,7 @@ export type AssetType<P extends AllAssetParameter> = P extends {
     path: infer Path;
 } ? IsJsonPath<Path> : P extends {
     paths: infer Paths;
-} ? Paths extends string[] ? (IsJsonPath<Paths[number]> extends JsonAsset ? JsonAsset : ImageAsset) : never : never;
+} ? Paths extends string[] ? (IsJsonPath<Paths[number]> extends true ? JsonAsset : ImageAsset) : never : never;
 export interface AssetParameter extends ApiParameter {
     include?: JsonAssetWithRelationships[];
 }

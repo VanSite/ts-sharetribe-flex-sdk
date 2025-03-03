@@ -1,4 +1,8 @@
-import { ApiParameter, ExtraParameter, Relationship, RelationshipTypeMap, UUID } from '../sharetribe';
+/**
+ * @fileoverview Type definitions for managing the current user in the Sharetribe Marketplace API.
+ * These types define the structure of current user-related parameters, responses, and relationships.
+ */
+import { ApiParameter, ExtraParameter, ExtraParameterType, Relationship, RelationshipTypeMap, UUID } from '../sharetribe';
 export type CurrentUserEndpoints = 'show' | 'delete' | 'create' | 'create_with_idp' | 'update_profile' | 'change_password' | 'change_email' | 'verify_email' | 'send_verification_email';
 export type CurrentUserRelationshipsFields = 'marketplace' | 'profileImage' | 'stripeAccount' | 'stripeCustomer';
 export interface CurrentUser {
@@ -133,14 +137,13 @@ export interface CurrentUserCustomProfileMetadata {
 }
 type AllCurrentUserParameter = CurrentUserShowParameter | CurrentUserDeleteParameter | CurrentUserCreateParameter | CurrentUserCreateWithIdpParameter | CurrentUserUpdateProfileParameter | CurrentUserChangePasswordParameter | CurrentUserChangeEmailParameter | CurrentUserVerifyEmailParameter | void;
 type CurrentUserTypeType<P extends AllCurrentUserParameter> = 'include' extends keyof P ? (P['include'] extends CurrentUserRelationshipsFields[] ? true : false) : false;
-type IncludedType<P extends AllCurrentUserParameter> = 'include' extends keyof P ? (P['include'] extends (keyof RelationshipTypeMap)[] ? Array<RelationshipTypeMap[P['include'][number]]> : never) : never;
+type IncludedType<P extends AllCurrentUserParameter> = 'include' extends keyof P ? P['include'] extends (keyof RelationshipTypeMap)[] ? Array<RelationshipTypeMap[P['include'][number]]> : never : never;
 type ExpandReturnType<P extends AllCurrentUserParameter, EP> = EP extends {
     expand: true;
 } ? CurrentUserType<CurrentUserTypeType<P>> : EP extends {
     expand: false;
 } ? Omit<CurrentUserType<CurrentUserTypeType<P>>, 'attributes'> : Omit<CurrentUserType<CurrentUserTypeType<P>>, 'attributes'>;
-type DataType<E extends CurrentUserEndpoints, P extends AllCurrentUserParameter, EP extends ExtraParameter | undefined> = E extends 'show' ? CurrentUserType<CurrentUserTypeType<P>> : E extends 'delete' ? Pick<DeleteCurrentUser, 'id' | 'type'> : E extends 'create' | 'createWithIdp' | 'updateProfile' | 'changePassword' | 'changeEmail' | 'verifyEmail' ? ExpandReturnType<P, EP> : never;
-type ExtraParameterType = ExtraParameter | undefined;
+type DataType<E extends CurrentUserEndpoints, P extends AllCurrentUserParameter, EP extends ExtraParameter | undefined> = E extends 'show' ? CurrentUserType<CurrentUserTypeType<P>> : E extends 'delete' ? Pick<DeleteCurrentUser, 'id' | 'type'> : E extends 'create' | 'create_with_idp' | 'update_profile' | 'change_password' | 'change_email' | 'verify_email' ? ExpandReturnType<P, EP> : never;
 export type CurrentUserResponse<E extends CurrentUserEndpoints, P extends AllCurrentUserParameter, EP extends ExtraParameterType = undefined> = {
     data: DataType<E, P, EP>;
 } & ('include' extends keyof P ? {

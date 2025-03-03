@@ -10,6 +10,7 @@ class LatLng {
   lat: number | string;
   lng: number | string;
   value: string;
+  readonly _sdkType: 'LatLng';
 
   /**
    * Creates an instance of the LatLng class.
@@ -21,6 +22,8 @@ class LatLng {
    * console.log(coordinates.toString()); // Outputs: '37.7749,-122.4194'
    */
   constructor(lat: string | number, lng: string | number) {
+    this._sdkType = 'LatLng';
+
     // Helper function to validate if a value is a number or a number-like string.
     const isNumberOrNumberString = (val: any): boolean => {
       if (typeof val === 'number') return true;

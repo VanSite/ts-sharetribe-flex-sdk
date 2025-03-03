@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
  */
 class UUID {
   uuid: string;
+  readonly _sdkType: 'UUID';
 
   /**
    * Creates an instance of the UUID class.
@@ -25,6 +26,8 @@ class UUID {
    * console.log(predefinedId.toString()); // Outputs: '123e4567-e89b-12d3-a456-426614174000'
    */
   constructor(uuid?: string) {
+    this._sdkType = 'UUID';
+
     if (uuid !== undefined && typeof uuid !== 'string') {
       console.warn('uuid must be a string');
       // If it's not a string, fallback to a generated UUID.

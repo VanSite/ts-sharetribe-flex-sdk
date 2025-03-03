@@ -39,3 +39,28 @@ export const objectQueryString = (obj: ObjectQueryStringParam): string => {
     .map(([key, value]) => `${key}:${serializeAttribute(value)}`) // Serialize each key-value pair
     .join(';'); // Join the serialized pairs with semicolons
 };
+
+export const transitToJson = (transitString: string) => {
+  // Parse the transit string into an object
+  const transitObj = JSON.parse(transitString);
+
+  // Recursive function to normalize the transit object
+  function normalizeTransit(obj: any): any {
+    if (Array.isArray(obj)) {
+      // Normalize each item in the array
+      return obj.map(normalizeTransit);
+    } else if (typeof obj === "object" && obj !== null) {
+      // Normalize each key and value in the object
+      return Object.keys(obj).reduce((acc: any, key) => {
+        const normalizedKey = key.startsWith("~:") ? key.slice(2) : key;
+        acc[normalizedKey] = normalizeTransit(obj[key]);
+        return acc;
+      }, {});
+    }
+    // Return the value directly if it's not an array or object
+    return obj;
+  }
+
+  // Normalize the transit object
+  return normalizeTransit(transitObj);
+}

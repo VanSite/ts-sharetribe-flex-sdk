@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Type definitions for managing marketplace data in the Sharetribe Marketplace API.
+ * These types define the structure for marketplace parameters, attributes, and responses.
+ */
 import { UUID } from '../sharetribe';
 export type MarketplaceEndpoints = 'show';
 export interface Marketplace {

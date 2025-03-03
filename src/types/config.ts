@@ -1,14 +1,23 @@
-import UUID from '../sdkTypes/UUID';
-import LatLng from '../sdkTypes/LatLng';
-import Money from '../sdkTypes/Money';
-import LatLngBounds from '../sdkTypes/LatLngBounds';
+import UUID from "../sdkTypes/UUID";
+import LatLng from "../sdkTypes/LatLng";
+import Money from "../sdkTypes/Money";
+import LatLngBounds from "../sdkTypes/LatLngBounds";
 import BigDecimal from "../sdkTypes/BigDecimal";
-import MemoryStore from "../utils/stores/memory-store";
 
 /**
- * Supported SDK types.
+ * Supported SDK type classes.
  */
-type SdkType = UUID | LatLng | Money | LatLngBounds | BigDecimal;
+type SdkTypeClass =
+  | typeof UUID
+  | typeof LatLng
+  | typeof Money
+  | typeof LatLngBounds
+  | typeof BigDecimal;
+
+/**
+ * Supported SDK type instances.
+ */
+type SdkTypeInstance = UUID | LatLng | Money | LatLngBounds | BigDecimal;
 
 /**
  * Represents application-specific types.
@@ -18,18 +27,23 @@ type AppType = any;
 
 /**
  * Interface for handling type transformations between SDK and application-specific types.
+ * T represents the specific SDK type instance (e.g., UUID, Money)
+ * U represents the specific application type
  */
-export interface TypeHandler {
-  sdkType: SdkType;
+export interface TypeHandler<
+  T extends SdkTypeInstance = SdkTypeInstance,
+  U = any
+> {
+  sdkType: SdkTypeClass;
   appType: AppType;
   /**
-   * Function to read and transform an SDK type into an application-specific type.
+   * Function to read and transform a specific SDK type instance into an application-specific type.
    */
-  reader?: (value: SdkType) => AppType;
+  reader?: (value: T) => U;
   /**
-   * Function to write and transform an application-specific type into an SDK type.
+   * Function to write and transform an application-specific type into a specific SDK type instance.
    */
-  writer?: (value: AppType) => SdkType;
+  writer?: (value: U) => T;
   /**
    * Function to determine if a handler can process a specific key-value pair.
    */
@@ -42,9 +56,9 @@ export interface TypeHandler {
 export interface TokenStore {
   token?: {
     access_token: string;
-    token_type: 'bearer';
+    token_type: "bearer";
     expires_in: number;
-    scope?: 'public-read' | 'trusted:user' | 'user' | 'integ';
+    scope?: "public-read" | "trusted:user" | "user" | "integ";
     refresh_token?: string;
   } | null;
   expiration?: number;
@@ -55,9 +69,9 @@ export interface TokenStore {
    */
   getToken: () => Promise<{
     access_token: string;
-    token_type: 'bearer';
+    token_type: "bearer";
     expires_in: number;
-    scope?: 'public-read' | 'trusted:user' | 'user' | 'integ';
+    scope?: "public-read" | "trusted:user" | "user" | "integ";
     refresh_token?: string;
   } | null>;
 
@@ -67,9 +81,9 @@ export interface TokenStore {
    */
   setToken: (args: {
     access_token: string;
-    token_type: 'bearer';
+    token_type: "bearer";
     expires_in: number;
-    scope?: 'public-read' | 'trusted:user' | 'user' | 'integ';
+    scope?: "public-read" | "trusted:user" | "user" | "integ";
     refresh_token?: string;
   }) => void;
 
@@ -122,5 +136,5 @@ export interface SdkConfig {
   /**
    * Custom type handlers for transforming data.
    */
-  typeHandlers?: TypeHandler[];
+  typeHandlers?: TypeHandler<any, any>[];
 }

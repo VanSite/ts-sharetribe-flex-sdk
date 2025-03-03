@@ -1,4 +1,8 @@
-import { ApiParameter, ExtraParameter, UUID, Relationship, RelationshipTypeMap } from '../sharetribe';
+/**
+ * @fileoverview Type definitions for Stripe Customer operations in the Sharetribe Marketplace API.
+ * This file defines the structure of parameters and responses for the Stripe Customer API endpoints.
+ */
+import { ApiParameter, UUID, Relationship, RelationshipTypeMap, ExtraParameterType } from '../sharetribe';
 export type StripeCustomerEndpoints = 'create' | 'addPaymentMethod' | 'deletePaymentMethod';
 export type StripeCustomerRelationshipsFields = 'defaultPaymentMethod';
 export interface StripeCustomer {
@@ -34,7 +38,6 @@ type ExpandReturnType<P extends AllStripeCustomerParameter, EP> = EP extends {
 } ? StripeCustomerType<StripeCustomerTypeType<P>> : EP extends {
     expand: false;
 } ? Omit<StripeCustomerType<StripeCustomerTypeType<P>>, 'attributes'> : Omit<StripeCustomerType<StripeCustomerTypeType<P>>, 'attributes'>;
-type ExtraParameterType = ExtraParameter | undefined;
 type DataType<E extends StripeCustomerEndpoints, P extends AllStripeCustomerParameter, EP extends ExtraParameterType> = E extends 'create' ? ExpandReturnType<P, EP> : E extends 'addPaymentMethod' ? ExpandReturnType<P, EP> : E extends 'deletePaymentMethod' ? ExpandReturnType<P, EP> : never;
 export type StripeCustomerResponse<E extends StripeCustomerEndpoints, P extends AllStripeCustomerParameter, EP extends ExtraParameterType = undefined> = {
     data: DataType<E, P, EP>;

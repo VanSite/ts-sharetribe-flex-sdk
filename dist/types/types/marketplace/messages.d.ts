@@ -1,4 +1,8 @@
-import { ApiMeta, ApiParameter, ExtraParameter, UUID, Relationship, RelationshipTypeMap } from '../sharetribe';
+/**
+ * @fileoverview Type definitions for managing messages in the Sharetribe Marketplace API.
+ * These types define the structure for message parameters, attributes, and responses.
+ */
+import { ApiMeta, ApiParameter, ExtraParameter, UUID, Relationship, RelationshipTypeMap, ExtraParameterType } from '../sharetribe';
 export type MessagesEndpoints = 'query' | 'send';
 export type MessagesRelationshipsFields = 'sender' | 'transaction';
 export interface Message {
@@ -35,7 +39,6 @@ type ExpandReturnType<P extends AllMessagesParameter, EP> = EP extends {
     expand: false;
 } ? Omit<MessageType<MessagesType<P>>, 'attributes'> : Omit<MessageType<MessagesType<P>>, 'attributes'>;
 type DataType<E extends MessagesEndpoints, P extends AllMessagesParameter, EP extends ExtraParameter | undefined> = E extends 'query' ? MessageType<MessagesType<P>>[] : E extends 'send' ? ExpandReturnType<P, EP> : never;
-type ExtraParameterType = ExtraParameter | undefined;
 export type MessagesResponse<E extends MessagesEndpoints, P extends AllMessagesParameter, EP extends ExtraParameterType = undefined> = {
     data: DataType<E, P, EP>;
 } & ('include' extends keyof P ? {

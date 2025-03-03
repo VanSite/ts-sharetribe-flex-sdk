@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Type definitions for authentication in the Sharetribe Marketplace API.
+ * These types define the structure of authentication-related parameters, endpoints, and responses.
+ */
 export type TokenTypes = "access_token" | "refresh_token";
 export type GrantType = "client_credentials" | "password" | "refresh_token" | "token_exchange";
 export type Scope = "public-read" | "user" | "trusted:user" | "integ";
@@ -56,7 +60,7 @@ export type DetailsEndpoint = void;
 export type Endpoint<S extends ScopeType> = S extends "public-read" ? AnonymousEndpoint : S extends "user" ? UserPasswordEndpoint : S extends "trusted:user" ? TrustedUserEndpoint : S extends "integ" ? IntegClientCredentialsEndpoint : S extends "details" ? DetailsEndpoint : S extends "refresh-token" ? RefreshTokenEndpoint : never;
 export type AuthToken = {
     access_token: string;
-    token_type: 'bearer';
+    token_type: "bearer";
     expires_in: number;
     scope?: Scope;
     refresh_token?: string;

@@ -1,4 +1,8 @@
-import { ApiMeta, ApiParameter, ExtraParameter, Relationship, RelationshipTypeMap, UUID } from '../sharetribe';
+/**
+ * @fileoverview Type definitions for Stock Reservations in the Sharetribe Marketplace API.
+ * This file defines the structure of parameters and responses for the Stock Reservations API endpoints.
+ */
+import { ApiParameter, ExtraParameter, ExtraParameterType, Relationship, RelationshipTypeMap, UUID } from '../sharetribe';
 export type StockReservationsEndpoints = 'show';
 export type StockReservationsRelationshipsFields = 'listing' | 'transaction' | 'stockAdjustments';
 export type StockReservationState = 'pending' | 'proposed' | 'accepted' | 'declined' | 'cancelled';
@@ -32,12 +36,9 @@ type ExpandReturnType<P extends AllStockReservationsParameter, EP> = EP extends 
     expand: false;
 } ? Omit<StockReservationType<StockReservationsType<P>>, 'attributes'> : Omit<StockReservationType<StockReservationsType<P>>, 'attributes'>;
 type DataType<E extends StockReservationsEndpoints, P extends AllStockReservationsParameter, EP extends ExtraParameter | undefined> = E extends 'show' ? ExpandReturnType<P, EP> : never;
-type ExtraParameterType = ExtraParameter | undefined;
 export type StockReservationsResponse<E extends StockReservationsEndpoints, P extends AllStockReservationsParameter, EP extends ExtraParameterType = undefined> = {
     data: DataType<E, P, EP>;
 } & ('include' extends keyof P ? {
     included: IncludedType<P>;
-} : {}) & (E extends 'query' ? {
-    meta: ApiMeta;
 } : {});
 export {};

@@ -13,7 +13,6 @@ This is a **TypeScript SDK** for the [Sharetribe Flex API](https://www.sharetrib
 - Fully typed SDK for safer and faster development.
 - Compatible with both **Node.js** and **browser environments**.
 - Built-in support for cookie handling and UUID generation.
-- Uses [Zod](https://zod.dev) for runtime schema validation.
 
 ---
 

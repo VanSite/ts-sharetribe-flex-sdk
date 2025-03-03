@@ -12,6 +12,7 @@
 class Money {
   amount: number;
   currency: string;
+  readonly _sdkType: 'Money';
 
   /**
    * Creates an instance of the Money class.
@@ -23,6 +24,8 @@ class Money {
    * console.log(money); // Outputs: Money { amount: 1000, currency: 'USD' }
    */
   constructor(amount: number, currency: string) {
+    this._sdkType = 'Money';
+
     let isValid = true;
 
     // Validate the amount.

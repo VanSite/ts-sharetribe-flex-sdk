@@ -5,9 +5,9 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#show-user
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { UsersResponse, UsersShowParameter } from '../../types/marketplace/user';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { UsersResponse, UsersShowParameter } from "../../types/marketplace/user";
 /**
  * Class representing the Users API.
  *
@@ -36,6 +36,7 @@ declare class Users {
      * });
      * const userDetails = response.data;
      */
-    show<P extends UsersShowParameter>(params: P): Promise<AxiosResponse<UsersResponse<'show', P>>>;
+    show<P extends UsersShowParameter>(params: P): Promise<AxiosResponse<UsersResponse<"show", P>>>;
 }
 export default Users;
+//# sourceMappingURL=Users.d.ts.map

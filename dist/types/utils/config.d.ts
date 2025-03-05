@@ -1,12 +1,16 @@
-import MemoryStore from "./stores/memory-store";
-/**
- * Default SDK configuration object for the Sharetribe Flex API.
- */
-export declare const DefaultSdkConfig: {
+import MemoryStore from "./stores/MemoryStore";
+import { TypeHandler } from "../types/config";
+type DefaultSdkConfigType = {
     baseUrl: string;
     assetCdnBaseUrl: string;
     version: string;
     transitVerbose: boolean;
     tokenStore: MemoryStore;
-    typeHandlers: never[];
+    typeHandlers: TypeHandler[];
 };
+/**
+ * Default SDK configuration object for the Sharetribe Flex API.
+ */
+export declare const DefaultSdkConfig: DefaultSdkConfigType;
+export {};
+//# sourceMappingURL=config.d.ts.map

@@ -1,42 +1,85 @@
-import UUIDClass from '../sdkTypes/UUID';
-import {User} from "./marketplace/user";
-import {Booking} from "./marketplace/bookings";
-import {Stock} from "./marketplace/stock";
-import {StripePaymentMethod} from "./marketplace/stripePaymentMethod";
-import {Image} from "./marketplace/images";
-import {Listing} from "./marketplace/listings";
+import UUIDClass from "../sdkTypes/UUID";
+import { User } from "./marketplace/user";
+import { Booking } from "./marketplace/bookings";
+import { Stock } from "./marketplace/stock";
+import { StripePaymentMethod } from "./marketplace/stripePaymentMethod";
+import { Image } from "./marketplace/images";
+import { Listing } from "./marketplace/listings";
 import Marketplace from "../endpoints/marketplace";
-import {Message} from "./marketplace/messages";
-import {OwnListing} from "./marketplace/ownListings";
-import {Review} from "./marketplace/reviews";
-import {StockReservation} from "./marketplace/stockReservations";
-import {StripeAccount} from "./marketplace/stripeAccount";
-import {StripeCustomer} from "./marketplace/stripeCustomer";
-import {Transaction} from "./marketplace/transaction";
+import { Message } from "./marketplace/messages";
+import { OwnListing } from "./marketplace/ownListings";
+import { Review } from "./marketplace/reviews";
+import { StockReservation } from "./marketplace/stockReservations";
+import { StripeAccount } from "./marketplace/stripeAccount";
+import { StripeCustomer } from "./marketplace/stripeCustomer";
+import { Transaction } from "./marketplace/transactions";
+import { CurrentUserPermissionSet } from "./marketplace/currentUser";
 
 /**
  * A mapping of relationship types to their corresponding entities.
  */
-export type RelationshipTypeMap = {
-  'author': User,
-  'booking': Booking,
-  'currentStock': Stock,
-  'customer': User,
-  'defaultPaymentMethod': StripePaymentMethod,
-  'images': Image,
-  'listing': Listing,
-  'marketplace': Marketplace,
-  'messages': Message,
-  'ownListing': OwnListing,
-  'profileImage': Image,
-  'provider': User,
-  'reviews': Review,
-  'sender': User,
-  'stockReservation': StockReservation,
-  'stripeAccount': StripeAccount,
-  'stripeCustomer': StripeCustomer,
-  'subject': User,
-  'transaction': Transaction
+export type RelationshipTypeMap<I extends boolean = false> = {
+  author: User<I>;
+  "author.marketplace": Marketplace;
+  "author.profileImage": Image;
+  "author.stripeAccount": StripeAccount;
+  "author.effectivePermissionSet": CurrentUserPermissionSet;
+  booking: Booking;
+  "booking.transaction": Transaction;
+  currentStock: Stock;
+  customer: User<I>;
+  "customer.marketplace": Marketplace;
+  "customer.profileImage": Image;
+  "customer.stripeAccount": StripeAccount;
+  "customer.effectivePermissionSet": CurrentUserPermissionSet;
+  defaultPaymentMethod: StripePaymentMethod;
+  images: Image;
+  listing: Listing<I>;
+  "listing.marketplace": Marketplace;
+  "listing.author": User<I>;
+  "listing.images": Image;
+  "listing.currentStock": Stock;
+  marketplace: Marketplace;
+  messages: Message;
+  "messages.sender": User<I>;
+  "messages.transaction": Transaction;
+  ownListing: OwnListing;
+  "ownListing.marketplace": Marketplace;
+  "ownListing.author": User<I>;
+  "ownListing.images": Image;
+  "ownListing.currentStock": Stock;
+  profileImage: Image;
+  provider: User<I>;
+  "provider.marketplace": Marketplace;
+  "provider.profileImage": Image;
+  "provider.stripeAccount": StripeAccount;
+  "provider.effectivePermissionSet": CurrentUserPermissionSet;
+  reviews: Review;
+  "reviews.author": User<I>;
+  "reviews.listing": Listing<I>;
+  "reviews.subject": User<I>;
+  sender: User<I>;
+  "sender.marketplace": Marketplace;
+  "sender.profileImage": Image;
+  "sender.stripeAccount": StripeAccount;
+  "sender.effectivePermissionSet": CurrentUserPermissionSet;
+  stockReservation: StockReservation;
+  "stockReservation.transaction": Transaction;
+  stripeAccount: StripeAccount;
+  stripeCustomer: StripeCustomer;
+  "stripeCustomer.defaultPaymentMethod": StripePaymentMethod;
+  subject: User<I>;
+  "subject.marketplace": Marketplace;
+  "subject.profileImage": Image;
+  "subject.stripeAccount": StripeAccount;
+  "subject.effectivePermissionSet": CurrentUserPermissionSet;
+  transaction: Transaction;
+  "transaction.marketplace": Marketplace;
+  "transaction.listing": Listing<I>;
+  "transaction.provider": User<I>;
+  "transaction.customer": User<I>;
+  "transaction.booking": Booking;
+  "transaction.stockReservation": StockReservation;
 };
 
 /**
@@ -44,39 +87,39 @@ export type RelationshipTypeMap = {
  */
 export type ApiError = {
   data: {
-    id: string, // Unique ID for each instance of an error
-    status: number, // HTTP status code
-    code: string, // Specific error code
-    title: string, // Human-readable error title
-    details?: string, // Optional explanation for debugging
+    id: string; // Unique ID for each instance of an error
+    status: number; // HTTP status code
+    code: string; // Specific error code
+    title: string; // Human-readable error title
+    details?: string; // Optional explanation for debugging
     source?: {
-      path: string[], // Path to the parameter causing the error
-      type: string // Indicates body or query parameter
-    }
-  }
+      path: string[]; // Path to the parameter causing the error
+      type: string; // Indicates body or query parameter
+    };
+  };
 };
 
 /**
  * Represents a universally unique identifier (UUID).
  */
-export type UUID = typeof UUIDClass;
+export type UUID = InstanceType<typeof UUIDClass>;
 
 /**
  * Metadata for paginated API responses.
  */
 export type ApiMeta = {
-  totalItems: number,
-  totalPages: number,
-  page: number,
-  paginationLimit: number,
-  perPage: number
+  totalItems: number;
+  totalPages: number;
+  page: number;
+  paginationLimit: number;
+  perPage: number;
 };
 
 /**
  * Represents a relationship to another entity in the API.
  */
 export type Relationship<A extends boolean, T extends string> = {
-  data: A extends true ? { id: UUID, type: T }[] : { id: UUID, type: T }
+  data: A extends true ? { id: UUID; type: T }[] : { id: UUID; type: T };
 };
 
 /**
@@ -116,8 +159,8 @@ export interface ApiResponse {
  * Represents a latitude/longitude coordinate.
  */
 export type LatLng = {
-  lat: number,
-  lng: number
+  lat: number;
+  lng: number;
 };
 
 /**
@@ -137,6 +180,6 @@ export type ExtraParameterType = ExtraParameter | undefined;
  * Represents a monetary value.
  */
 export type Money = {
-  amount: number,
-  currency: string
+  amount: number;
+  currency: string;
 };

@@ -1,4 +1,4 @@
-import { InternalAxiosRequestConfig } from 'axios';
+import { InternalAxiosRequestConfig } from "axios";
 
 /**
  * Extended type for Axios internal request configuration to include a retry flag.

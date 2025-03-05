@@ -6,10 +6,13 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#stripe-persons
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { StripePersonsCreateParameter, StripePersonsResponse } from '../../types/marketplace/stripePersons';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import {
+  StripePersonsCreateParameter,
+  StripePersonsResponse,
+} from "../../types/marketplace/stripePersons";
+import { ExtraParameter } from "../../types/sharetribe";
 
 /**
  * Class representing the Stripe Persons API.
@@ -28,7 +31,7 @@ class StripePersons {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/stripe_persons';
+    this.endpoint = api.endpoint + "/stripe_persons";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -48,11 +51,14 @@ class StripePersons {
    * });
    * const personDetails = response.data;
    */
-  async create<P extends StripePersonsCreateParameter, EP extends ExtraParameter>(
+  async create<
+    P extends StripePersonsCreateParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StripePersonsResponse<'create'>>> {
-    return this.axios.post<StripePersonsResponse<'create'>>(
+  ): Promise<AxiosResponse<StripePersonsResponse<"create">>> {
+    return this.axios.post<StripePersonsResponse<"create">>(
       `${this.endpoint}/create`,
       { ...params, ...extraParams },
       { headers: this.headers }

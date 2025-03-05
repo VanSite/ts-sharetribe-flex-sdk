@@ -6,9 +6,12 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#bookings
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { BookingsQueryParameter, BookingsResponse } from '../../types/marketplace/bookings';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import {
+  BookingsQueryParameter,
+  BookingsResponse,
+} from "../../types/marketplace/bookings";
 
 /**
  * Class representing the Bookings API.
@@ -26,7 +29,7 @@ class Bookings {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/bookings';
+    this.endpoint = api.endpoint + "/bookings";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -49,11 +52,14 @@ class Bookings {
    */
   async query<P extends BookingsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<BookingsResponse<'query', P>>> {
-    return this.axios.get<BookingsResponse<'query', P>>(`${this.endpoint}/query`, {
-      headers: this.headers,
-      params,
-    });
+  ): Promise<AxiosResponse<BookingsResponse<"query", P>>> {
+    return this.axios.get<BookingsResponse<"query", P>>(
+      `${this.endpoint}/query`,
+      {
+        headers: this.headers,
+        params,
+      }
+    );
   }
 }
 

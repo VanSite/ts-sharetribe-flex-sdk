@@ -4,9 +4,11 @@
  * The BigDecimal class ensures that large decimal numbers are stored as strings
  * to avoid precision loss during computations.
  */
-declare class BigDecimal {
+import { SdkType } from "../types/sdk-types";
+declare const BIGDECIMAL_SDK_TYPE = "BigDecimal";
+declare class BigDecimal implements SdkType {
     value: string;
-    readonly _sdkType: 'BigDecimal';
+    readonly _sdkType: typeof BIGDECIMAL_SDK_TYPE;
     /**
      * Creates an instance of the BigDecimal class.
      *
@@ -26,3 +28,4 @@ declare class BigDecimal {
     toString(): string;
 }
 export default BigDecimal;
+//# sourceMappingURL=BigDecimal.d.ts.map

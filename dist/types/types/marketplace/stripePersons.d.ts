@@ -2,14 +2,14 @@
  * @fileoverview Type definitions for Stripe Persons in the Sharetribe Marketplace API.
  * This file includes the structure of Stripe Persons, their attributes, parameters, and response types.
  */
-export type StripePersonsEndpoints = 'create';
-import { ApiParameter, ExtraParameterType, UUID } from '../sharetribe';
+export type StripePersonsEndpoints = "create";
+import { ApiParameter, ExtraParameterType, UUID } from "../sharetribe";
 /**
  * Represents a Stripe Person object.
  */
 export interface StripePersons {
     id: UUID;
-    type: 'stripePerson';
+    type: "stripePerson";
     attributes: {
         stripePersonId: string;
     };
@@ -32,11 +32,11 @@ type ExpandReturnType<EP> = EP extends {
     expand: true;
 } ? StripePersons : EP extends {
     expand: false;
-} ? Omit<StripePersons, 'attributes'> : Omit<StripePersons, 'attributes'>;
+} ? Omit<StripePersons, "attributes"> : Omit<StripePersons, "attributes">;
 /**
  * Determines the data type based on the endpoint.
  */
-type DataType<E extends StripePersonsEndpoints, EP extends ExtraParameterType> = E extends 'create' ? ExpandReturnType<EP> : never;
+type DataType<E extends StripePersonsEndpoints, EP extends ExtraParameterType> = E extends "create" ? ExpandReturnType<EP> : never;
 /**
  * The response type for Stripe Persons API calls.
  */
@@ -44,3 +44,4 @@ export type StripePersonsResponse<E extends StripePersonsEndpoints, EP extends E
     data: DataType<E, EP>;
 };
 export {};
+//# sourceMappingURL=stripePersons.d.ts.map

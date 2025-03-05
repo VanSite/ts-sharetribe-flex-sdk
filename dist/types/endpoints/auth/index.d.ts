@@ -5,9 +5,9 @@
  * For more information, refer to the Authentication API reference:
  * https://www.sharetribe.com/api-reference/authentication.html
  */
-import { AuthWithIdpParameter, Endpoint, RevokeResponse, ScopeType, TokenResponse } from '../../types/authentication';
-import { AxiosResponse } from 'axios';
-import SharetribeSdk from '../../sdk';
+import { AuthWithIdpParameter, Endpoint, RevokeResponse, ScopeType, TokenResponse } from "../../types/authentication";
+import { AxiosResponse } from "axios";
+import SharetribeSdk from "../../sdk";
 import IntegrationSdk from "../../integrationSdk";
 /**
  * Class representing the Authentication API for obtaining and managing access tokens.
@@ -53,6 +53,7 @@ declare class AuthenticationApi {
      *
      * @returns {Promise<TokenResponse<'details'>>} - A promise resolving to the token details response.
      */
-    details(): Promise<AxiosResponse<TokenResponse<'details'>>>;
+    details(): Promise<AxiosResponse<TokenResponse<"details">>>;
 }
 export default AuthenticationApi;
+//# sourceMappingURL=index.d.ts.map

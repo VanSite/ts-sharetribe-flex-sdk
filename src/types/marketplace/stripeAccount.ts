@@ -3,16 +3,16 @@
  * This file defines the structure of parameters and responses for the Stripe Account API endpoints.
  */
 
-import { ApiParameter, ExtraParameter, ExtraParameterType, UUID } from '../sharetribe';
-import type Stripe from 'stripe';
+import { ApiParameter, ExtraParameterType, UUID } from "../sharetribe";
+import type Stripe from "stripe";
 
 // Supported API endpoints for Stripe Account operations.
-export type StripeAccountEndpoints = 'fetch' | 'create' | 'update';
+export type StripeAccountEndpoints = "fetch" | "create" | "update";
 
 // Structure of a Stripe Account object.
 export interface StripeAccount {
   id: UUID;
-  type: 'stripeAccount';
+  type: "stripeAccount";
   attributes: {
     stripeAccountId: string; // Unique identifier for the Stripe Account.
     stripeAccountData: Stripe.Account; // Full Stripe account data from the Stripe API.
@@ -20,8 +20,7 @@ export interface StripeAccount {
 }
 
 // Base parameters for Stripe Account operations.
-export interface StripeAccountParameter extends ApiParameter {
-}
+export interface StripeAccountParameter extends ApiParameter {}
 
 // Parameters for creating a Stripe Account.
 export interface StripeAccountCreateParameter extends StripeAccountParameter {
@@ -45,20 +44,23 @@ export interface StripeAccountUpdateParameter extends StripeAccountParameter {
 }
 
 // Conditional type for expanding or omitting attributes in the response.
-type ExpandReturnType<EP> =
-  EP extends { expand: true } ? StripeAccount :
-    EP extends { expand: false } ? Omit<StripeAccount, 'attributes'> :
-      Omit<StripeAccount, 'attributes'>;
+type ExpandReturnType<EP> = EP extends { expand: true }
+  ? StripeAccount
+  : EP extends { expand: false }
+  ? Omit<StripeAccount, "attributes">
+  : Omit<StripeAccount, "attributes">;
 
 // Type for determining the data structure of the response based on the endpoint.
 type DataType<
   E extends StripeAccountEndpoints,
   EP extends ExtraParameterType
-> =
-  E extends 'fetch' ? StripeAccount :
-    E extends 'create' ? ExpandReturnType<EP> :
-      E extends 'update' ? ExpandReturnType<EP> :
-        never;
+> = E extends "fetch"
+  ? StripeAccount
+  : E extends "create"
+  ? ExpandReturnType<EP>
+  : E extends "update"
+  ? ExpandReturnType<EP>
+  : never;
 
 // Response structure for Stripe Account operations.
 export type StripeAccountResponse<

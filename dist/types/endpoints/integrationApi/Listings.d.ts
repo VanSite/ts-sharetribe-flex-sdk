@@ -5,10 +5,10 @@
  * For more details, refer to the Integration API documentation:
  * https://www.sharetribe.com/api-reference/integration.html#listings
  */
-import { AxiosResponse } from 'axios';
-import IntegrationApi from './index';
-import { ListingsApproveParameter, ListingsCloseParameter, ListingsCreateParameter, ListingsOpenParameter, ListingsQueryParameter, ListingsResponse, ListingsShowParameter, ListingsUpdateParameter } from '../../types/marketplace/listings';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import IntegrationApi from "./index";
+import { ListingsApproveParameter, ListingsCloseParameter, ListingsCreateParameter, ListingsOpenParameter, ListingsQueryParameter, ListingsResponse, ListingsShowParameter, ListingsUpdateParameter } from "../../types/marketplace/listings";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Listings API.
  *
@@ -38,7 +38,7 @@ declare class Listings {
      *
      * const listing = response.data;
      */
-    show<P extends ListingsShowParameter>(params: P): Promise<AxiosResponse<ListingsResponse<'show', P>>>;
+    show<P extends ListingsShowParameter>(params: P): Promise<AxiosResponse<ListingsResponse<"show", P, undefined, true>>>;
     /**
      * Queries listings based on specified filters.
      *
@@ -55,7 +55,7 @@ declare class Listings {
      *
      * const listings = response.data;
      */
-    query<P extends ListingsQueryParameter>(params: P): Promise<AxiosResponse<ListingsResponse<'query', P>>>;
+    query<P extends ListingsQueryParameter>(params: P): Promise<AxiosResponse<ListingsResponse<"query", P, undefined, false>>>;
     /**
      * Creates a new listing.
      *
@@ -63,7 +63,7 @@ declare class Listings {
      * @template EP
      * @param {P & ListingsCreateParameter} params - Parameters for the new listing.
      * @param {EP | void} extraParams - Optional extra parameters for the request.
-     * @returns {Promise<ListingsResponse<'create', P, EP>>} - A promise resolving to the created listing.
+     * @returns {Promise<ListingsResponse<'create', P, EP, true>>} - A promise resolving to the created listing.
      *
      * @example
      * const response = await integrationSdk.listings.create({
@@ -75,7 +75,7 @@ declare class Listings {
      *
      * const newListing = response.data;
      */
-    create<P extends ListingsCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<ListingsResponse<'create', P, EP>>>;
+    create<P extends ListingsCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<ListingsResponse<"create", P, EP, true>>>;
     /**
      * Updates an existing listing.
      *
@@ -93,7 +93,7 @@ declare class Listings {
      *
      * const updatedListing = response.data;
      */
-    update<P extends ListingsUpdateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<ListingsResponse<'update', P, EP>>>;
+    update<P extends ListingsUpdateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<ListingsResponse<"update", P, EP, true>>>;
     /**
      * Closes a listing.
      *
@@ -110,7 +110,7 @@ declare class Listings {
      *
      * const closedListing = response.data;
      */
-    close<P extends ListingsCloseParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<ListingsResponse<'close', P, EP>>>;
+    close<P extends ListingsCloseParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<ListingsResponse<"close", P, EP, true>>>;
     /**
      * Opens a listing.
      *
@@ -127,7 +127,7 @@ declare class Listings {
      *
      * const openedListing = response.data;
      */
-    open<P extends ListingsOpenParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<ListingsResponse<'open', P, EP>>>;
+    open<P extends ListingsOpenParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<ListingsResponse<"open", P, EP, true>>>;
     /**
      * Approves a listing.
      *
@@ -144,6 +144,7 @@ declare class Listings {
      *
      * const approvedListing = response.data;
      */
-    approve<P extends ListingsApproveParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<ListingsResponse<'approve', P, EP>>>;
+    approve<P extends ListingsApproveParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<ListingsResponse<"approve", P, EP, true>>>;
 }
 export default Listings;
+//# sourceMappingURL=Listings.d.ts.map

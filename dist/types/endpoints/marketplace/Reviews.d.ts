@@ -5,9 +5,9 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#reviews
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { ReviewsQueryParameter, ReviewsResponse, ReviewsShowParameter } from '../../types/marketplace/reviews';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { ReviewsQueryParameter, ReviewsResponse, ReviewsShowParameter } from "../../types/marketplace/reviews";
 /**
  * Class representing the Reviews API.
  *
@@ -34,7 +34,7 @@ declare class Reviews {
      * const response = await sdk.reviews.show({ id: 'review-id' });
      * const review = response.data;
      */
-    show<P extends ReviewsShowParameter>(params: P): Promise<AxiosResponse<ReviewsResponse<'show', P>>>;
+    show<P extends ReviewsShowParameter>(params: P): Promise<AxiosResponse<ReviewsResponse<"show", P>>>;
     /**
      * Queries reviews based on specified filters.
      *
@@ -46,6 +46,7 @@ declare class Reviews {
      * const response = await sdk.reviews.query({ listingId: 'listing-id', perPage: 10 });
      * const reviews = response.data;
      */
-    query<P extends ReviewsQueryParameter>(params: P): Promise<AxiosResponse<ReviewsResponse<'query', P>>>;
+    query<P extends ReviewsQueryParameter>(params: P): Promise<AxiosResponse<ReviewsResponse<"query", P>>>;
 }
 export default Reviews;
+//# sourceMappingURL=Reviews.d.ts.map

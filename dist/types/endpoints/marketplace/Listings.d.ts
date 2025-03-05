@@ -5,9 +5,9 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#listings
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { ListingsShowParameter, ListingsResponse, ListingsQueryParameter } from '../../types/marketplace/listings';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { ListingsShowParameter, ListingsResponse, ListingsQueryParameter } from "../../types/marketplace/listings";
 /**
  * Class representing the Listings API.
  *
@@ -34,7 +34,7 @@ declare class Listings {
      * const response = await sdk.listings.show({ id: 'listing-id' });
      * const listing = response.data;
      */
-    show<P extends ListingsShowParameter>(params: P): Promise<AxiosResponse<ListingsResponse<'show', P>>>;
+    show<P extends ListingsShowParameter>(params: P): Promise<AxiosResponse<ListingsResponse<"show", P>>>;
     /**
      * Queries listings based on specified filters.
      *
@@ -46,6 +46,7 @@ declare class Listings {
      * const response = await sdk.listings.query({ ids: ['listing-id-1', 'listing-id-2'] });
      * const listings = response.data;
      */
-    query<P extends ListingsQueryParameter>(params: P): Promise<AxiosResponse<ListingsResponse<'query', P>>>;
+    query<P extends ListingsQueryParameter>(params: P): Promise<AxiosResponse<ListingsResponse<"query", P>>>;
 }
 export default Listings;
+//# sourceMappingURL=Listings.d.ts.map

@@ -5,9 +5,9 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#process-transitions
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { ProcessTransitionsQueryParameter, ProcessTransitionsResponse } from '../../types/marketplace/processTransitions';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { ProcessTransitionsQueryParameter, ProcessTransitionsResponse } from "../../types/marketplace/processTransitions";
 /**
  * Class representing the Process Transitions API.
  *
@@ -37,6 +37,7 @@ declare class ProcessTransitions {
      * });
      * const transitions = response.data;
      */
-    query<P extends ProcessTransitionsQueryParameter>(params: P): Promise<AxiosResponse<ProcessTransitionsResponse<'query'>>>;
+    query<P extends ProcessTransitionsQueryParameter>(params: P): Promise<AxiosResponse<ProcessTransitionsResponse<"query">>>;
 }
 export default ProcessTransitions;
+//# sourceMappingURL=ProcessTransitions.d.ts.map

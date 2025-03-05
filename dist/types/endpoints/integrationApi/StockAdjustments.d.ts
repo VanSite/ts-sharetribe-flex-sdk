@@ -5,10 +5,10 @@
  * For more details, refer to the Integration API documentation:
  * https://www.sharetribe.com/api-reference/integration.html#stock-adjustments
  */
-import { AxiosResponse } from 'axios';
-import IntegrationApi from './index';
-import { StockAdjustmentsCreateParameter, StockAdjustmentsQueryParameter, StockAdjustmentsResponse } from '../../types/marketplace/stockAdjustment';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import IntegrationApi from "./index";
+import { StockAdjustmentsCreateParameter, StockAdjustmentsQueryParameter, StockAdjustmentsResponse } from "../../types/marketplace/stockAdjustment";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Stock Adjustments API.
  *
@@ -41,7 +41,7 @@ declare class StockAdjustments {
      *
      * const adjustments = response.data;
      */
-    query<P extends StockAdjustmentsQueryParameter>(params: P): Promise<AxiosResponse<StockAdjustmentsResponse<'query', P>>>;
+    query<P extends StockAdjustmentsQueryParameter>(params: P): Promise<AxiosResponse<StockAdjustmentsResponse<"query", P>>>;
     /**
      * Creates a new stock adjustment record.
      *
@@ -59,6 +59,7 @@ declare class StockAdjustments {
      *
      * const newAdjustment = response.data;
      */
-    create<P extends StockAdjustmentsCreateParameter, EP extends ExtraParameter | undefined>(params: P, extraParams: EP): Promise<AxiosResponse<StockAdjustmentsResponse<'create', P, EP>>>;
+    create<P extends StockAdjustmentsCreateParameter, EP extends ExtraParameter | undefined>(params: P, extraParams: EP): Promise<AxiosResponse<StockAdjustmentsResponse<"create", P, EP>>>;
 }
 export default StockAdjustments;
+//# sourceMappingURL=StockAdjustments.d.ts.map

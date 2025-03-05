@@ -3,14 +3,18 @@
  * This class encapsulates a latitude and longitude pair, with validation for numeric input.
  */
 
+import { SdkType } from "../types/sdk-types";
+
+// Define a static class name
+const LATLNG_SDK_TYPE = "LatLng";
+
 /**
  * Class representing a geographical coordinate pair (latitude and longitude).
  */
-class LatLng {
+class LatLng implements SdkType {
   lat: number | string;
   lng: number | string;
-  value: string;
-  readonly _sdkType: 'LatLng';
+  readonly _sdkType: typeof LATLNG_SDK_TYPE;
 
   /**
    * Creates an instance of the LatLng class.
@@ -22,12 +26,12 @@ class LatLng {
    * console.log(coordinates.toString()); // Outputs: '37.7749,-122.4194'
    */
   constructor(lat: string | number, lng: string | number) {
-    this._sdkType = 'LatLng';
+    this._sdkType = LATLNG_SDK_TYPE;
 
     // Helper function to validate if a value is a number or a number-like string.
     const isNumberOrNumberString = (val: any): boolean => {
-      if (typeof val === 'number') return true;
-      return typeof val === 'string' && /^\d+(\.\d+)?$/.test(val);
+      if (typeof val === "number") return true;
+      return typeof val === "string" && /^\d+(\.\d+)?$/.test(val);
     };
 
     // Validate latitude.
@@ -47,7 +51,6 @@ class LatLng {
     // Assign values to instance properties.
     this.lat = lat;
     this.lng = lng;
-    this.value = `${this.lat},${this.lng}`;
   }
 
   /**
@@ -63,4 +66,5 @@ class LatLng {
   }
 }
 
+// Default export for backward compatibility
 export default LatLng;

@@ -5,10 +5,10 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#messages
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { ExtraParameter } from '../../types/sharetribe';
-import { MessagesQueryParameter, MessagesResponse, MessagesSendParameter } from '../../types/marketplace/messages';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { ExtraParameter } from "../../types/sharetribe";
+import { MessagesQueryParameter, MessagesResponse, MessagesSendParameter } from "../../types/marketplace/messages";
 /**
  * Class representing the Messages API.
  *
@@ -35,7 +35,7 @@ declare class Messages {
      * const response = await sdk.messages.query({ transactionId: 'transaction-id' });
      * const messages = response.data;
      */
-    query<P extends MessagesQueryParameter>(params: P): Promise<AxiosResponse<MessagesResponse<'query', P>>>;
+    query<P extends MessagesQueryParameter>(params: P): Promise<AxiosResponse<MessagesResponse<"query", P>>>;
     /**
      * Sends a new message.
      *
@@ -51,6 +51,7 @@ declare class Messages {
      * });
      * const sentMessage = response.data;
      */
-    send<P extends MessagesSendParameter, EP extends ExtraParameter>(params: P, extraParams: EP | void): Promise<AxiosResponse<MessagesResponse<'send', P, EP>>>;
+    send<P extends MessagesSendParameter, EP extends ExtraParameter>(params: P, extraParams: EP | void): Promise<AxiosResponse<MessagesResponse<"send", P, EP>>>;
 }
 export default Messages;
+//# sourceMappingURL=Messages.d.ts.map

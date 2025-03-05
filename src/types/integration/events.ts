@@ -3,82 +3,92 @@
  * These types define the structure of events, event parameters, and responses for querying events.
  */
 
-import {ApiMeta, UUID} from '../sharetribe';
-import {ListingWithRelationships} from "../marketplace/listings";
-import {UserWithRelationships} from "../marketplace/user";
-import {AvailabilityExceptionWithRelationships} from "../marketplace/availabilityExceptions";
-import {MessageWithRelationships} from "../marketplace/messages";
-import {TransactionWithRelationships} from "../marketplace/transaction";
-import {BookingWithRelationShips} from "../marketplace/bookings";
-import {ReviewWithRelationships} from "../marketplace/reviews";
-import {StockAdjustmentWithRelationships} from "../marketplace/stockAdjustment";
-import {StockReservationWithRelationships} from "../marketplace/stockReservations";
+import { ApiMeta, UUID } from "../sharetribe";
+import { ListingWithRelationships } from "../marketplace/listings";
+import { UserWithRelationships } from "../marketplace/user";
+import { AvailabilityExceptionWithRelationships } from "../marketplace/availabilityExceptions";
+import { MessageWithRelationships } from "../marketplace/messages";
+import { TransactionWithRelationships } from "../marketplace/transactions";
+import { BookingWithRelationShips } from "../marketplace/bookings";
+import { ReviewWithRelationships } from "../marketplace/reviews";
+import { StockAdjustmentWithRelationships } from "../marketplace/stockAdjustment";
+import { StockReservationWithRelationships } from "../marketplace/stockReservations";
 
 // Supported API endpoints for Events.
-export type EventsEndpoints = 'query';
+export type EventsEndpoints = "query";
 
 // Event types for specific resources.
 export type EventTypes =
-  | 'listing/created'
-  | 'listing/updated'
-  | 'listing/deleted'
-  | 'user/created'
-  | 'user/updated'
-  | 'user/deleted'
-  | 'availabilityException/created'
-  | 'availabilityException/updated'
-  | 'availabilityException/deleted'
-  | 'message/created'
-  | 'message/updated'
-  | 'message/deleted'
-  | 'transaction/initiated'
-  | 'transaction/transitioned'
-  | 'transaction/updated'
-  | 'transaction/deleted'
-  | 'booking/created'
-  | 'booking/updated'
-  | 'booking/deleted'
-  | 'review/created'
-  | 'review/updated'
-  | 'review/deleted'
-  | 'stockAdjustment/created'
-  | 'stockAdjustment/updated'
-  | 'stockAdjustment/deleted'
-  | 'stockReservation/created'
-  | 'stockReservation/updated'
-  | 'stockReservation/deleted';
+  | "listing/created"
+  | "listing/updated"
+  | "listing/deleted"
+  | "user/created"
+  | "user/updated"
+  | "user/deleted"
+  | "availabilityException/created"
+  | "availabilityException/updated"
+  | "availabilityException/deleted"
+  | "message/created"
+  | "message/updated"
+  | "message/deleted"
+  | "transaction/initiated"
+  | "transaction/transitioned"
+  | "transaction/updated"
+  | "transaction/deleted"
+  | "booking/created"
+  | "booking/updated"
+  | "booking/deleted"
+  | "review/created"
+  | "review/updated"
+  | "review/deleted"
+  | "stockAdjustment/created"
+  | "stockAdjustment/updated"
+  | "stockAdjustment/deleted"
+  | "stockReservation/created"
+  | "stockReservation/updated"
+  | "stockReservation/deleted";
 
 // Sources of events in the system.
 export type EventSource =
-  | 'source/marketplace-api'
-  | 'source/integration-api'
-  | 'source/transaction'
-  | 'source/console'
-  | 'source/admin';
+  | "source/marketplace-api"
+  | "source/integration-api"
+  | "source/transaction"
+  | "source/console"
+  | "source/admin";
 
 // Supported resource types for Events.
 export type EventResourceType =
-  | 'listing'
-  | 'user'
-  | 'availabilityException'
-  | 'message'
-  | 'transaction'
-  | 'booking'
-  | 'review'
-  | 'stockAdjustment'
-  | 'stockReservation';
+  | "listing"
+  | "user"
+  | "availabilityException"
+  | "message"
+  | "transaction"
+  | "booking"
+  | "review"
+  | "stockAdjustment"
+  | "stockReservation";
 
 // Resource representation for specific event types.
 export type EventResource<T extends EventResourceType = any> =
-  T extends 'listing' ? ListingWithRelationships<true> :
-    T extends 'user' ? UserWithRelationships<true> :
-      T extends 'availabilityException' ? AvailabilityExceptionWithRelationships :
-        T extends 'message' ? MessageWithRelationships :
-          T extends 'transaction' ? TransactionWithRelationships :
-            T extends 'booking' ? BookingWithRelationShips :
-              T extends 'review' ? ReviewWithRelationships :
-                T extends 'stockAdjustment' ? StockAdjustmentWithRelationships :
-                  T extends 'stockReservation' ? StockReservationWithRelationships : never;
+  T extends "listing"
+    ? ListingWithRelationships<true>
+    : T extends "user"
+    ? UserWithRelationships<true>
+    : T extends "availabilityException"
+    ? AvailabilityExceptionWithRelationships
+    : T extends "message"
+    ? MessageWithRelationships
+    : T extends "transaction"
+    ? TransactionWithRelationships
+    : T extends "booking"
+    ? BookingWithRelationShips
+    : T extends "review"
+    ? ReviewWithRelationships
+    : T extends "stockAdjustment"
+    ? StockAdjustmentWithRelationships
+    : T extends "stockReservation"
+    ? StockReservationWithRelationships
+    : never;
 
 // Audit data associated with an Event.
 export type EventAuditData = {
@@ -91,7 +101,7 @@ export type EventAuditData = {
 // Event structure for API responses.
 export interface Event {
   id: UUID;
-  type: 'event';
+  type: "event";
   attributes: {
     createdAt: Date;
     sequenceId: number;
@@ -116,10 +126,9 @@ export interface EventQueryParameter {
 }
 
 // Determine the data type for a given Events endpoint.
-type DataType<E extends EventsEndpoints> =
-  E extends 'query' ? Event[] : never;
+type DataType<E extends EventsEndpoints> = E extends "query" ? Event[] : never;
 
 // Response structure for Events API.
 export type EventsResponse<E extends EventsEndpoints> = {
   data: DataType<E>;
-} & (E extends 'query' ? { meta: ApiMeta } : {});
+} & (E extends "query" ? { meta: ApiMeta } : {});

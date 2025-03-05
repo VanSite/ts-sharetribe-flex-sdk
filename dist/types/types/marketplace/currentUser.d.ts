@@ -2,12 +2,12 @@
  * @fileoverview Type definitions for managing the current user in the Sharetribe Marketplace API.
  * These types define the structure of current user-related parameters, responses, and relationships.
  */
-import { ApiParameter, ExtraParameter, ExtraParameterType, Relationship, RelationshipTypeMap, UUID } from '../sharetribe';
-export type CurrentUserEndpoints = 'show' | 'delete' | 'create' | 'create_with_idp' | 'update_profile' | 'change_password' | 'change_email' | 'verify_email' | 'send_verification_email';
-export type CurrentUserRelationshipsFields = 'marketplace' | 'profileImage' | 'stripeAccount' | 'stripeCustomer';
+import { ApiParameter, ExtraParameter, ExtraParameterType, Relationship, RelationshipTypeMap, UUID } from "../sharetribe";
+export type CurrentUserEndpoints = "show" | "delete" | "create" | "create_with_idp" | "update_profile" | "change_password" | "change_email" | "verify_email" | "send_verification_email";
+export type CurrentUserRelationshipsFields = "marketplace" | "profileImage" | "stripeAccount" | "stripeCustomer" | "stripeCustomer.defaultPaymentMethod" | "effectivePermissionSet";
 export interface CurrentUser {
     id: UUID;
-    type: 'currentUser';
+    type: "currentUser";
     attributes: {
         banned: boolean;
         deleted: boolean;
@@ -37,7 +37,7 @@ export interface CurrentUser {
 }
 export interface DeleteCurrentUser {
     id: UUID;
-    type: 'currentUser';
+    type: "currentUser";
     attributes: {
         banned: false;
         deleted: true;
@@ -62,12 +62,18 @@ export interface DeleteCurrentUser {
         };
     };
 }
+export interface CurrentUserPermissionSet {
+    postListings: "POST /own_listings/create_draft" | "POST /own_listings/publish_draft" | "POST /own_listings/create" | "POST /own_listings/open";
+    initiateTransactions: "POST /transactions/initiate";
+    read: "GET /listings/query" | "GET /listings/show" | "GET /users/show" | "GET /timeslots/query" | "GET /reviews/query" | "GET /reviews/show";
+}
 export interface CurrentUserWithRelationships extends CurrentUser {
     relationships: {
-        marketplace: Relationship<false, 'marketplace'>;
-        profileImage: Relationship<false, 'image'>;
-        stripeAccount: Relationship<false, 'stripeAccount'>;
-        stripeCustomer: Relationship<false, 'stripeCustomer'>;
+        marketplace: Relationship<false, "marketplace">;
+        profileImage: Relationship<false, "image">;
+        stripeAccount: Relationship<false, "stripeAccount">;
+        stripeCustomer: Relationship<false, "stripeCustomer">;
+        effectivePermissionSet: Relationship<false, "permissionSet">;
     };
 }
 export type CurrentUserType<R extends boolean> = R extends true ? CurrentUserWithRelationships : CurrentUser;
@@ -136,17 +142,18 @@ export interface CurrentUserProfileMetadata {
 export interface CurrentUserCustomProfileMetadata {
 }
 type AllCurrentUserParameter = CurrentUserShowParameter | CurrentUserDeleteParameter | CurrentUserCreateParameter | CurrentUserCreateWithIdpParameter | CurrentUserUpdateProfileParameter | CurrentUserChangePasswordParameter | CurrentUserChangeEmailParameter | CurrentUserVerifyEmailParameter | void;
-type CurrentUserTypeType<P extends AllCurrentUserParameter> = 'include' extends keyof P ? (P['include'] extends CurrentUserRelationshipsFields[] ? true : false) : false;
-type IncludedType<P extends AllCurrentUserParameter> = 'include' extends keyof P ? P['include'] extends (keyof RelationshipTypeMap)[] ? Array<RelationshipTypeMap[P['include'][number]]> : never : never;
+type CurrentUserTypeType<P extends AllCurrentUserParameter> = "include" extends keyof P ? P["include"] extends CurrentUserRelationshipsFields[] ? true : false : false;
+type IncludedType<P extends AllCurrentUserParameter> = "include" extends keyof P ? P["include"] extends (keyof RelationshipTypeMap)[] ? Array<RelationshipTypeMap[P["include"][number]]> : never : never;
 type ExpandReturnType<P extends AllCurrentUserParameter, EP> = EP extends {
     expand: true;
 } ? CurrentUserType<CurrentUserTypeType<P>> : EP extends {
     expand: false;
-} ? Omit<CurrentUserType<CurrentUserTypeType<P>>, 'attributes'> : Omit<CurrentUserType<CurrentUserTypeType<P>>, 'attributes'>;
-type DataType<E extends CurrentUserEndpoints, P extends AllCurrentUserParameter, EP extends ExtraParameter | undefined> = E extends 'show' ? CurrentUserType<CurrentUserTypeType<P>> : E extends 'delete' ? Pick<DeleteCurrentUser, 'id' | 'type'> : E extends 'create' | 'create_with_idp' | 'update_profile' | 'change_password' | 'change_email' | 'verify_email' ? ExpandReturnType<P, EP> : never;
+} ? Omit<CurrentUserType<CurrentUserTypeType<P>>, "attributes"> : CurrentUserType<CurrentUserTypeType<P>>;
+type DataType<E extends CurrentUserEndpoints, P extends AllCurrentUserParameter, EP extends ExtraParameter | undefined> = E extends "show" ? CurrentUserType<CurrentUserTypeType<P>> : E extends "delete" ? Pick<DeleteCurrentUser, "id" | "type"> : E extends "create" | "create_with_idp" | "update_profile" | "change_password" | "change_email" | "verify_email" ? ExpandReturnType<P, EP> : never;
 export type CurrentUserResponse<E extends CurrentUserEndpoints, P extends AllCurrentUserParameter, EP extends ExtraParameterType = undefined> = {
     data: DataType<E, P, EP>;
-} & ('include' extends keyof P ? {
+} & ("include" extends keyof P ? {
     included: IncludedType<P>;
 } : {});
 export {};
+//# sourceMappingURL=currentUser.d.ts.map

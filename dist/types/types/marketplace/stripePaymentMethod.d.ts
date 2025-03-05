@@ -2,13 +2,13 @@
  * @fileoverview Type definition for Stripe Payment Method objects in the Sharetribe Marketplace API.
  * This file defines the structure of a Stripe Payment Method, including its attributes.
  */
-import { UUID } from '../sharetribe';
+import { UUID } from "../sharetribe";
 /**
  * Represents a Stripe Payment Method object.
  */
 export interface StripePaymentMethod {
     id: UUID;
-    type: 'stripePaymentMethod';
+    type: "stripePaymentMethod";
     attributes: {
         type: string;
         stripePaymentMethodId: string;
@@ -20,3 +20,4 @@ export interface StripePaymentMethod {
         };
     };
 }
+//# sourceMappingURL=stripePaymentMethod.d.ts.map

@@ -6,9 +6,12 @@
  * https://www.sharetribe.com/api-reference/integration.html#stock-reservations
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import IntegrationApi from './index';
-import { StockReservationShowParameter, StockReservationsResponse } from '../../types/marketplace/stockReservations';
+import { AxiosInstance, AxiosResponse } from "axios";
+import IntegrationApi from "./index";
+import {
+  StockReservationShowParameter,
+  StockReservationsResponse,
+} from "../../types/marketplace/stockReservations";
 
 /**
  * Class representing the Stock Reservations API.
@@ -26,7 +29,7 @@ class StockReservation {
    * @param {IntegrationApi} api - The Integration API instance providing configuration and request handling.
    */
   constructor(api: IntegrationApi) {
-    this.endpoint = api.endpoint + '/stock_reservations';
+    this.endpoint = api.endpoint + "/stock_reservations";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -47,11 +50,14 @@ class StockReservation {
    */
   async show<P extends StockReservationShowParameter>(
     params: P
-  ): Promise<AxiosResponse<StockReservationsResponse<'show', P>>> {
-    return this.axios.get<StockReservationsResponse<'show', P>>(`${this.endpoint}/show`, {
-      ...this.headers,
-      params,
-    });
+  ): Promise<AxiosResponse<StockReservationsResponse<"show", P>>> {
+    return this.axios.get<StockReservationsResponse<"show", P>>(
+      `${this.endpoint}/show`,
+      {
+        ...this.headers,
+        params,
+      }
+    );
   }
 }
 

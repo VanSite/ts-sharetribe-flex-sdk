@@ -3,6 +3,8 @@ import LatLng from "../sdkTypes/LatLng";
 import Money from "../sdkTypes/Money";
 import LatLngBounds from "../sdkTypes/LatLngBounds";
 import BigDecimal from "../sdkTypes/BigDecimal";
+import { Agent as HttpAgent } from "http";
+import { Agent as HttpsAgent } from "https";
 
 /**
  * Supported SDK type classes.
@@ -137,4 +139,12 @@ export interface SdkConfig {
    * Custom type handlers for transforming data.
    */
   typeHandlers?: TypeHandler<any, any>[];
+  /**
+   * Http Agent
+   */
+  httpAgent?: HttpAgent;
+  /**
+   * Https Agent
+   */
+  httpsAgent?: HttpsAgent;
 }

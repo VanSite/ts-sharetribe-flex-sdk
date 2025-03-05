@@ -3,16 +3,20 @@
  * This class allows for the creation and validation of UUIDs, using the `uuid` library.
  */
 
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+import { SdkType } from "../types/sdk-types";
+
+// Define a static class name
+const UUID_SDK_TYPE = "UUID";
 
 /**
  * Class representing a UUID (Universally Unique Identifier).
  *
  * The UUID class ensures that a valid UUID is created or used, with the option to generate one if none is provided.
  */
-class UUID {
+class UUID implements SdkType {
   uuid: string;
-  readonly _sdkType: 'UUID';
+  readonly _sdkType: typeof UUID_SDK_TYPE;
 
   /**
    * Creates an instance of the UUID class.
@@ -26,10 +30,10 @@ class UUID {
    * console.log(predefinedId.toString()); // Outputs: '123e4567-e89b-12d3-a456-426614174000'
    */
   constructor(uuid?: string) {
-    this._sdkType = 'UUID';
+    this._sdkType = UUID_SDK_TYPE;
 
-    if (uuid !== undefined && typeof uuid !== 'string') {
-      console.warn('uuid must be a string');
+    if (uuid !== undefined && typeof uuid !== "string") {
+      console.warn("uuid must be a string");
       // If it's not a string, fallback to a generated UUID.
       this.uuid = uuidv4();
     } else {
@@ -51,4 +55,8 @@ class UUID {
   }
 }
 
+// Default export for backward compatibility
 export default UUID;
+
+// Export the instance type
+export type UUIDInstance = InstanceType<typeof UUID>;

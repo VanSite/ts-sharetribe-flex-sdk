@@ -5,10 +5,10 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#password-reset
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { PasswordResetRequestParams, PasswordResetResetParams, PasswordResetResponse } from '../../types/marketplace/passwordReset';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { PasswordResetRequestParams, PasswordResetResetParams, PasswordResetResponse } from "../../types/marketplace/passwordReset";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Password Reset API.
  *
@@ -39,7 +39,7 @@ declare class PasswordReset {
      * });
      * const result = response.data;
      */
-    request<P extends PasswordResetRequestParams, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<PasswordResetResponse<'request', EP>>>;
+    request<P extends PasswordResetRequestParams, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<PasswordResetResponse<"request", EP>>>;
     /**
      * Resets the user's password using a token.
      *
@@ -57,6 +57,7 @@ declare class PasswordReset {
      * });
      * const result = response.data;
      */
-    reset<P extends PasswordResetResetParams, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<PasswordResetResponse<'reset', EP>>>;
+    reset<P extends PasswordResetResetParams, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<PasswordResetResponse<"reset", EP>>>;
 }
 export default PasswordReset;
+//# sourceMappingURL=PasswordReset.d.ts.map

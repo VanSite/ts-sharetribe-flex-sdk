@@ -3,27 +3,40 @@
  * These types define the structure of current user-related parameters, responses, and relationships.
  */
 
-import {ApiParameter, ExtraParameter, ExtraParameterType, Relationship, RelationshipTypeMap, UUID} from '../sharetribe';
+import {
+  ApiParameter,
+  ExtraParameter,
+  ExtraParameterType,
+  Relationship,
+  RelationshipTypeMap,
+  UUID,
+} from "../sharetribe";
 
 // Supported API endpoints for current user operations.
 export type CurrentUserEndpoints =
-  'show'
-  | 'delete'
-  | 'create'
-  | 'create_with_idp'
-  | 'update_profile'
-  | 'change_password'
-  | 'change_email'
-  | 'verify_email'
-  | 'send_verification_email';
+  | "show"
+  | "delete"
+  | "create"
+  | "create_with_idp"
+  | "update_profile"
+  | "change_password"
+  | "change_email"
+  | "verify_email"
+  | "send_verification_email";
 
 // Supported relationship fields for current user.
-export type CurrentUserRelationshipsFields = 'marketplace' | 'profileImage' | 'stripeAccount' | 'stripeCustomer';
+export type CurrentUserRelationshipsFields =
+  | "marketplace"
+  | "profileImage"
+  | "stripeAccount"
+  | "stripeCustomer"
+  | "stripeCustomer.defaultPaymentMethod"
+  | "effectivePermissionSet";
 
 // Base structure for a current user.
 export interface CurrentUser {
   id: UUID;
-  type: 'currentUser';
+  type: "currentUser";
   attributes: {
     banned: boolean;
     deleted: boolean;
@@ -41,9 +54,12 @@ export interface CurrentUser {
       displayName: string;
       abbreviatedName: string;
       bio: string;
-      publicData: CurrentUserProfilePublicData & CurrentUserCustomProfilePublicData;
-      protectedData: CurrentUserProfileProtectedData & CurrentUserCustomProfileProtectedData;
-      privateData: CurrentUserProfilePrivateData & CurrentUserCustomProfilePrivateData;
+      publicData: CurrentUserProfilePublicData &
+        CurrentUserCustomProfilePublicData;
+      protectedData: CurrentUserProfileProtectedData &
+        CurrentUserCustomProfileProtectedData;
+      privateData: CurrentUserProfilePrivateData &
+        CurrentUserCustomProfilePrivateData;
       metadata: CurrentUserProfileMetadata & CurrentUserCustomProfileMetadata;
     };
   };
@@ -52,7 +68,7 @@ export interface CurrentUser {
 // Structure for a deleted current user.
 export interface DeleteCurrentUser {
   id: UUID;
-  type: 'currentUser';
+  type: "currentUser";
   attributes: {
     banned: false;
     deleted: true;
@@ -78,18 +94,37 @@ export interface DeleteCurrentUser {
   };
 }
 
+export interface CurrentUserPermissionSet {
+  postListings:
+    | "POST /own_listings/create_draft"
+    | "POST /own_listings/publish_draft"
+    | "POST /own_listings/create"
+    | "POST /own_listings/open";
+  initiateTransactions: "POST /transactions/initiate";
+  read:
+    | "GET /listings/query"
+    | "GET /listings/show"
+    | "GET /users/show"
+    | "GET /timeslots/query"
+    | "GET /reviews/query"
+    | "GET /reviews/show";
+}
+
 // Current user with relationships.
 export interface CurrentUserWithRelationships extends CurrentUser {
   relationships: {
-    marketplace: Relationship<false, 'marketplace'>;
-    profileImage: Relationship<false, 'image'>;
-    stripeAccount: Relationship<false, 'stripeAccount'>;
-    stripeCustomer: Relationship<false, 'stripeCustomer'>;
+    marketplace: Relationship<false, "marketplace">;
+    profileImage: Relationship<false, "image">;
+    stripeAccount: Relationship<false, "stripeAccount">;
+    stripeCustomer: Relationship<false, "stripeCustomer">;
+    effectivePermissionSet: Relationship<false, "permissionSet">;
   };
 }
 
 // Determine the current user type based on the relationship flag.
-export type CurrentUserType<R extends boolean> = R extends true ? CurrentUserWithRelationships : CurrentUser;
+export type CurrentUserType<R extends boolean> = R extends true
+  ? CurrentUserWithRelationships
+  : CurrentUser;
 
 // Base parameters for current user operations.
 export interface CurrentUserParameter extends ApiParameter {
@@ -110,12 +145,14 @@ export interface CurrentUserCreateParameter extends CurrentUserParameter {
   protectedData?: unknown;
   privateData?: unknown;
 }
-export interface CurrentUserCreateWithIdpParameter extends CurrentUserCreateParameter {
+export interface CurrentUserCreateWithIdpParameter
+  extends CurrentUserCreateParameter {
   idpId: string;
   idpClientId: string;
   idpToken: string;
 }
-export interface CurrentUserUpdateProfileParameter extends CurrentUserParameter {
+export interface CurrentUserUpdateProfileParameter
+  extends CurrentUserParameter {
   firstName?: string;
   lastName?: string;
   displayName?: string;
@@ -125,7 +162,8 @@ export interface CurrentUserUpdateProfileParameter extends CurrentUserParameter 
   privateData?: unknown;
   profileImageId?: string;
 }
-export interface CurrentUserChangePasswordParameter extends CurrentUserParameter {
+export interface CurrentUserChangePasswordParameter
+  extends CurrentUserParameter {
   currentPassword: string;
   newPassword: string;
 }
@@ -169,43 +207,46 @@ type AllCurrentUserParameter =
 
 // Determine if the parameter includes relationships.
 type CurrentUserTypeType<P extends AllCurrentUserParameter> =
-  'include' extends keyof P ? (P['include'] extends CurrentUserRelationshipsFields[] ? true : false) : false;
+  "include" extends keyof P
+    ? P["include"] extends CurrentUserRelationshipsFields[]
+      ? true
+      : false
+    : false;
 
 // Extract the included relationships type based on the parameter.
-type IncludedType<P extends AllCurrentUserParameter> =
-  'include' extends keyof P
-    ? P['include'] extends (keyof RelationshipTypeMap)[]
-      ? Array<RelationshipTypeMap[P['include'][number]]>
-      : never
-    : never;
+type IncludedType<P extends AllCurrentUserParameter> = "include" extends keyof P
+  ? P["include"] extends (keyof RelationshipTypeMap)[]
+    ? Array<RelationshipTypeMap[P["include"][number]]>
+    : never
+  : never;
 
 // Expand the return type based on the expand parameter.
-type ExpandReturnType<P extends AllCurrentUserParameter, EP> =
-  EP extends { expand: true }
-    ? CurrentUserType<CurrentUserTypeType<P>>
-    : EP extends { expand: false }
-      ? Omit<CurrentUserType<CurrentUserTypeType<P>>, 'attributes'>
-      : Omit<CurrentUserType<CurrentUserTypeType<P>>, 'attributes'>;
+type ExpandReturnType<P extends AllCurrentUserParameter, EP> = EP extends {
+  expand: true;
+}
+  ? CurrentUserType<CurrentUserTypeType<P>>
+  : EP extends { expand: false }
+  ? Omit<CurrentUserType<CurrentUserTypeType<P>>, "attributes">
+  : CurrentUserType<CurrentUserTypeType<P>>;
 
 // Define the possible data type for current user based on the endpoint and parameters.
 type DataType<
   E extends CurrentUserEndpoints,
   P extends AllCurrentUserParameter,
   EP extends ExtraParameter | undefined
-> =
-  E extends 'show'
-    ? CurrentUserType<CurrentUserTypeType<P>>
-    : E extends 'delete'
-      ? Pick<DeleteCurrentUser, 'id' | 'type'>
-      : E extends
-        | 'create'
-        | 'create_with_idp'
-        | 'update_profile'
-        | 'change_password'
-        | 'change_email'
-        | 'verify_email'
-        ? ExpandReturnType<P, EP>
-        : never;
+> = E extends "show"
+  ? CurrentUserType<CurrentUserTypeType<P>>
+  : E extends "delete"
+  ? Pick<DeleteCurrentUser, "id" | "type">
+  : E extends
+      | "create"
+      | "create_with_idp"
+      | "update_profile"
+      | "change_password"
+      | "change_email"
+      | "verify_email"
+  ? ExpandReturnType<P, EP>
+  : never;
 
 // Response structure for current user-related endpoints.
 export type CurrentUserResponse<
@@ -214,4 +255,4 @@ export type CurrentUserResponse<
   EP extends ExtraParameterType = undefined
 > = {
   data: DataType<E, P, EP>;
-} & ('include' extends keyof P ? { included: IncludedType<P> } : {});
+} & ("include" extends keyof P ? { included: IncludedType<P> } : {});

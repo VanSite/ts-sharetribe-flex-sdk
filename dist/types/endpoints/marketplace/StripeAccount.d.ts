@@ -5,10 +5,10 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#stripe-account
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { StripeAccountCreateParameter, StripeAccountResponse, StripeAccountUpdateParameter } from '../../types/marketplace/stripeAccount';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { StripeAccountCreateParameter, StripeAccountResponse, StripeAccountUpdateParameter } from "../../types/marketplace/stripeAccount";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Stripe Account API.
  *
@@ -34,7 +34,7 @@ declare class StripeAccount {
      * const response = await sdk.stripeAccount.fetch();
      * const stripeAccountDetails = response.data;
      */
-    fetch(): Promise<AxiosResponse<StripeAccountResponse<'fetch'>>>;
+    fetch(): Promise<AxiosResponse<StripeAccountResponse<"fetch">>>;
     /**
      * Creates a new Stripe account.
      *
@@ -56,7 +56,7 @@ declare class StripeAccount {
      * });
      * const createdStripeAccount = response.data;
      */
-    create<P extends StripeAccountCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripeAccountResponse<'create', EP>>>;
+    create<P extends StripeAccountCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripeAccountResponse<"create", EP>>>;
     /**
      * Updates an existing Stripe account.
      *
@@ -72,6 +72,7 @@ declare class StripeAccount {
      * });
      * const updatedStripeAccount = response.data;
      */
-    update<P extends StripeAccountUpdateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripeAccountResponse<'update', EP>>>;
+    update<P extends StripeAccountUpdateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripeAccountResponse<"update", EP>>>;
 }
 export default StripeAccount;
+//# sourceMappingURL=StripeAccount.d.ts.map

@@ -3,15 +3,15 @@
  * This file defines the structure of parameters and responses for the Stock API endpoints.
  */
 
-import { ExtraParameter, ExtraParameterType, UUID } from '../sharetribe';
+import { ExtraParameter, ExtraParameterType, UUID } from "../sharetribe";
 
 // Supported API endpoints for Stock operations.
-export type StockEndpoints = 'compareAndSet';
+export type StockEndpoints = "compareAndSet";
 
 // Structure of a Stock object.
 export interface Stock {
   id: UUID;
-  type: 'stock';
+  type: "stock";
   attributes: {
     quantity: number;
   };
@@ -25,17 +25,17 @@ export interface StockCompareAndSetParameter {
 }
 
 // Utility type for expanding or omitting the attributes in the Stock response based on extra parameters.
-type ExpandReturnType<EP> =
-  EP extends { expand: true } ? Stock :
-    EP extends { expand: false } ? Omit<Stock, 'attributes'> :
-      Omit<Stock, 'attributes'>;
+type ExpandReturnType<EP> = EP extends { expand: true }
+  ? Stock
+  : EP extends { expand: false }
+  ? Omit<Stock, "attributes">
+  : Omit<Stock, "attributes">;
 
 // Data type based on the endpoint and extra parameters.
 type DataType<
   E extends StockEndpoints,
   EP extends ExtraParameter | undefined
-> =
-  E extends 'compareAndSet' ? ExpandReturnType<EP> : never;
+> = E extends "compareAndSet" ? ExpandReturnType<EP> : never;
 
 // Response structure for Stock operations.
 export type StockResponse<

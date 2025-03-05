@@ -5,10 +5,10 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#availability-exceptions
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { AvailabilityExceptionsCreateParameter, AvailabilityExceptionsDeleteParameter, AvailabilityExceptionsQueryParameter, AvailabilityExceptionsResponse } from '../../types/marketplace/availabilityExceptions';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { AvailabilityExceptionsCreateParameter, AvailabilityExceptionsDeleteParameter, AvailabilityExceptionsQueryParameter, AvailabilityExceptionsResponse } from "../../types/marketplace/availabilityExceptions";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the AvailabilityExceptions API.
  *
@@ -41,7 +41,7 @@ declare class AvailabilityExceptions {
      *
      * const exceptions = response.data;
      */
-    query<P extends AvailabilityExceptionsQueryParameter>(params: P): Promise<AxiosResponse<AvailabilityExceptionsResponse<'query', P>>>;
+    query<P extends AvailabilityExceptionsQueryParameter>(params: P): Promise<AxiosResponse<AvailabilityExceptionsResponse<"query", P>>>;
     /**
      * Creates a new availability exception for a listing.
      *
@@ -61,7 +61,7 @@ declare class AvailabilityExceptions {
      *
      * const newException = response.data;
      */
-    create<P extends AvailabilityExceptionsCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<AvailabilityExceptionsResponse<'create', P, EP>>>;
+    create<P extends AvailabilityExceptionsCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<AvailabilityExceptionsResponse<"create", P, EP>>>;
     /**
      * Deletes an existing availability exception.
      *
@@ -78,6 +78,7 @@ declare class AvailabilityExceptions {
      *
      * const deletionResult = response.data;
      */
-    delete<P extends AvailabilityExceptionsDeleteParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<AvailabilityExceptionsResponse<'delete', P, EP>>>;
+    delete<P extends AvailabilityExceptionsDeleteParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<AvailabilityExceptionsResponse<"delete", P, EP>>>;
 }
 export default AvailabilityExceptions;
+//# sourceMappingURL=AvailabilityExceptions.d.ts.map

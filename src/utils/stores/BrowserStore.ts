@@ -1,6 +1,7 @@
-import Cookies from 'js-cookie';
-import { generateKey } from './store';
-import { AuthToken, TokenStore } from '../../types/store';
+import Cookies from "js-cookie";
+import { generateKey } from "./store";
+import { TokenStore } from "../../types/store";
+import { AuthToken } from "../../types/authentication";
 
 /**
  * Configuration options for the `BrowserStore`.
@@ -15,7 +16,7 @@ export type BrowserStoreOptions = {
  */
 class BrowserStore implements TokenStore {
   expiration: number = 30; // Default cookie expiration in days
-  private namespace: string = 'st'; // Namespace for cookie keys
+  private namespace: string = "st"; // Namespace for cookie keys
   private readonly key: string; // Generated key for the cookie
   private readonly secure: boolean | undefined; // Indicates if cookies should be marked as secure
 
@@ -43,7 +44,10 @@ class BrowserStore implements TokenStore {
    */
   setToken(token: AuthToken): void {
     const secureFlag = this.secure ? { secure: true } : {};
-    Cookies.set(this.key, JSON.stringify(token), { expires: this.expiration, ...secureFlag });
+    Cookies.set(this.key, JSON.stringify(token), {
+      expires: this.expiration,
+      ...secureFlag,
+    });
   }
 
   /**

@@ -6,9 +6,13 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#reviews
  */
 
-import {AxiosInstance, AxiosResponse} from 'axios';
-import MarketplaceApi from './index';
-import {ReviewsQueryParameter, ReviewsResponse, ReviewsShowParameter,} from '../../types/marketplace/reviews';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import {
+  ReviewsQueryParameter,
+  ReviewsResponse,
+  ReviewsShowParameter,
+} from "../../types/marketplace/reviews";
 
 /**
  * Class representing the Reviews API.
@@ -26,7 +30,7 @@ class Reviews {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/reviews';
+    this.endpoint = api.endpoint + "/reviews";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -44,8 +48,8 @@ class Reviews {
    */
   async show<P extends ReviewsShowParameter>(
     params: P
-  ): Promise<AxiosResponse<ReviewsResponse<'show', P>>> {
-    return this.axios.get<ReviewsResponse<'show', P>>(`${this.endpoint}/show`, {
+  ): Promise<AxiosResponse<ReviewsResponse<"show", P>>> {
+    return this.axios.get<ReviewsResponse<"show", P>>(`${this.endpoint}/show`, {
       headers: this.headers,
       params,
     });
@@ -64,11 +68,14 @@ class Reviews {
    */
   async query<P extends ReviewsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<ReviewsResponse<'query', P>>> {
-    return this.axios.get<ReviewsResponse<'query', P>>(`${this.endpoint}/query`, {
-      headers: this.headers,
-      params,
-    });
+  ): Promise<AxiosResponse<ReviewsResponse<"query", P>>> {
+    return this.axios.get<ReviewsResponse<"query", P>>(
+      `${this.endpoint}/query`,
+      {
+        headers: this.headers,
+        params,
+      }
+    );
   }
 }
 

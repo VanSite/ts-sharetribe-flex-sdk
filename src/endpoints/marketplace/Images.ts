@@ -6,10 +6,13 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#images
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { ImagesResponse, ImagesUploadParameter } from '../../types/marketplace/images';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import {
+  ImagesResponse,
+  ImagesUploadParameter,
+} from "../../types/marketplace/images";
+import { ExtraParameter } from "../../types/sharetribe";
 
 /**
  * Class representing the Images API.
@@ -28,7 +31,7 @@ class Images {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/images';
+    this.endpoint = api.endpoint + "/images";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -52,8 +55,8 @@ class Images {
   async upload<P extends ImagesUploadParameter, EP extends ExtraParameter>(
     params: P,
     extraParams: EP
-  ): Promise<AxiosResponse<ImagesResponse<'upload', EP>>> {
-    return this.axios.post<ImagesResponse<'upload', EP>>(
+  ): Promise<AxiosResponse<ImagesResponse<"upload", EP>>> {
+    return this.axios.post<ImagesResponse<"upload", EP>>(
       `${this.endpoint}/upload`,
       { ...params, ...extraParams },
       { ...this.headers }

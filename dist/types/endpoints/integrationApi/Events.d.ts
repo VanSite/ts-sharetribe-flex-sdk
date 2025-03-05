@@ -5,9 +5,9 @@
  * For more details, refer to the Integration API documentation:
  * https://www.sharetribe.com/api-reference/integration.html#events
  */
-import { AxiosResponse } from 'axios';
-import IntegrationApi from './index';
-import { EventQueryParameter, EventsResponse } from '../../types/integration/events';
+import { AxiosResponse } from "axios";
+import IntegrationApi from "./index";
+import { EventQueryParameter, EventsResponse } from "../../types/integration/events";
 /**
  * Class representing the Events API.
  *
@@ -42,6 +42,7 @@ declare class Events {
      * // Access the list of events
      * const eventsList = response.data;
      */
-    query<P extends EventQueryParameter>(params: P): Promise<AxiosResponse<EventsResponse<'query'>>>;
+    query<P extends EventQueryParameter>(params: P): Promise<AxiosResponse<EventsResponse<"query">>>;
 }
 export default Events;
+//# sourceMappingURL=Events.d.ts.map

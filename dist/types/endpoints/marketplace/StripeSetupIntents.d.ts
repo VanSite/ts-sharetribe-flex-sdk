@@ -5,10 +5,10 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#create-stripe-person
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { StripeSetupIntentsCreateParameter, StripeSetupIntentsResponse } from '../../types/marketplace/stripeSetupIntents';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { StripeSetupIntentsCreateParameter, StripeSetupIntentsResponse } from "../../types/marketplace/stripeSetupIntents";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Stripe Setup Intents API.
  *
@@ -37,6 +37,7 @@ declare class StripeSetupIntents {
      * const response = await sdk.stripeSetupIntents.create({});
      * const setupIntentDetails = response.data;
      */
-    create<P extends StripeSetupIntentsCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripeSetupIntentsResponse<'create'>>>;
+    create<P extends StripeSetupIntentsCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripeSetupIntentsResponse<"create">>>;
 }
 export default StripeSetupIntents;
+//# sourceMappingURL=StripeSetupIntents.d.ts.map

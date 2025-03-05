@@ -3,16 +3,18 @@
  * This class encapsulates a northeast (NE) and southwest (SW) pair of coordinates to define a rectangular area.
  */
 
-import LatLng from './LatLng';
+import LatLng from "./LatLng";
+import { SdkType } from "../types/sdk-types";
+// Define a static class name
+const LATLNGBOUNDS_SDK_TYPE = "LatLngBounds";
 
 /**
  * Class representing a geographical bounding box with NE and SW coordinates.
  */
-class LatLngBounds {
+class LatLngBounds implements SdkType {
   ne: LatLng | { lat: number | string; lng: number | string };
   sw: LatLng | { lat: number | string; lng: number | string };
-  value: string;
-  readonly _sdkType: 'LatLngBounds';
+  readonly _sdkType: typeof LATLNGBOUNDS_SDK_TYPE;
 
   /**
    * Creates an instance of the LatLngBounds class.
@@ -29,16 +31,16 @@ class LatLngBounds {
     ne: LatLng | { lat: number; lng: number },
     sw: LatLng | { lat: number; lng: number }
   ) {
-    this._sdkType = 'LatLngBounds';
+    this._sdkType = LATLNGBOUNDS_SDK_TYPE;
 
     let isValid = true;
 
     // Helper function to check if a value is an object with numeric lat/lng.
     const isLatLngObject = (val: any): boolean =>
       val &&
-      typeof val === 'object' &&
-      typeof val.lat === 'number' &&
-      typeof val.lng === 'number';
+      typeof val === "object" &&
+      typeof val.lat === "number" &&
+      typeof val.lng === "number";
 
     // Validate the northeast (NE) coordinate.
     let neLatLng: LatLng;
@@ -70,7 +72,6 @@ class LatLngBounds {
 
     this.ne = neLatLng;
     this.sw = swLatLng;
-    this.value = `${this.ne.toString()},${this.sw.toString()}`;
 
     if (!isValid) {
       console.warn(
@@ -94,4 +95,5 @@ class LatLngBounds {
   }
 }
 
+// Default export for backward compatibility
 export default LatLngBounds;

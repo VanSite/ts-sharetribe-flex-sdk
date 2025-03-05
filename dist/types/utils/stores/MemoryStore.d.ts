@@ -1,4 +1,5 @@
-import { AuthToken, TokenStore } from '../../types/store';
+import { TokenStore } from "../../types/store";
+import { AuthToken } from "../../types/authentication";
 /**
  * `MemoryStore` is an in-memory implementation of the `TokenStore` interface.
  * It is suitable for short-lived or testing purposes, where tokens do not need to persist beyond the application's lifecycle.
@@ -21,3 +22,4 @@ declare class MemoryStore implements TokenStore {
     setToken(token: AuthToken): void;
 }
 export default MemoryStore;
+//# sourceMappingURL=MemoryStore.d.ts.map

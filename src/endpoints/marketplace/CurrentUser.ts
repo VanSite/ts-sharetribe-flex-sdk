@@ -6,17 +6,20 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#current-user
  */
 
-import {AxiosInstance, AxiosResponse} from 'axios';
-import MarketplaceApi from './index';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
 import {
   CurrentUserChangeEmailParameter,
   CurrentUserChangePasswordParameter,
   CurrentUserCreateParameter,
-  CurrentUserCreateWithIdpParameter, CurrentUserDeleteParameter,
+  CurrentUserCreateWithIdpParameter,
+  CurrentUserDeleteParameter,
   CurrentUserResponse,
-  CurrentUserShowParameter, CurrentUserUpdateProfileParameter, CurrentUserVerifyEmailParameter
-} from '../../types/marketplace/currentUser';
-import { ExtraParameter } from '../../types/sharetribe';
+  CurrentUserShowParameter,
+  CurrentUserUpdateProfileParameter,
+  CurrentUserVerifyEmailParameter,
+} from "../../types/marketplace/currentUser";
+import { ExtraParameter } from "../../types/sharetribe";
 
 /**
  * Class representing the Current User API.
@@ -36,7 +39,7 @@ class CurrentUser {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/current_user';
+    this.endpoint = api.endpoint + "/current_user";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -52,11 +55,16 @@ class CurrentUser {
    * const response = await sdk.currentUser.show({});
    * const user = response.data;
    */
-  async show<P extends CurrentUserShowParameter>(params: P): Promise<AxiosResponse<CurrentUserResponse<'show', P>>> {
-    return this.axios.get<CurrentUserResponse<'show', P>>(`${this.endpoint}/show`, {
-      ...this.headers,
-      params
-    });
+  async show<P extends CurrentUserShowParameter>(
+    params: P
+  ): Promise<AxiosResponse<CurrentUserResponse<"show", P>>> {
+    return this.axios.get<CurrentUserResponse<"show", P>>(
+      `${this.endpoint}/show`,
+      {
+        ...this.headers,
+        params,
+      }
+    );
   }
 
   /**
@@ -72,8 +80,15 @@ class CurrentUser {
    * const response = await sdk.currentUser.delete();
    * const result = response.data;
    */
-  async delete<P extends CurrentUserDeleteParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<'delete', P>>> {
-    return this.axios.post<CurrentUserResponse<'delete', P>>(`${this.endpoint}/delete`, { ...params, ...extraParams }, { ...this.headers });
+  async delete<P extends CurrentUserDeleteParameter, EP extends ExtraParameter>(
+    params: P,
+    extraParams: EP
+  ): Promise<AxiosResponse<CurrentUserResponse<"delete", P>>> {
+    return this.axios.post<CurrentUserResponse<"delete", P>>(
+      `${this.endpoint}/delete`,
+      { ...params, ...extraParams },
+      { ...this.headers }
+    );
   }
 
   /**
@@ -94,8 +109,15 @@ class CurrentUser {
    * });
    * const newUser = response.data;
    */
-  async create<P extends CurrentUserCreateParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<'create', P>>> {
-    return this.axios.post<CurrentUserResponse<'create', P>>(`${this.endpoint}/create`, { ...params, ...extraParams }, { ...this.headers });
+  async create<P extends CurrentUserCreateParameter, EP extends ExtraParameter>(
+    params: P,
+    extraParams: EP
+  ): Promise<AxiosResponse<CurrentUserResponse<"create", P>>> {
+    return this.axios.post<CurrentUserResponse<"create", P>>(
+      `${this.endpoint}/create`,
+      { ...params, ...extraParams },
+      { ...this.headers }
+    );
   }
 
   /**
@@ -115,8 +137,18 @@ class CurrentUser {
    * });
    * const newUser = response.data;
    */
-  async createWithIdp<P extends CurrentUserCreateWithIdpParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<'create_with_idp', P>>> {
-    return this.axios.post<CurrentUserResponse<'create_with_idp', P>>(`${this.endpoint}/create_with_idp`, { ...params, ...extraParams }, { ...this.headers });
+  async createWithIdp<
+    P extends CurrentUserCreateWithIdpParameter,
+    EP extends ExtraParameter
+  >(
+    params: P,
+    extraParams: EP
+  ): Promise<AxiosResponse<CurrentUserResponse<"create_with_idp", P>>> {
+    return this.axios.post<CurrentUserResponse<"create_with_idp", P>>(
+      `${this.endpoint}/create_with_idp`,
+      { ...params, ...extraParams },
+      { ...this.headers }
+    );
   }
 
   /**
@@ -135,8 +167,18 @@ class CurrentUser {
    * });
    * const updatedUser = response.data;
    */
-  async updateProfile<P extends CurrentUserUpdateProfileParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<'update_profile', P>>> {
-    return this.axios.post<CurrentUserResponse<'update_profile', P>>(`${this.endpoint}/update_profile`, { ...params, ...extraParams }, { ...this.headers });
+  async updateProfile<
+    P extends CurrentUserUpdateProfileParameter,
+    EP extends ExtraParameter
+  >(
+    params: P,
+    extraParams: EP
+  ): Promise<AxiosResponse<CurrentUserResponse<"update_profile", P>>> {
+    return this.axios.post<CurrentUserResponse<"update_profile", P>>(
+      `${this.endpoint}/update_profile`,
+      { ...params, ...extraParams },
+      { ...this.headers }
+    );
   }
 
   /**
@@ -155,11 +197,14 @@ class CurrentUser {
    * });
    * const result = response.data;
    */
-  async changePassword<P extends CurrentUserChangePasswordParameter, EP extends ExtraParameter>(
+  async changePassword<
+    P extends CurrentUserChangePasswordParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams: EP
-  ): Promise<AxiosResponse<CurrentUserResponse<'change_password', P>>> {
-    return this.axios.post<CurrentUserResponse<'change_password', P>>(
+  ): Promise<AxiosResponse<CurrentUserResponse<"change_password", P>>> {
+    return this.axios.post<CurrentUserResponse<"change_password", P>>(
       `${this.endpoint}/change_password`,
       { ...params, ...extraParams },
       { ...this.headers }
@@ -182,11 +227,14 @@ class CurrentUser {
    * });
    * const result = response.data;
    */
-  async changeEmail<P extends CurrentUserChangeEmailParameter, EP extends ExtraParameter>(
+  async changeEmail<
+    P extends CurrentUserChangeEmailParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams: EP
-  ): Promise<AxiosResponse<CurrentUserResponse<'change_email', P>>> {
-    return this.axios.post<CurrentUserResponse<'change_email', P>>(
+  ): Promise<AxiosResponse<CurrentUserResponse<"change_email", P>>> {
+    return this.axios.post<CurrentUserResponse<"change_email", P>>(
       `${this.endpoint}/change_email`,
       { ...params, ...extraParams },
       { ...this.headers }
@@ -208,11 +256,14 @@ class CurrentUser {
    * });
    * const result = response.data;
    */
-  async verifyEmail<P extends CurrentUserVerifyEmailParameter, EP extends ExtraParameter>(
+  async verifyEmail<
+    P extends CurrentUserVerifyEmailParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams: EP
-  ): Promise<AxiosResponse<CurrentUserResponse<'verify_email', P>>> {
-    return this.axios.post<CurrentUserResponse<'verify_email', P>>(
+  ): Promise<AxiosResponse<CurrentUserResponse<"verify_email", P>>> {
+    return this.axios.post<CurrentUserResponse<"verify_email", P>>(
       `${this.endpoint}/verify_email`,
       { ...params, ...extraParams },
       { ...this.headers }
@@ -229,8 +280,10 @@ class CurrentUser {
    * const response = await sdk.currentUser.sendVerificationEmail();
    * const result = response.data;
    */
-  async sendVerificationEmail<P extends void>(): Promise<AxiosResponse<CurrentUserResponse<'send_verification_email', P>>> {
-    return this.axios.post<CurrentUserResponse<'send_verification_email', P>>(
+  async sendVerificationEmail<P extends void>(): Promise<
+    AxiosResponse<CurrentUserResponse<"send_verification_email", P>>
+  > {
+    return this.axios.post<CurrentUserResponse<"send_verification_email", P>>(
       `${this.endpoint}/send_verification_email`,
       null,
       { ...this.headers }
@@ -242,7 +295,9 @@ class CurrentUser {
    * Throws an error to indicate that this method should not be used.
    */
   async createStripeAccount() {
-    throw new Error('This API endpoint is DEPRECATED. Use /stripe_account/create instead!');
+    throw new Error(
+      "This API endpoint is DEPRECATED. Use /stripe_account/create instead!"
+    );
   }
 
   /**
@@ -250,7 +305,9 @@ class CurrentUser {
    * Throws an error to indicate that this method should not be used.
    */
   async updateStripeAccount() {
-    throw new Error('This API endpoint is DEPRECATED. Use /stripe_account/update instead!');
+    throw new Error(
+      "This API endpoint is DEPRECATED. Use /stripe_account/update instead!"
+    );
   }
 }
 

@@ -6,29 +6,29 @@
  * https://www.sharetribe.com/api-reference/marketplace.html
  */
 
-import SharetribeSdk from '../../sdk';
-import { AxiosInstance } from 'axios';
-import AvailabilityExceptions from './AvailabilityExceptions';
-import Listings from './Listings';
-import Bookings from './Bookings';
-import CurrentUser from './CurrentUser';
-import Images from './Images';
-import Marketplace from './Marketplace';
-import Messages from './Messages';
-import OwnListings from './OwnListings';
-import PasswordReset from './PasswordReset';
-import ProcessTransitions from './ProcessTransitions';
-import Reviews from './Reviews';
-import Stock from './Stock';
-import StockAdjustments from './StockAdjustments';
-import StripeAccount from './StripeAccount';
-import StripeAccountLinks from './StripeAccountLinks';
-import StripeCustomer from './StripeCustomer';
-import StripePersons from './StripePersons';
-import StripeSetupIntents from './StripeSetupIntents';
-import TimeSlots from './TimeSlots';
-import Transactions from './Transactions';
-import Users from './Users';
+import SharetribeSdk from "../../sdk";
+import { AxiosInstance } from "axios";
+import AvailabilityExceptions from "./AvailabilityExceptions";
+import Listings from "./Listings";
+import Bookings from "./Bookings";
+import CurrentUser from "./CurrentUser";
+import Images from "./Images";
+import Marketplace from "./Marketplace";
+import Messages from "./Messages";
+import OwnListings from "./OwnListings";
+import PasswordReset from "./PasswordReset";
+import ProcessTransitions from "./ProcessTransitions";
+import Reviews from "./Reviews";
+import Stock from "./Stock";
+import StockAdjustments from "./StockAdjustments";
+import StripeAccount from "./StripeAccount";
+import StripeAccountLinks from "./StripeAccountLinks";
+import StripeCustomer from "./StripeCustomer";
+import StripePersons from "./StripePersons";
+import StripeSetupIntents from "./StripeSetupIntents";
+import TimeSlots from "./TimeSlots";
+import Transactions from "./Transactions";
+import Users from "./Users";
 
 /**
  * Class representing the Sharetribe Marketplace API.

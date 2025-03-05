@@ -6,8 +6,8 @@
  * https://www.sharetribe.com/api-reference/integration.html#listings
  */
 
-import {AxiosInstance, AxiosResponse} from 'axios';
-import IntegrationApi from './index';
+import { AxiosInstance, AxiosResponse } from "axios";
+import IntegrationApi from "./index";
 import {
   ListingsApproveParameter,
   ListingsCloseParameter,
@@ -16,9 +16,9 @@ import {
   ListingsQueryParameter,
   ListingsResponse,
   ListingsShowParameter,
-  ListingsUpdateParameter
-} from '../../types/marketplace/listings';
-import { ExtraParameter } from '../../types/sharetribe';
+  ListingsUpdateParameter,
+} from "../../types/marketplace/listings";
+import { ExtraParameter } from "../../types/sharetribe";
 
 /**
  * Class representing the Listings API.
@@ -36,7 +36,7 @@ class Listings {
    * @param {IntegrationApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: IntegrationApi) {
-    this.endpoint = api.endpoint + '/listings';
+    this.endpoint = api.endpoint + "/listings";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -55,11 +55,16 @@ class Listings {
    *
    * const listing = response.data;
    */
-  async show<P extends ListingsShowParameter>(params: P): Promise<AxiosResponse<ListingsResponse<'show', P>>> {
-    return this.axios.get<ListingsResponse<'show', P>>(`${this.endpoint}/show`, {
-      ...this.headers,
-      params,
-    });
+  async show<P extends ListingsShowParameter>(
+    params: P
+  ): Promise<AxiosResponse<ListingsResponse<"show", P, undefined, true>>> {
+    return this.axios.get<ListingsResponse<"show", P, undefined, true>>(
+      `${this.endpoint}/show`,
+      {
+        ...this.headers,
+        params,
+      }
+    );
   }
 
   /**
@@ -78,11 +83,16 @@ class Listings {
    *
    * const listings = response.data;
    */
-  async query<P extends ListingsQueryParameter>(params: P): Promise<AxiosResponse<ListingsResponse<'query', P>>> {
-    return this.axios.get<ListingsResponse<'query', P>>(`${this.endpoint}/query`, {
-      ...this.headers,
-      params,
-    });
+  async query<P extends ListingsQueryParameter>(
+    params: P
+  ): Promise<AxiosResponse<ListingsResponse<"query", P, undefined, false>>> {
+    return this.axios.get<ListingsResponse<"query", P, undefined, false>>(
+      `${this.endpoint}/query`,
+      {
+        ...this.headers,
+        params,
+      }
+    );
   }
 
   /**
@@ -92,7 +102,7 @@ class Listings {
    * @template EP
    * @param {P & ListingsCreateParameter} params - Parameters for the new listing.
    * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<ListingsResponse<'create', P, EP>>} - A promise resolving to the created listing.
+   * @returns {Promise<ListingsResponse<'create', P, EP, true>>} - A promise resolving to the created listing.
    *
    * @example
    * const response = await integrationSdk.listings.create({
@@ -107,8 +117,12 @@ class Listings {
   async create<P extends ListingsCreateParameter, EP extends ExtraParameter>(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<ListingsResponse<'create', P, EP>>> {
-    return this.axios.post<ListingsResponse<'create', P, EP>>(`${this.endpoint}/create`, { ...params, ...extraParams }, {});
+  ): Promise<AxiosResponse<ListingsResponse<"create", P, EP, true>>> {
+    return this.axios.post<ListingsResponse<"create", P, EP, true>>(
+      `${this.endpoint}/create`,
+      { ...params, ...extraParams },
+      {}
+    );
   }
 
   /**
@@ -131,8 +145,12 @@ class Listings {
   async update<P extends ListingsUpdateParameter, EP extends ExtraParameter>(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<ListingsResponse<'update', P, EP>>> {
-    return this.axios.post<ListingsResponse<'update', P, EP>>(`${this.endpoint}/update`, { ...params, ...extraParams }, {});
+  ): Promise<AxiosResponse<ListingsResponse<"update", P, EP, true>>> {
+    return this.axios.post<ListingsResponse<"update", P, EP, true>>(
+      `${this.endpoint}/update`,
+      { ...params, ...extraParams },
+      {}
+    );
   }
 
   /**
@@ -154,8 +172,12 @@ class Listings {
   async close<P extends ListingsCloseParameter, EP extends ExtraParameter>(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<ListingsResponse<'close', P, EP>>> {
-    return this.axios.post<ListingsResponse<'close', P, EP>>(`${this.endpoint}/close`, { ...params, ...extraParams }, {});
+  ): Promise<AxiosResponse<ListingsResponse<"close", P, EP, true>>> {
+    return this.axios.post<ListingsResponse<"close", P, EP, true>>(
+      `${this.endpoint}/close`,
+      { ...params, ...extraParams },
+      {}
+    );
   }
 
   /**
@@ -177,8 +199,12 @@ class Listings {
   async open<P extends ListingsOpenParameter, EP extends ExtraParameter>(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<ListingsResponse<'open', P, EP>>> {
-    return this.axios.post<ListingsResponse<'open', P, EP>>(`${this.endpoint}/open`, { ...params, ...extraParams }, {});
+  ): Promise<AxiosResponse<ListingsResponse<"open", P, EP, true>>> {
+    return this.axios.post<ListingsResponse<"open", P, EP, true>>(
+      `${this.endpoint}/open`,
+      { ...params, ...extraParams },
+      {}
+    );
   }
 
   /**
@@ -200,8 +226,12 @@ class Listings {
   async approve<P extends ListingsApproveParameter, EP extends ExtraParameter>(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<ListingsResponse<'approve', P, EP>>> {
-    return this.axios.post<ListingsResponse<'approve', P, EP>>(`${this.endpoint}/approve`, { ...params, ...extraParams }, {});
+  ): Promise<AxiosResponse<ListingsResponse<"approve", P, EP, true>>> {
+    return this.axios.post<ListingsResponse<"approve", P, EP, true>>(
+      `${this.endpoint}/approve`,
+      { ...params, ...extraParams },
+      {}
+    );
   }
 }
 

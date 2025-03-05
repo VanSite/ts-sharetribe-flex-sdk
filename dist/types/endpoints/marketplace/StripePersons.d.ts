@@ -5,10 +5,10 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#stripe-persons
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { StripePersonsCreateParameter, StripePersonsResponse } from '../../types/marketplace/stripePersons';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { StripePersonsCreateParameter, StripePersonsResponse } from "../../types/marketplace/stripePersons";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Stripe Persons API.
  *
@@ -40,6 +40,7 @@ declare class StripePersons {
      * });
      * const personDetails = response.data;
      */
-    create<P extends StripePersonsCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripePersonsResponse<'create'>>>;
+    create<P extends StripePersonsCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripePersonsResponse<"create">>>;
 }
 export default StripePersons;
+//# sourceMappingURL=StripePersons.d.ts.map

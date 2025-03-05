@@ -5,10 +5,10 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#own-listings
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { OwnListingsAddImageParameter, OwnListingsCloseParameter, OwnListingsCreateDraftParameter, OwnListingsCreateParameter, OwnListingsDiscardDraftParameter, OwnListingsOpenParameter, OwnListingsPublishDraftParameter, OwnListingsQueryParameter, OwnListingsResponse, OwnListingsShowParameter, OwnListingsUpdateParameter } from '../../types/marketplace/ownListings';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { OwnListingsAddImageParameter, OwnListingsCloseParameter, OwnListingsCreateDraftParameter, OwnListingsCreateParameter, OwnListingsDiscardDraftParameter, OwnListingsOpenParameter, OwnListingsPublishDraftParameter, OwnListingsQueryParameter, OwnListingsResponse, OwnListingsShowParameter, OwnListingsUpdateParameter } from "../../types/marketplace/ownListings";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Own Listings API.
  *
@@ -36,7 +36,7 @@ declare class OwnListings {
      * const response = await sdk.ownListings.show({ id: 'listing-id' });
      * const listing = response.data;
      */
-    show<P extends OwnListingsShowParameter>(params: P): Promise<AxiosResponse<OwnListingsResponse<'show', P>>>;
+    show<P extends OwnListingsShowParameter>(params: P): Promise<AxiosResponse<OwnListingsResponse<"show", P>>>;
     /**
      * Queries the user's listings based on specified filters.
      *
@@ -48,7 +48,7 @@ declare class OwnListings {
      * const response = await sdk.ownListings.query({});
      * const listings = response.data;
      */
-    query<P extends OwnListingsQueryParameter>(params: P): Promise<AxiosResponse<OwnListingsResponse<'query', P>>>;
+    query<P extends OwnListingsQueryParameter>(params: P): Promise<AxiosResponse<OwnListingsResponse<"query", P>>>;
     /**
      * Creates a new listing.
      *
@@ -69,7 +69,7 @@ declare class OwnListings {
      *  });
      * const newListing = response.data;
      */
-    create<P extends OwnListingsCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<OwnListingsResponse<'create', P, EP>>>;
+    create<P extends OwnListingsCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<OwnListingsResponse<"create", P, EP>>>;
     /**
      * Creates a draft listing.
      *
@@ -86,7 +86,7 @@ declare class OwnListings {
      * });
      * const draft = response.data;
      */
-    createDraft<P extends OwnListingsCreateDraftParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<OwnListingsResponse<'createDraft', P, EP>>>;
+    createDraft<P extends OwnListingsCreateDraftParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<OwnListingsResponse<"createDraft", P, EP>>>;
     /**
      * Updates an existing listing.
      *
@@ -103,7 +103,7 @@ declare class OwnListings {
      * });
      * const updatedListing = response.data;
      */
-    update<P extends OwnListingsUpdateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<OwnListingsResponse<'update', P, EP>>>;
+    update<P extends OwnListingsUpdateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<OwnListingsResponse<"update", P, EP>>>;
     /**
      * Publishes a draft listing.
      *
@@ -119,7 +119,7 @@ declare class OwnListings {
      * });
      * const publishedListing = response.data;
      */
-    publishDraft<P extends OwnListingsPublishDraftParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<OwnListingsResponse<'publishDraft', P, EP>>>;
+    publishDraft<P extends OwnListingsPublishDraftParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<OwnListingsResponse<"publishDraft", P, EP>>>;
     /**
      * Discards a draft listing.
      *
@@ -131,7 +131,7 @@ declare class OwnListings {
      * const response = await sdk.ownListings.discardDraft({ id: 'draft-id' });
      * const result = response.data;
      */
-    discardDraft<P extends OwnListingsDiscardDraftParameter>(params: P): Promise<AxiosResponse<OwnListingsResponse<'discardDraft', P>>>;
+    discardDraft<P extends OwnListingsDiscardDraftParameter>(params: P): Promise<AxiosResponse<OwnListingsResponse<"discardDraft", P>>>;
     /**
      * Closes a listing.
      *
@@ -145,7 +145,7 @@ declare class OwnListings {
      * const response = await sdk.ownListings.close({ id: 'listing-id' });
      * const closedListing = response.data;
      */
-    close<P extends OwnListingsCloseParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<OwnListingsResponse<'close', P>>>;
+    close<P extends OwnListingsCloseParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<OwnListingsResponse<"close", P>>>;
     /**
      * Opens a listing.
      *
@@ -159,7 +159,7 @@ declare class OwnListings {
      * const response = await sdk.ownListings.open({ id: 'listing-id' });
      * const openedListing = response.data;
      */
-    open<P extends OwnListingsOpenParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<OwnListingsResponse<'open', P>>>;
+    open<P extends OwnListingsOpenParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<OwnListingsResponse<"open", P>>>;
     /**
      * Adds an image to a listing.
      *
@@ -175,6 +175,7 @@ declare class OwnListings {
      * });
      * const updatedListing = response.data;
      */
-    addImage<P extends OwnListingsAddImageParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<OwnListingsResponse<'addImage', P>>>;
+    addImage<P extends OwnListingsAddImageParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<OwnListingsResponse<"addImage", P>>>;
 }
 export default OwnListings;
+//# sourceMappingURL=OwnListings.d.ts.map

@@ -6,14 +6,14 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#password-reset
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
 import {
   PasswordResetRequestParams,
   PasswordResetResetParams,
   PasswordResetResponse,
-} from '../../types/marketplace/passwordReset';
-import { ExtraParameter } from '../../types/sharetribe';
+} from "../../types/marketplace/passwordReset";
+import { ExtraParameter } from "../../types/sharetribe";
 
 /**
  * Class representing the Password Reset API.
@@ -31,7 +31,7 @@ class PasswordReset {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/password_reset';
+    this.endpoint = api.endpoint + "/password_reset";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -51,11 +51,14 @@ class PasswordReset {
    * });
    * const result = response.data;
    */
-  async request<P extends PasswordResetRequestParams, EP extends ExtraParameter>(
+  async request<
+    P extends PasswordResetRequestParams,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<PasswordResetResponse<'request', EP>>> {
-    return this.axios.post<PasswordResetResponse<'request', EP>>(
+  ): Promise<AxiosResponse<PasswordResetResponse<"request", EP>>> {
+    return this.axios.post<PasswordResetResponse<"request", EP>>(
       `${this.endpoint}/request`,
       { ...params, ...extraParams },
       { headers: this.headers }
@@ -82,8 +85,8 @@ class PasswordReset {
   async reset<P extends PasswordResetResetParams, EP extends ExtraParameter>(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<PasswordResetResponse<'reset', EP>>> {
-    return this.axios.post<PasswordResetResponse<'reset', EP>>(
+  ): Promise<AxiosResponse<PasswordResetResponse<"reset", EP>>> {
+    return this.axios.post<PasswordResetResponse<"reset", EP>>(
       `${this.endpoint}/reset`,
       { ...params, ...extraParams },
       { headers: this.headers }

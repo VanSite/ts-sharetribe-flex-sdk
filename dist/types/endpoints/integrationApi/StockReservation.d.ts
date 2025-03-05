@@ -5,9 +5,9 @@
  * For more details, refer to the Integration API documentation:
  * https://www.sharetribe.com/api-reference/integration.html#stock-reservations
  */
-import { AxiosResponse } from 'axios';
-import IntegrationApi from './index';
-import { StockReservationShowParameter, StockReservationsResponse } from '../../types/marketplace/stockReservations';
+import { AxiosResponse } from "axios";
+import IntegrationApi from "./index";
+import { StockReservationShowParameter, StockReservationsResponse } from "../../types/marketplace/stockReservations";
 /**
  * Class representing the Stock Reservations API.
  *
@@ -37,6 +37,7 @@ declare class StockReservation {
      *
      * const reservationDetails = response.data;
      */
-    show<P extends StockReservationShowParameter>(params: P): Promise<AxiosResponse<StockReservationsResponse<'show', P>>>;
+    show<P extends StockReservationShowParameter>(params: P): Promise<AxiosResponse<StockReservationsResponse<"show", P>>>;
 }
 export default StockReservation;
+//# sourceMappingURL=StockReservation.d.ts.map

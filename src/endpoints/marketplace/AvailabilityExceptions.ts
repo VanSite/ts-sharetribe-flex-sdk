@@ -6,15 +6,15 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#availability-exceptions
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
 import {
   AvailabilityExceptionsCreateParameter,
   AvailabilityExceptionsDeleteParameter,
   AvailabilityExceptionsQueryParameter,
   AvailabilityExceptionsResponse,
-} from '../../types/marketplace/availabilityExceptions';
-import { ExtraParameter } from '../../types/sharetribe';
+} from "../../types/marketplace/availabilityExceptions";
+import { ExtraParameter } from "../../types/sharetribe";
 
 /**
  * Class representing the AvailabilityExceptions API.
@@ -33,7 +33,7 @@ class AvailabilityExceptions {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/availability_exceptions';
+    this.endpoint = api.endpoint + "/availability_exceptions";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -56,11 +56,14 @@ class AvailabilityExceptions {
    */
   async query<P extends AvailabilityExceptionsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<AvailabilityExceptionsResponse<'query', P>>> {
-    return this.axios.get<AvailabilityExceptionsResponse<'query', P>>(`${this.endpoint}/query`, {
-      headers: this.headers,
-      params,
-    });
+  ): Promise<AxiosResponse<AvailabilityExceptionsResponse<"query", P>>> {
+    return this.axios.get<AvailabilityExceptionsResponse<"query", P>>(
+      `${this.endpoint}/query`,
+      {
+        headers: this.headers,
+        params,
+      }
+    );
   }
 
   /**
@@ -82,11 +85,14 @@ class AvailabilityExceptions {
    *
    * const newException = response.data;
    */
-  async create<P extends AvailabilityExceptionsCreateParameter, EP extends ExtraParameter>(
+  async create<
+    P extends AvailabilityExceptionsCreateParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<AvailabilityExceptionsResponse<'create', P, EP>>> {
-    return this.axios.post<AvailabilityExceptionsResponse<'create', P, EP>>(
+  ): Promise<AxiosResponse<AvailabilityExceptionsResponse<"create", P, EP>>> {
+    return this.axios.post<AvailabilityExceptionsResponse<"create", P, EP>>(
       `${this.endpoint}/create`,
       { ...params, ...extraParams },
       { headers: this.headers }
@@ -109,11 +115,14 @@ class AvailabilityExceptions {
    *
    * const deletionResult = response.data;
    */
-  async delete<P extends AvailabilityExceptionsDeleteParameter, EP extends ExtraParameter>(
+  async delete<
+    P extends AvailabilityExceptionsDeleteParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<AvailabilityExceptionsResponse<'delete', P, EP>>> {
-    return this.axios.post<AvailabilityExceptionsResponse<'delete', P, EP>>(
+  ): Promise<AxiosResponse<AvailabilityExceptionsResponse<"delete", P, EP>>> {
+    return this.axios.post<AvailabilityExceptionsResponse<"delete", P, EP>>(
       `${this.endpoint}/delete`,
       { ...params, ...extraParams },
       { headers: this.headers }

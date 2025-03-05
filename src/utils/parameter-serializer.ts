@@ -1,8 +1,8 @@
-import UUID from '../sdkTypes/UUID';
-import LatLng from '../sdkTypes/LatLng';
-import LatLngBounds from '../sdkTypes/LatLngBounds';
+import UUID from "../sdkTypes/UUID";
+import LatLng from "../sdkTypes/LatLng";
+import LatLngBounds from "../sdkTypes/LatLngBounds";
 
-const UNKNOWN_TYPE = 'unknown-type';
+const UNKNOWN_TYPE = "unknown-type";
 
 /**
  * Serializes a value into a string representation for URL query parameters.
@@ -32,7 +32,7 @@ export const serializeValue = (value: any) => {
     v = value.toISOString();
   } else if (value === null) {
     v = value;
-  } else if (typeof value !== 'object') {
+  } else if (typeof value !== "object") {
     v = value;
   } else {
     throw new Error(UNKNOWN_TYPE);

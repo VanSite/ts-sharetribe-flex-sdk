@@ -5,9 +5,9 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#bookings
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { BookingsQueryParameter, BookingsResponse } from '../../types/marketplace/bookings';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { BookingsQueryParameter, BookingsResponse } from "../../types/marketplace/bookings";
 /**
  * Class representing the Bookings API.
  *
@@ -39,6 +39,7 @@ declare class Bookings {
      *
      * const bookings = response.data;
      */
-    query<P extends BookingsQueryParameter>(params: P): Promise<AxiosResponse<BookingsResponse<'query', P>>>;
+    query<P extends BookingsQueryParameter>(params: P): Promise<AxiosResponse<BookingsResponse<"query", P>>>;
 }
 export default Bookings;
+//# sourceMappingURL=Bookings.d.ts.map

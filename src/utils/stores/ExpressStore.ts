@@ -1,6 +1,7 @@
-import { Request, Response } from 'express';
-import { generateKey } from './store';
-import { AuthToken, TokenStore } from '../../types/store';
+import { Request, Response } from "express";
+import { generateKey } from "./store";
+import { TokenStore } from "../../types/store";
+import { AuthToken } from "../../types/authentication";
 
 /**
  * Configuration options for the `ExpressStore`.
@@ -17,7 +18,7 @@ export type ExpressStoreOptions = {
  */
 class ExpressStore implements TokenStore {
   expiration: number = 180; // Default cookie expiration in days
-  private namespace: string = 'st'; // Namespace for cookie keys
+  private namespace: string = "st"; // Namespace for cookie keys
   private key: string; // Generated key for the cookie
   private secure: boolean | undefined; // Indicates if cookies should be marked as secure
   private req: Request; // Reference to the Express request object

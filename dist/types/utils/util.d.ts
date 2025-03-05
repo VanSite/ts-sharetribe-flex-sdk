@@ -9,5 +9,5 @@ type ObjectQueryStringParam = Record<string, any>;
  * @returns {string} A semicolon-separated query string.
  */
 export declare const objectQueryString: (obj: ObjectQueryStringParam) => string;
-export declare const transitToJson: (transitString: string) => any;
 export {};
+//# sourceMappingURL=util.d.ts.map

@@ -3,15 +3,15 @@
  * These types define the structure for marketplace parameters, attributes, and responses.
  */
 
-import { UUID } from '../sharetribe';
+import { UUID } from "../sharetribe";
 
 // Supported API endpoints for marketplace operations.
-export type MarketplaceEndpoints = 'show';
+export type MarketplaceEndpoints = "show";
 
 // Base structure for a marketplace.
 export interface Marketplace {
   id: UUID;
-  type: 'marketplace';
+  type: "marketplace";
   attributes: {
     name: string;
     description: string;
@@ -22,13 +22,11 @@ export interface Marketplace {
 export type MarketplaceType = Marketplace;
 
 // Mapping of data types for marketplace responses.
-type DataType<
-  E extends MarketplaceEndpoints
-> = E extends 'show' ? MarketplaceType : never;
+type DataType<E extends MarketplaceEndpoints> = E extends "show"
+  ? MarketplaceType
+  : never;
 
 // Response structure for marketplace operations.
-export type MarketplaceResponse<
-  E extends MarketplaceEndpoints
-> = {
+export type MarketplaceResponse<E extends MarketplaceEndpoints> = {
   data: DataType<E>;
 };

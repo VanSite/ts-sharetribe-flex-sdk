@@ -5,10 +5,10 @@
  * For more details, refer to the Integration API documentation:
  * https://www.sharetribe.com/api-reference/integration.html#images
  */
-import { AxiosResponse } from 'axios';
-import IntegrationApi from './index';
-import { ImagesResponse, ImagesUploadParameter } from '../../types/marketplace/images';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import IntegrationApi from "./index";
+import { ImagesResponse, ImagesUploadParameter } from "../../types/marketplace/images";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Images API.
  *
@@ -42,6 +42,7 @@ declare class Images {
      * // Access the uploaded image details
      * const imageDetails = response.data;
      */
-    upload<P extends ImagesUploadParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<ImagesResponse<'upload', EP>>>;
+    upload<P extends ImagesUploadParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<ImagesResponse<"upload", EP>>>;
 }
 export default Images;
+//# sourceMappingURL=Images.d.ts.map

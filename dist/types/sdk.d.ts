@@ -1,31 +1,31 @@
-import { SdkConfig } from './types/config';
-import { ApiConfigs } from './types/apiConfigs';
-import { AxiosInstance, AxiosResponse } from 'axios';
+import { SdkConfig } from "./types/config";
+import { ApiConfigs } from "./types/apiConfigs";
+import { AxiosInstance, AxiosResponse } from "axios";
 import AuthenticationApi from "./endpoints/auth";
-import MarketplaceApi from './endpoints/marketplace';
-import Listings from './endpoints/marketplace/Listings';
-import AvailabilityExceptions from './endpoints/marketplace/AvailabilityExceptions';
-import Bookings from './endpoints/marketplace/Bookings';
-import CurrentUser from './endpoints/marketplace/CurrentUser';
-import Images from './endpoints/marketplace/Images';
-import Marketplace from './endpoints/marketplace/Marketplace';
-import Messages from './endpoints/marketplace/Messages';
-import OwnListings from './endpoints/marketplace/OwnListings';
-import PasswordReset from './endpoints/marketplace/PasswordReset';
-import ProcessTransitions from './endpoints/marketplace/ProcessTransitions';
-import Reviews from './endpoints/marketplace/Reviews';
-import Stock from './endpoints/marketplace/Stock';
-import StockAdjustments from './endpoints/marketplace/StockAdjustments';
-import StripeAccount from './endpoints/marketplace/StripeAccount';
-import StripeAccountLinks from './endpoints/marketplace/StripeAccountLinks';
-import StripeCustomer from './endpoints/marketplace/StripeCustomer';
-import StripePersons from './endpoints/marketplace/StripePersons';
-import StripeSetupIntents from './endpoints/marketplace/StripeSetupIntents';
-import TimeSlots from './endpoints/marketplace/TimeSlots';
-import Transactions from './endpoints/marketplace/Transactions';
-import Users from './endpoints/marketplace/Users';
-import { AuthInfoResponse, LoginParameter, LoginWithIdpParameter, RevokeResponse, TokenResponse } from './types/authentication';
-import AssetsApi from './endpoints/assets';
+import MarketplaceApi from "./endpoints/marketplace";
+import Listings from "./endpoints/marketplace/Listings";
+import AvailabilityExceptions from "./endpoints/marketplace/AvailabilityExceptions";
+import Bookings from "./endpoints/marketplace/Bookings";
+import CurrentUser from "./endpoints/marketplace/CurrentUser";
+import Images from "./endpoints/marketplace/Images";
+import Marketplace from "./endpoints/marketplace/Marketplace";
+import Messages from "./endpoints/marketplace/Messages";
+import OwnListings from "./endpoints/marketplace/OwnListings";
+import PasswordReset from "./endpoints/marketplace/PasswordReset";
+import ProcessTransitions from "./endpoints/marketplace/ProcessTransitions";
+import Reviews from "./endpoints/marketplace/Reviews";
+import Stock from "./endpoints/marketplace/Stock";
+import StockAdjustments from "./endpoints/marketplace/StockAdjustments";
+import StripeAccount from "./endpoints/marketplace/StripeAccount";
+import StripeAccountLinks from "./endpoints/marketplace/StripeAccountLinks";
+import StripeCustomer from "./endpoints/marketplace/StripeCustomer";
+import StripePersons from "./endpoints/marketplace/StripePersons";
+import StripeSetupIntents from "./endpoints/marketplace/StripeSetupIntents";
+import TimeSlots from "./endpoints/marketplace/TimeSlots";
+import Transactions from "./endpoints/marketplace/Transactions";
+import Users from "./endpoints/marketplace/Users";
+import { AuthInfoResponse, LoginParameter, LoginParameterType, LoginWithIdpParameter, RevokeResponse, TokenResponse } from "./types/authentication";
+import AssetsApi from "./endpoints/assets";
 declare class SharetribeSdk {
     /**
      * The SDK configuration object.
@@ -149,13 +149,13 @@ declare class SharetribeSdk {
      * @type {Users} */
     users: Users;
     /** @type {AssetsApi['assetByAlias']} */
-    assetByAlias: AssetsApi['assetByAlias'];
+    assetByAlias: AssetsApi["assetByAlias"];
     /** @type {AssetsApi['assetsByAlias']} */
-    assetsByAlias: AssetsApi['assetsByAlias'];
+    assetsByAlias: AssetsApi["assetsByAlias"];
     /** @type {AssetsApi['assetByVersion']} */
-    assetByVersion: AssetsApi['assetByVersion'];
+    assetByVersion: AssetsApi["assetByVersion"];
     /** @type {AssetsApi['assetsByVersion']} */
-    assetsByVersion: AssetsApi['assetsByVersion'];
+    assetsByVersion: AssetsApi["assetsByVersion"];
     /**
      * Creates an instance of the Sharetribe SDK.
      *
@@ -170,7 +170,15 @@ declare class SharetribeSdk {
      * @param {LoginParameter} params - The login parameters.
      * @returns {Promise<AuthToken>} - The authentication token.
      */
-    login(params: LoginParameter): Promise<AxiosResponse<TokenResponse<"user">>>;
+    login<T extends LoginParameterType>(params: LoginParameter<T>): Promise<AxiosResponse<TokenResponse<"user">>>;
+    /**
+     * Logs in the marketplace operator as the marketplace user and returns a Promise
+     *
+     * @async
+     * @param {LoginAsParameter} params - The login parameters.
+     * @returns {Promise<AuthToken>} - The authentication token.
+     */
+    loginAs(params: LoginParameter<"auth_code">): Promise<AxiosResponse<TokenResponse<"user">>>;
     /**
      * Logs in a user using an identity provider (IDP).
      *
@@ -202,3 +210,4 @@ declare class SharetribeSdk {
     authInfo(): Promise<AuthInfoResponse>;
 }
 export default SharetribeSdk;
+//# sourceMappingURL=sdk.d.ts.map

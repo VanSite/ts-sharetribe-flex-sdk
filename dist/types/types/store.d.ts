@@ -1,17 +1,8 @@
+import { AuthToken } from "./authentication";
 /**
  * Represents the possible scopes for authentication tokens.
  */
 type Scope = "public-read" | "trusted:user" | "user" | "integ";
-/**
- * Represents an authentication token used for API requests.
- */
-export interface AuthToken {
-    access_token: string;
-    token_type: "bearer";
-    expires_in: number;
-    scope?: Scope;
-    refresh_token?: string;
-}
 /**
  * Interface for managing authentication tokens in a store.
  */
@@ -40,3 +31,4 @@ export interface TokenStore {
     removeToken: () => void;
 }
 export {};
+//# sourceMappingURL=store.d.ts.map

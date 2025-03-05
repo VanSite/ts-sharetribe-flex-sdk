@@ -6,9 +6,9 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#marketplace
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { MarketplaceResponse } from '../../types/marketplace/marketplace';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { MarketplaceResponse } from "../../types/marketplace/marketplace";
 
 /**
  * Class representing the Marketplace API.
@@ -26,7 +26,7 @@ class Marketplace {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/marketplace';
+    this.endpoint = api.endpoint + "/marketplace";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -40,10 +40,13 @@ class Marketplace {
    * const response = await sdk.marketplace.show();
    * const marketplaceDetails = response.data;
    */
-  async show(): Promise<AxiosResponse<MarketplaceResponse<'show'>>> {
-    return this.axios.get<MarketplaceResponse<'show'>>(`${this.endpoint}/show`, {
-      headers: this.headers,
-    });
+  async show(): Promise<AxiosResponse<MarketplaceResponse<"show">>> {
+    return this.axios.get<MarketplaceResponse<"show">>(
+      `${this.endpoint}/show`,
+      {
+        headers: this.headers,
+      }
+    );
   }
 }
 

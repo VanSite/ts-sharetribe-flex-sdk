@@ -6,9 +6,12 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#time-slots
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { TimeSlotsQueryParameter, TimeSlotsResponse } from '../../types/marketplace/timeSlots';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import {
+  TimeSlotsQueryParameter,
+  TimeSlotsResponse,
+} from "../../types/marketplace/timeSlots";
 
 /**
  * Class representing the Time Slots API.
@@ -26,7 +29,7 @@ class TimeSlots {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/timeslots';
+    this.endpoint = api.endpoint + "/timeslots";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -48,11 +51,14 @@ class TimeSlots {
    */
   async query<P extends TimeSlotsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<TimeSlotsResponse<'query'>>> {
-    return this.axios.get<TimeSlotsResponse<'query'>>(`${this.endpoint}/query`, {
-      headers: this.headers,
-      params,
-    });
+  ): Promise<AxiosResponse<TimeSlotsResponse<"query">>> {
+    return this.axios.get<TimeSlotsResponse<"query">>(
+      `${this.endpoint}/query`,
+      {
+        headers: this.headers,
+        params,
+      }
+    );
   }
 }
 

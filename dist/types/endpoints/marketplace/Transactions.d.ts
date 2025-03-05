@@ -5,10 +5,10 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#transactions
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { TransactionsInitiateParameter, TransactionsInitiateSpeculativeParameter, TransactionsQueryParameter, TransactionsResponse, TransactionsShowParameter, TransactionsTransitionParameter, TransactionsTransitionSpeculativeParameter } from '../../types/marketplace/transaction';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { TransactionsInitiateParameter, TransactionsInitiateSpeculativeParameter, TransactionsQueryParameter, TransactionsResponse, TransactionsShowParameter, TransactionsTransitionParameter, TransactionsTransitionSpeculativeParameter } from "../../types/marketplace/transactions";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Transactions API.
  *
@@ -36,7 +36,7 @@ declare class Transactions {
      * const response = await sdk.transactions.show({ id: 'transaction-id' });
      * const transactionDetails = response.data;
      */
-    show<P extends TransactionsShowParameter>(params: P): Promise<AxiosResponse<TransactionsResponse<'show', P>>>;
+    show<P extends TransactionsShowParameter>(params: P): Promise<AxiosResponse<TransactionsResponse<"show", P>>>;
     /**
      * Queries transactions based on specified filters.
      *
@@ -48,7 +48,7 @@ declare class Transactions {
      * const response = await sdk.transactions.query({ perPage: 10 });
      * const transactions = response.data;
      */
-    query<P extends TransactionsQueryParameter>(params: P): Promise<AxiosResponse<TransactionsResponse<'query', P>>>;
+    query<P extends TransactionsQueryParameter>(params: P): Promise<AxiosResponse<TransactionsResponse<"query", P>>>;
     /**
      * Initiates a new transaction.
      *
@@ -66,7 +66,7 @@ declare class Transactions {
      * });
      * const initiatedTransaction = response.data;
      */
-    initiate<P extends TransactionsInitiateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<TransactionsResponse<'initiate', P, EP>>>;
+    initiate<P extends TransactionsInitiateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<TransactionsResponse<"initiate", P, EP>>>;
     /**
      * Initiates a speculative transaction.
      *
@@ -84,7 +84,7 @@ declare class Transactions {
      * });
      * const speculativeTransaction = response.data;
      */
-    initiateSpeculative<P extends TransactionsInitiateSpeculativeParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<TransactionsResponse<'initiateSpeculative', P, EP>>>;
+    initiateSpeculative<P extends TransactionsInitiateSpeculativeParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<TransactionsResponse<"initiateSpeculative", P, EP>>>;
     /**
      * Transitions an existing transaction.
      *
@@ -102,7 +102,7 @@ declare class Transactions {
      * });
      * const transitionedTransaction = response.data;
      */
-    transition<P extends TransactionsTransitionParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<TransactionsResponse<'transition', P, EP>>>;
+    transition<P extends TransactionsTransitionParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<TransactionsResponse<"transition", P, EP>>>;
     /**
      * Transitions a speculative transaction.
      *
@@ -120,6 +120,7 @@ declare class Transactions {
      * });
      * const speculativeTransitionedTransaction = response.data;
      */
-    transitionSpeculative<P extends TransactionsTransitionSpeculativeParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<TransactionsResponse<'transitionSpeculative', P, EP>>>;
+    transitionSpeculative<P extends TransactionsTransitionSpeculativeParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<TransactionsResponse<"transitionSpeculative", P, EP>>>;
 }
 export default Transactions;
+//# sourceMappingURL=Transactions.d.ts.map

@@ -1,5 +1,6 @@
-import { Request, Response } from 'express';
-import { AuthToken, TokenStore } from '../../types/store';
+import { Request, Response } from "express";
+import { TokenStore } from "../../types/store";
+import { AuthToken } from "../../types/authentication";
 /**
  * Configuration options for the `ExpressStore`.
  */
@@ -46,3 +47,4 @@ declare class ExpressStore implements TokenStore {
     removeToken(): void;
 }
 export default ExpressStore;
+//# sourceMappingURL=ExpressStore.d.ts.map

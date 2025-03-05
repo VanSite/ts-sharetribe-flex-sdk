@@ -5,9 +5,9 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#marketplace
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { MarketplaceResponse } from '../../types/marketplace/marketplace';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { MarketplaceResponse } from "../../types/marketplace/marketplace";
 /**
  * Class representing the Marketplace API.
  *
@@ -32,6 +32,7 @@ declare class Marketplace {
      * const response = await sdk.marketplace.show();
      * const marketplaceDetails = response.data;
      */
-    show(): Promise<AxiosResponse<MarketplaceResponse<'show'>>>;
+    show(): Promise<AxiosResponse<MarketplaceResponse<"show">>>;
 }
 export default Marketplace;
+//# sourceMappingURL=Marketplace.d.ts.map

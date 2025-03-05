@@ -5,9 +5,9 @@
  * For more details, refer to the Integration API documentation:
  * https://www.sharetribe.com/api-reference/integration.html#users
  */
-import { AxiosResponse } from 'axios';
-import IntegrationApi from './index';
-import { UsersApproveParameter, UsersQueryParameter, UsersResponse, UsersShowParameter, UsersUpdatePermissionsParameter, UsersUpdateProfileParameter } from '../../types/marketplace/user';
+import { AxiosResponse } from "axios";
+import IntegrationApi from "./index";
+import { UsersApproveParameter, UsersQueryParameter, UsersResponse, UsersShowParameter, UsersUpdatePermissionsParameter, UsersUpdateProfileParameter } from "../../types/marketplace/user";
 import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Users API.
@@ -38,7 +38,7 @@ declare class Users {
      *
      * const userDetails = response.data;
      */
-    show<P extends UsersShowParameter<true>>(params: P): Promise<AxiosResponse<UsersResponse<'show', P>>>;
+    show<P extends UsersShowParameter<true>>(params: P): Promise<AxiosResponse<UsersResponse<"show", P>>>;
     /**
      * Queries users based on specified filters.
      *
@@ -52,7 +52,7 @@ declare class Users {
      * });
      * const users = response.data;
      */
-    query<P extends UsersQueryParameter>(params: P): Promise<AxiosResponse<UsersResponse<'query', P>>>;
+    query<P extends UsersQueryParameter>(params: P): Promise<AxiosResponse<UsersResponse<"query", P>>>;
     /**
      * Updates a user's profile.
      *
@@ -71,7 +71,7 @@ declare class Users {
      * });
      * const updatedProfile = response.data;
      */
-    updateProfile<P extends UsersUpdateProfileParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<UsersResponse<'updateProfile', P, EP>>>;
+    updateProfile<P extends UsersUpdateProfileParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<UsersResponse<"updateProfile", P, EP>>>;
     /**
      * Approves a user.
      *
@@ -85,7 +85,7 @@ declare class Users {
      * const response = await integrationSdk.users.approve({ id: 'user-id' });
      * const approvalResult = response.data;
      */
-    approve<P extends UsersApproveParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<UsersResponse<'approve', P, EP>>>;
+    approve<P extends UsersApproveParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<UsersResponse<"approve", P, EP>>>;
     /**
      * Updates a user's permissions.
      *
@@ -102,6 +102,7 @@ declare class Users {
      * );
      * const updatedPermissions = response.data;
      */
-    updatePermissions<P extends UsersUpdatePermissionsParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<UsersResponse<'updatePermissions', P, EP>>>;
+    updatePermissions<P extends UsersUpdatePermissionsParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<UsersResponse<"updatePermissions", P, EP>>>;
 }
 export default Users;
+//# sourceMappingURL=Users.d.ts.map

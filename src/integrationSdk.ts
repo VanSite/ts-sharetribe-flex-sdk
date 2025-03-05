@@ -1,9 +1,12 @@
-import {SdkConfig} from './types/config';
-import axios, { AxiosInstance } from 'axios';
-import {ApiConfigs} from "./types/apiConfigs";
+import { SdkConfig } from "./types/config";
+import axios, { AxiosInstance } from "axios";
+import { ApiConfigs } from "./types/apiConfigs";
 import IntegrationApi from "./endpoints/integrationApi";
-import {createApisConfigs} from "./utils/apis";
-import prepareAxiosInstance from "./utils/prepare-axios-instance";
+import { createApisConfigs } from "./utils/apis";
+import {
+  prepareAxiosInstance,
+  createAxiosConfig,
+} from "./utils/prepare-axios-instance";
 import AuthenticationApi from "./endpoints/auth";
 import AvailabilityExceptions from "./endpoints/integrationApi/AvailabilityExceptions";
 import Events from "./endpoints/integrationApi/Events";
@@ -15,14 +18,14 @@ import StockAdjustments from "./endpoints/integrationApi/StockAdjustments";
 import StockReservation from "./endpoints/integrationApi/StockReservation";
 import Transactions from "./endpoints/integrationApi/Transactions";
 import Users from "./endpoints/integrationApi/Users";
-import {DefaultSdkConfig} from "./utils/config";
+import { DefaultSdkConfig } from "./utils/config";
 
 /**
  * The main Sharetribe Integration SDK for interacting with the Sharetribe Integration API.
  *
  * @class
  */
-class SharetribeIntegrationSdk {
+class IntegrationSdk {
   /**
    * Configuration for the SDK.
    *
@@ -143,9 +146,13 @@ class SharetribeIntegrationSdk {
     };
 
     this.apisConfigs = createApisConfigs(true);
-    this.axios = axios.create({
-      baseURL: `${this.sdkConfig.baseUrl}/${this.sdkConfig.version}/`,
-    });
+    this.axios = axios.create(
+      createAxiosConfig(this, {
+        baseURL: `${this.sdkConfig.baseUrl}/${this.sdkConfig.version}/`,
+        httpAgent: this.sdkConfig.httpAgent,
+        httpsAgent: this.sdkConfig.httpsAgent,
+      })
+    );
     prepareAxiosInstance(this);
 
     this.auth = new AuthenticationApi(this);
@@ -165,5 +172,4 @@ class SharetribeIntegrationSdk {
   }
 }
 
-export default SharetribeIntegrationSdk;
-
+export default IntegrationSdk;

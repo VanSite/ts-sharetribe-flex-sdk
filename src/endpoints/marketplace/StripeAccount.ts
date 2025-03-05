@@ -6,14 +6,14 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#stripe-account
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
 import {
   StripeAccountCreateParameter,
   StripeAccountResponse,
   StripeAccountUpdateParameter,
-} from '../../types/marketplace/stripeAccount';
-import { ExtraParameter } from '../../types/sharetribe';
+} from "../../types/marketplace/stripeAccount";
+import { ExtraParameter } from "../../types/sharetribe";
 
 /**
  * Class representing the Stripe Account API.
@@ -32,7 +32,7 @@ class StripeAccount {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/stripe_account';
+    this.endpoint = api.endpoint + "/stripe_account";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -46,10 +46,13 @@ class StripeAccount {
    * const response = await sdk.stripeAccount.fetch();
    * const stripeAccountDetails = response.data;
    */
-  async fetch(): Promise<AxiosResponse<StripeAccountResponse<'fetch'>>> {
-    return this.axios.get<StripeAccountResponse<'fetch'>>(`${this.endpoint}/fetch`, {
-      headers: this.headers,
-    });
+  async fetch(): Promise<AxiosResponse<StripeAccountResponse<"fetch">>> {
+    return this.axios.get<StripeAccountResponse<"fetch">>(
+      `${this.endpoint}/fetch`,
+      {
+        headers: this.headers,
+      }
+    );
   }
 
   /**
@@ -73,11 +76,14 @@ class StripeAccount {
    * });
    * const createdStripeAccount = response.data;
    */
-  async create<P extends StripeAccountCreateParameter, EP extends ExtraParameter>(
+  async create<
+    P extends StripeAccountCreateParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StripeAccountResponse<'create', EP>>> {
-    return this.axios.post<StripeAccountResponse<'create', EP>>(
+  ): Promise<AxiosResponse<StripeAccountResponse<"create", EP>>> {
+    return this.axios.post<StripeAccountResponse<"create", EP>>(
       `${this.endpoint}/create`,
       { ...params, ...extraParams },
       { headers: this.headers }
@@ -99,11 +105,14 @@ class StripeAccount {
    * });
    * const updatedStripeAccount = response.data;
    */
-  async update<P extends StripeAccountUpdateParameter, EP extends ExtraParameter>(
+  async update<
+    P extends StripeAccountUpdateParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StripeAccountResponse<'update', EP>>> {
-    return this.axios.post<StripeAccountResponse<'update', EP>>(
+  ): Promise<AxiosResponse<StripeAccountResponse<"update", EP>>> {
+    return this.axios.post<StripeAccountResponse<"update", EP>>(
       `${this.endpoint}/update`,
       { ...params, ...extraParams },
       { headers: this.headers }

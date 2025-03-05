@@ -6,13 +6,13 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#create-stripe-person
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
 import {
   StripeSetupIntentsCreateParameter,
   StripeSetupIntentsResponse,
-} from '../../types/marketplace/stripeSetupIntents';
-import { ExtraParameter } from '../../types/sharetribe';
+} from "../../types/marketplace/stripeSetupIntents";
+import { ExtraParameter } from "../../types/sharetribe";
 
 /**
  * Class representing the Stripe Setup Intents API.
@@ -30,7 +30,7 @@ class StripeSetupIntents {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/stripe_setup_intents';
+    this.endpoint = api.endpoint + "/stripe_setup_intents";
     this.axios = api.axios;
   }
 
@@ -47,11 +47,14 @@ class StripeSetupIntents {
    * const response = await sdk.stripeSetupIntents.create({});
    * const setupIntentDetails = response.data;
    */
-  async create<P extends StripeSetupIntentsCreateParameter, EP extends ExtraParameter>(
+  async create<
+    P extends StripeSetupIntentsCreateParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StripeSetupIntentsResponse<'create'>>> {
-    return this.axios.post<StripeSetupIntentsResponse<'create'>>(
+  ): Promise<AxiosResponse<StripeSetupIntentsResponse<"create">>> {
+    return this.axios.post<StripeSetupIntentsResponse<"create">>(
       `${this.endpoint}/create`,
       { ...params, ...extraParams }
     );

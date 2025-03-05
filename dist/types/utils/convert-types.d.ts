@@ -1,8 +1,8 @@
-import Money from '../sdkTypes/Money';
-import LatLng from '../sdkTypes/LatLng';
-import LatLngBounds from '../sdkTypes/LatLngBounds';
-import UUID from '../sdkTypes/UUID';
-import SharetribeSdk from '../sdk';
+import Money from "../sdkTypes/Money";
+import LatLng from "../sdkTypes/LatLng";
+import LatLngBounds from "../sdkTypes/LatLngBounds";
+import UUID from "../sdkTypes/UUID";
+import SharetribeSdk from "../sdk";
 import IntegrationSdk from "../integrationSdk";
 import BigDecimal from "../sdkTypes/BigDecimal";
 /**
@@ -108,9 +108,10 @@ export declare function recursiveApplyHandler(value: {
  */
 export declare function dataToType(data: any, sdk: SharetribeSdk | IntegrationSdk): void;
 /**
- * Converts SDK-compatible types into plain data, applying type handlers if configured.
+ * Converts SDK types into raw data, applying type handlers if configured.
  *
- * @param {Object} data - The SDK-compatible data to convert.
+ * @param {Object} data - The data containing SDK types to convert.
  * @param {SharetribeSdk|IntegrationSdk} sdk - The SDK instance to use.
  */
 export declare function typeToData(data: any, sdk: SharetribeSdk | IntegrationSdk): void;
+//# sourceMappingURL=convert-types.d.ts.map

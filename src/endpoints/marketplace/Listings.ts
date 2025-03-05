@@ -6,9 +6,13 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#listings
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { ListingsShowParameter, ListingsResponse, ListingsQueryParameter } from '../../types/marketplace/listings';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import {
+  ListingsShowParameter,
+  ListingsResponse,
+  ListingsQueryParameter,
+} from "../../types/marketplace/listings";
 
 /**
  * Class representing the Listings API.
@@ -26,7 +30,7 @@ class Listings {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/listings';
+    this.endpoint = api.endpoint + "/listings";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -44,11 +48,14 @@ class Listings {
    */
   async show<P extends ListingsShowParameter>(
     params: P
-  ): Promise<AxiosResponse<ListingsResponse<'show', P>>> {
-    return this.axios.get<ListingsResponse<'show', P>>(`${this.endpoint}/show`, {
-      headers: this.headers,
-      params,
-    });
+  ): Promise<AxiosResponse<ListingsResponse<"show", P>>> {
+    return this.axios.get<ListingsResponse<"show", P>>(
+      `${this.endpoint}/show`,
+      {
+        headers: this.headers,
+        params,
+      }
+    );
   }
 
   /**
@@ -64,11 +71,14 @@ class Listings {
    */
   async query<P extends ListingsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<ListingsResponse<'query', P>>> {
-    return this.axios.get<ListingsResponse<'query', P>>(`${this.endpoint}/query`, {
-      headers: this.headers,
-      params,
-    });
+  ): Promise<AxiosResponse<ListingsResponse<"query", P>>> {
+    return this.axios.get<ListingsResponse<"query", P>>(
+      `${this.endpoint}/query`,
+      {
+        headers: this.headers,
+        params,
+      }
+    );
   }
 }
 

@@ -2,11 +2,13 @@
  * @fileoverview Provides the LatLngBounds class for representing geographical bounding boxes.
  * This class encapsulates a northeast (NE) and southwest (SW) pair of coordinates to define a rectangular area.
  */
-import LatLng from './LatLng';
+import LatLng from "./LatLng";
+import { SdkType } from "../types/sdk-types";
+declare const LATLNGBOUNDS_SDK_TYPE = "LatLngBounds";
 /**
  * Class representing a geographical bounding box with NE and SW coordinates.
  */
-declare class LatLngBounds {
+declare class LatLngBounds implements SdkType {
     ne: LatLng | {
         lat: number | string;
         lng: number | string;
@@ -15,8 +17,7 @@ declare class LatLngBounds {
         lat: number | string;
         lng: number | string;
     };
-    value: string;
-    readonly _sdkType: 'LatLngBounds';
+    readonly _sdkType: typeof LATLNGBOUNDS_SDK_TYPE;
     /**
      * Creates an instance of the LatLngBounds class.
      *
@@ -48,3 +49,4 @@ declare class LatLngBounds {
     toString(): string;
 }
 export default LatLngBounds;
+//# sourceMappingURL=LatLngBounds.d.ts.map

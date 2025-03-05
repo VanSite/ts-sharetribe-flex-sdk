@@ -6,9 +6,12 @@
  * https://www.sharetribe.com/api-reference/integration.html#events
  */
 
-import {AxiosInstance, AxiosResponse} from 'axios';
-import IntegrationApi from './index';
-import {EventQueryParameter, EventsResponse} from '../../types/integration/events';
+import { AxiosInstance, AxiosResponse } from "axios";
+import IntegrationApi from "./index";
+import {
+  EventQueryParameter,
+  EventsResponse,
+} from "../../types/integration/events";
 
 /**
  * Class representing the Events API.
@@ -26,7 +29,7 @@ class Events {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: IntegrationApi) {
-    this.endpoint = api.endpoint + '/bookings';
+    this.endpoint = api.endpoint + "/bookings";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -50,8 +53,10 @@ class Events {
    * // Access the list of events
    * const eventsList = response.data;
    */
-  async query<P extends EventQueryParameter>(params: P): Promise<AxiosResponse<EventsResponse<'query'>>> {
-    return this.axios.get<EventsResponse<'query'>>(`${this.endpoint}/query`, {
+  async query<P extends EventQueryParameter>(
+    params: P
+  ): Promise<AxiosResponse<EventsResponse<"query">>> {
+    return this.axios.get<EventsResponse<"query">>(`${this.endpoint}/query`, {
       ...this.headers,
       params,
     });

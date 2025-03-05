@@ -4,17 +4,51 @@
  * @module SharetribeSdkExports
  */
 
-import sharetribeSdk from "./sdk";
-import integrationSdk from "./integrationSdk";
+import SharetribeSdkExport from "./sdk";
+import IntegrationSdkExport from "./integrationSdk";
 import BigDecimal from "./sdkTypes/BigDecimal";
 import UUID from "./sdkTypes/UUID";
 import LatLng from "./sdkTypes/LatLng";
 import LatLngBounds from "./sdkTypes/LatLngBounds";
 import Money from "./sdkTypes/Money";
-import MemoryStore from "./utils/stores/memory-store";
-import BrowserStore from "./utils/stores/browser-store";
-import ExpressStore from "./utils/stores/express-store";
-import { objectQueryString, transitToJson } from "./utils/util";
+import MemoryStore from "./utils/stores/MemoryStore";
+import BrowserStore from "./utils/stores/BrowserStore";
+import ExpressStore from "./utils/stores/ExpressStore";
+import { objectQueryString } from "./utils/util";
+import { read, write } from "./utils/transit";
+
+// Export marketplace types
+export * from "./types/assets";
+export * from "./types/authentication";
+export * from "./types/integration/events";
+export * from "./types/marketplace/availabilityExceptions";
+export * from "./types/marketplace/bookings";
+export * from "./types/marketplace/currentUser";
+export * from "./types/marketplace/images";
+export * from "./types/marketplace/listings";
+export * from "./types/marketplace/marketplace";
+export * from "./types/marketplace/messages";
+export * from "./types/marketplace/ownListings";
+export * from "./types/marketplace/passwordReset";
+export * from "./types/marketplace/processTransitions";
+export * from "./types/marketplace/reviews";
+export * from "./types/marketplace/stock";
+export * from "./types/marketplace/stockAdjustment";
+export * from "./types/marketplace/stockReservations";
+export * from "./types/marketplace/stripeAccount";
+export * from "./types/marketplace/stripeAccountLinks";
+export * from "./types/marketplace/stripeCustomer";
+export * from "./types/marketplace/stripePaymentMethod";
+export * from "./types/marketplace/stripePersons";
+export * from "./types/marketplace/stripeSetupIntents";
+export * from "./types/marketplace/timeSlots";
+export * from "./types/marketplace/transactions";
+export * from "./types/marketplace/user";
+export * from "./types/config";
+export * from "./types/sharetribe";
+export * from "./types/apiConfigs";
+export * from "./types/config";
+export * from "./types/store";
 
 /**
  * SDK-specific types provided for advanced usage.
@@ -45,34 +79,38 @@ export const TokenStore = {
 };
 
 /**
+ * Transit utilities for reading and writing transit data.
+ */
+export const transit = {
+  read,
+  write,
+};
+
+/**
+ * Export the Sharetribe SDK and Integration SDK.
+ */
+export const SharetribeSdk = SharetribeSdkExport;
+export const IntegrationSdk = IntegrationSdkExport;
+
+/**
  * Utility functions for data manipulation.
  */
 export const util = {
   /** Serializes an object into a custom query string format. */
   objectQueryString,
-  /** Converts a value based on _sdkType property to a SDK type. */
-  transitToJson,
 };
-
-/**
- * The main Sharetribe SDK for interacting with the Sharetribe API.
- */
-export const SharetribeSdk = sharetribeSdk;
-
-/**
- * The Integration SDK for interacting with the Sharetribe Integration API.
- */
-export const IntegrationSdk = integrationSdk;
 
 export default {
   /** Export of the Sharetribe SDK. */
-  SharetribeSdk: sharetribeSdk,
+  SharetribeSdk: SharetribeSdkExport,
   /** Export of the Integration SDK. */
-  IntegrationSdk: integrationSdk,
+  IntegrationSdk: IntegrationSdkExport,
   /** Export of available token stores. */
   TokenStore,
   /** Export of SDK-specific types. */
   sdkTypes,
   /** Export of utility functions. */
   util,
+  /** Export of Transit utilities. */
+  transit,
 };

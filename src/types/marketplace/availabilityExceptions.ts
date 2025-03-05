@@ -6,23 +6,27 @@
 import {
   ApiMeta,
   ApiParameter,
-  ExtraParameter,
   ExtraParameterType,
   Relationship,
   RelationshipTypeMap,
-  UUID
-} from '../sharetribe';
+  UUID,
+} from "../sharetribe";
 
 // Supported API endpoints for availability exceptions.
-export type AvailabilityExceptionsEndpoints = 'query' | 'create' | 'delete';
+export type AvailabilityExceptionsEndpoints = "query" | "create" | "delete";
 
 // Supported relationship fields for availability exceptions.
-export type AvailabilityExceptionsRelationshipsFields = 'ownListing';
+export type AvailabilityExceptionsRelationshipsFields =
+  | "ownListing"
+  | "ownListing.marketplace"
+  | "ownListing.author"
+  | "ownListing.images"
+  | "ownListing.currentStock";
 
 // Base structure for an availability exception.
 export interface AvailabilityException {
   id: UUID;
-  type: 'availabilityException';
+  type: "availabilityException";
   attributes?: {
     seats: number;
     start: Date;
@@ -31,9 +35,10 @@ export interface AvailabilityException {
 }
 
 // Availability exception with relationships.
-export interface AvailabilityExceptionWithRelationships extends AvailabilityException {
+export interface AvailabilityExceptionWithRelationships
+  extends AvailabilityException {
   relationships: {
-    ownListing: Relationship<false, 'ownListing'>;
+    ownListing: Relationship<false, "ownListing">;
   };
 }
 
@@ -48,14 +53,16 @@ export interface AvailabilityExceptionsParameter extends ApiParameter {
 }
 
 // Query parameters for fetching availability exceptions.
-export interface AvailabilityExceptionsQueryParameter extends AvailabilityExceptionsParameter {
+export interface AvailabilityExceptionsQueryParameter
+  extends AvailabilityExceptionsParameter {
   listingId: UUID | string;
   start: Date | string;
   end: Date | string;
 }
 
 // Parameters for creating an availability exception.
-export interface AvailabilityExceptionsCreateParameter extends AvailabilityExceptionsParameter {
+export interface AvailabilityExceptionsCreateParameter
+  extends AvailabilityExceptionsParameter {
   listingId: UUID | string;
   seats: number;
   start: Date | string;
@@ -75,37 +82,45 @@ type AllAvailabilityExceptionsParameter =
 
 // Determine if the parameter includes relationships.
 type AvailabilityExceptionsType<P extends AllAvailabilityExceptionsParameter> =
-  'include' extends keyof P ? (P['include'] extends AvailabilityExceptionsRelationshipsFields[] ? true : false) : false;
+  "include" extends keyof P
+    ? P["include"] extends AvailabilityExceptionsRelationshipsFields[]
+      ? true
+      : false
+    : false;
 
 // Extract the included relationships type based on the parameter.
 type IncludedType<P extends AllAvailabilityExceptionsParameter> =
-  'include' extends keyof P
-    ? P['include'] extends (keyof RelationshipTypeMap)[]
-      ? Array<RelationshipTypeMap[P['include'][number]]>[]
+  "include" extends keyof P
+    ? P["include"] extends (keyof RelationshipTypeMap)[]
+      ? Array<RelationshipTypeMap[P["include"][number]]>[]
       : never
     : never;
 
 // Expand the return type based on the expand parameter.
-type ExpandReturnType<P extends AllAvailabilityExceptionsParameter, EP> =
-  EP extends { expand: true }
-    ? AvailabilityExceptionType<AvailabilityExceptionsType<P>>
-    : EP extends { expand: false }
-      ? Omit<AvailabilityExceptionType<AvailabilityExceptionsType<P>>, 'attributes'>
-      : Omit<AvailabilityExceptionType<AvailabilityExceptionsType<P>>, 'attributes'>;
+type ExpandReturnType<
+  P extends AllAvailabilityExceptionsParameter,
+  EP
+> = EP extends { expand: true }
+  ? AvailabilityExceptionType<AvailabilityExceptionsType<P>>
+  : EP extends { expand: false }
+  ? Omit<AvailabilityExceptionType<AvailabilityExceptionsType<P>>, "attributes">
+  : Omit<
+      AvailabilityExceptionType<AvailabilityExceptionsType<P>>,
+      "attributes"
+    >;
 
 // Define the possible data type for availability exceptions based on the endpoint and parameters.
 type DataType<
   E extends AvailabilityExceptionsEndpoints,
   P extends AllAvailabilityExceptionsParameter,
   EP extends ExtraParameterType
-> =
-  E extends 'query'
-    ? AvailabilityExceptionType<AvailabilityExceptionsType<P>>[]
-    : E extends 'create'
-      ? ExpandReturnType<P, EP>
-      : E extends 'delete'
-        ? Pick<AvailabilityException, 'id' | 'type'>
-        : never;
+> = E extends "query"
+  ? AvailabilityExceptionType<AvailabilityExceptionsType<P>>[]
+  : E extends "create"
+  ? ExpandReturnType<P, EP>
+  : E extends "delete"
+  ? Pick<AvailabilityException, "id" | "type">
+  : never;
 
 // Response structure for availability exception-related endpoints.
 export type AvailabilityExceptionsResponse<
@@ -114,5 +129,5 @@ export type AvailabilityExceptionsResponse<
   EP extends ExtraParameterType = undefined
 > = {
   data: DataType<E, P, EP>;
-} & ('include' extends keyof P ? { included: IncludedType<P> } : {})
-  & (E extends 'query' ? { meta: ApiMeta } : {});
+} & ("include" extends keyof P ? { included: IncludedType<P> } : {}) &
+  (E extends "query" ? { meta: ApiMeta } : {});

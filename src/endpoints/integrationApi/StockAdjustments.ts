@@ -6,14 +6,14 @@
  * https://www.sharetribe.com/api-reference/integration.html#stock-adjustments
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import IntegrationApi from './index';
+import { AxiosInstance, AxiosResponse } from "axios";
+import IntegrationApi from "./index";
 import {
   StockAdjustmentsCreateParameter,
   StockAdjustmentsQueryParameter,
   StockAdjustmentsResponse,
-} from '../../types/marketplace/stockAdjustment';
-import { ExtraParameter } from '../../types/sharetribe';
+} from "../../types/marketplace/stockAdjustment";
+import { ExtraParameter } from "../../types/sharetribe";
 
 /**
  * Class representing the Stock Adjustments API.
@@ -32,7 +32,7 @@ class StockAdjustments {
    * @param {IntegrationApi} api - The Integration API instance providing configuration and request handling.
    */
   constructor(api: IntegrationApi) {
-    this.endpoint = api.endpoint + '/stock_adjustments';
+    this.endpoint = api.endpoint + "/stock_adjustments";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -55,11 +55,14 @@ class StockAdjustments {
    */
   async query<P extends StockAdjustmentsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<StockAdjustmentsResponse<'query', P>>> {
-    return this.axios.get<StockAdjustmentsResponse<'query', P>>(`${this.endpoint}/query`, {
-      ...this.headers,
-      params,
-    });
+  ): Promise<AxiosResponse<StockAdjustmentsResponse<"query", P>>> {
+    return this.axios.get<StockAdjustmentsResponse<"query", P>>(
+      `${this.endpoint}/query`,
+      {
+        ...this.headers,
+        params,
+      }
+    );
   }
 
   /**
@@ -79,11 +82,14 @@ class StockAdjustments {
    *
    * const newAdjustment = response.data;
    */
-  async create<P extends StockAdjustmentsCreateParameter, EP extends ExtraParameter | undefined>(
+  async create<
+    P extends StockAdjustmentsCreateParameter,
+    EP extends ExtraParameter | undefined
+  >(
     params: P,
     extraParams: EP
-  ): Promise<AxiosResponse<StockAdjustmentsResponse<'create', P, EP>>> {
-    return this.axios.post<StockAdjustmentsResponse<'create', P, EP>>(
+  ): Promise<AxiosResponse<StockAdjustmentsResponse<"create", P, EP>>> {
+    return this.axios.post<StockAdjustmentsResponse<"create", P, EP>>(
       `${this.endpoint}/create`,
       { ...params, ...extraParams },
       this.headers

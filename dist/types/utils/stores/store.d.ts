@@ -6,3 +6,4 @@
  * @returns A string combining the namespace, client ID, and a token suffix.
  */
 export declare const generateKey: (clientId: string, namespace: string) => string;
+//# sourceMappingURL=store.d.ts.map

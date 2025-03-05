@@ -2,14 +2,15 @@
  * @fileoverview Provides the LatLng class for representing geographical coordinates.
  * This class encapsulates a latitude and longitude pair, with validation for numeric input.
  */
+import { SdkType } from "../types/sdk-types";
+declare const LATLNG_SDK_TYPE = "LatLng";
 /**
  * Class representing a geographical coordinate pair (latitude and longitude).
  */
-declare class LatLng {
+declare class LatLng implements SdkType {
     lat: number | string;
     lng: number | string;
-    value: string;
-    readonly _sdkType: 'LatLng';
+    readonly _sdkType: typeof LATLNG_SDK_TYPE;
     /**
      * Creates an instance of the LatLng class.
      *
@@ -31,3 +32,4 @@ declare class LatLng {
     toString(): string;
 }
 export default LatLng;
+//# sourceMappingURL=LatLng.d.ts.map

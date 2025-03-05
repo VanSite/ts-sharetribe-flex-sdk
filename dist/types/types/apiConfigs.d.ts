@@ -1,7 +1,7 @@
 /**
  * @fileoverview Defines API configuration types for different environments and endpoints.
  */
-import { SdkConfig } from './config';
+import { SdkConfig } from "./config";
 /**
  * Configuration type for various API endpoints.
  *
@@ -17,11 +17,11 @@ export type ApiConfigs<I extends boolean = false> = I extends false ? {
             /**
              * Optional header to enable verbose transit responses.
              */
-            'X-Transit-Verbose'?: 'true' | 'false';
+            "X-Transit-Verbose"?: "true" | "false";
             /**
              * Header indicating the format for API responses.
              */
-            Accept: 'application/transit+json';
+            Accept: "application/transit+json";
         };
         /**
          * Base URL for the main API.
@@ -36,11 +36,11 @@ export type ApiConfigs<I extends boolean = false> = I extends false ? {
             /**
              * Header indicating the content type for authentication requests.
              */
-            'Content-Type': 'application/x-www-form-urlencoded';
+            "Content-Type": "application/x-www-form-urlencoded";
             /**
              * Header indicating the format for authentication API responses.
              */
-            Accept: 'application/json';
+            Accept: "application/json";
         };
         /**
          * Base URL for the authentication API.
@@ -55,7 +55,7 @@ export type ApiConfigs<I extends boolean = false> = I extends false ? {
             /**
              * Header indicating the format for assets API responses.
              */
-            Accept: 'application/json';
+            Accept: "application/json";
         };
         /**
          * Base URL for the assets API.
@@ -71,11 +71,11 @@ export type ApiConfigs<I extends boolean = false> = I extends false ? {
             /**
              * Header indicating the content type for authentication requests.
              */
-            'Content-Type': 'application/x-www-form-urlencoded';
+            "Content-Type": "application/x-www-form-urlencoded";
             /**
              * Header indicating the format for authentication API responses.
              */
-            Accept: 'application/json';
+            Accept: "application/json";
         };
         /**
          * Base URL for the authentication API.
@@ -90,11 +90,11 @@ export type ApiConfigs<I extends boolean = false> = I extends false ? {
             /**
              * Optional header to enable verbose transit responses.
              */
-            'X-Transit-Verbose'?: 'true' | 'false';
+            "X-Transit-Verbose"?: "true" | "false";
             /**
              * Header indicating the format for integration API responses.
              */
-            Accept: 'application/transit+json';
+            Accept: "application/transit+json";
         };
         /**
          * Base URL for the integration API.
@@ -102,3 +102,4 @@ export type ApiConfigs<I extends boolean = false> = I extends false ? {
         baseUrl: string;
     };
 };
+//# sourceMappingURL=apiConfigs.d.ts.map

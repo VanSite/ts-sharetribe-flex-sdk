@@ -3,7 +3,7 @@
  * This class acts as a gateway to multiple sub-APIs, including availability exceptions, events, images, listings, stock, transactions, and users.
  */
 
-import {AxiosInstance} from "axios";
+import { AxiosInstance } from "axios";
 import IntegrationSdk from "../../integrationSdk";
 import AvailabilityExceptions from "./AvailabilityExceptions";
 import Events from "./Events";

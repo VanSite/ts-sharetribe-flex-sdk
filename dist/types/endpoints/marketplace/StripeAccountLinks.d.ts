@@ -5,10 +5,10 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#stripe-account-links
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { StripeAccountLinksCreateParameter, StripeAccountLinksResponse } from '../../types/marketplace/stripeAccountLinks';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { StripeAccountLinksCreateParameter, StripeAccountLinksResponse } from "../../types/marketplace/stripeAccountLinks";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Stripe Account Links API.
  *
@@ -46,6 +46,7 @@ declare class StripeAccountLinks {
      * });
      * const accountLink = response.data;
      */
-    create<P extends StripeAccountLinksCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripeAccountLinksResponse<'create', EP>>>;
+    create<P extends StripeAccountLinksCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripeAccountLinksResponse<"create", EP>>>;
 }
 export default StripeAccountLinks;
+//# sourceMappingURL=StripeAccountLinks.d.ts.map

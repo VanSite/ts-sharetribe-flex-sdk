@@ -1,4 +1,5 @@
-import { AuthToken, TokenStore } from '../../types/store';
+import { TokenStore } from "../../types/store";
+import { AuthToken } from "../../types/authentication";
 /**
  * Configuration options for the `BrowserStore`.
  */
@@ -35,3 +36,4 @@ declare class BrowserStore implements TokenStore {
     removeToken(): void;
 }
 export default BrowserStore;
+//# sourceMappingURL=BrowserStore.d.ts.map

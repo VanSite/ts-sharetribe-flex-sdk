@@ -2,23 +2,23 @@
  * @fileoverview Type definitions for Transactions in the Sharetribe Marketplace API.
  * This file defines the structure of transactions, their parameters, and response types for API requests.
  */
-import { ApiMeta, ApiParameter, ExtraParameterType, Money, Relationship, RelationshipTypeMap, UUID } from '../sharetribe';
+import { ApiParameter, ExtraParameterType, Money, Relationship, RelationshipTypeMap, UUID } from "../sharetribe";
 /**
  * Available endpoints for the Transactions API.
  */
-export type TransactionsEndpoints = 'show' | 'query' | 'initiate' | 'initiateSpeculative' | 'transition' | 'transitionSpeculative' | 'updateMetadata';
+export type TransactionsEndpoints = "show" | "query" | "initiate" | "initiateSpeculative" | "transition" | "transitionSpeculative" | "updateMetadata";
 /**
  * Fields available for relationships in transactions.
  */
-export type TransactionsRelationshipsFields = 'marketplace' | 'listing' | 'provider' | 'customer' | 'booking' | 'stockReservation' | 'reviews' | 'messages';
+export type TransactionsRelationshipsFields = "marketplace" | "listing" | "listing.marketplace" | "listing.author" | "listing.images" | "listing.currentStock" | "provider" | "provider.profileImage" | "provider.stripeAccount" | "provider.effectivePermissionSet" | "customer" | "customer.profileImage" | "customer.stripeAccount" | "customer.effectivePermissionSet" | "booking" | "stockReservation" | "reviews" | "reviews.author" | "reviews.subject" | "messages" | "messages.sender";
 /**
  * Roles for parties in a transaction.
  */
-export type TransactionsParties = 'customer' | 'provider';
+export type TransactionsParties = "customer" | "provider";
 /**
  * Varieties of transactions.
  */
-export type TransactionsVariety = 'sale' | 'order';
+export type TransactionsVariety = "sale" | "order";
 /**
  * Defines a line item within a transaction.
  */
@@ -46,7 +46,7 @@ export type Transition = {
  */
 export interface Transaction {
     id: UUID;
-    type: 'transaction';
+    type: "transaction";
     attributes: {
         createdAt: Date;
         processName: string;
@@ -66,14 +66,14 @@ export interface Transaction {
  */
 export interface TransactionWithRelationships extends Transaction {
     relationships: {
-        marketplace: Relationship<false, 'marketplace'>;
-        listing: Relationship<false, 'listing'>;
-        provider: Relationship<false, 'provider'>;
-        customer: Relationship<false, 'customer'>;
-        booking: Relationship<false, 'booking'>;
-        stockReservation: Relationship<false, 'stockReservation'>;
-        reviews: Relationship<true, 'reviews'>;
-        messages: Relationship<true, 'messages'>;
+        marketplace: Relationship<false, "marketplace">;
+        listing: Relationship<false, "listing">;
+        provider: Relationship<false, "user">;
+        customer: Relationship<false, "user">;
+        booking: Relationship<false, "booking">;
+        stockReservation: Relationship<false, "stockReservation">;
+        reviews: Relationship<true, "reviews">;
+        messages: Relationship<true, "messages">;
     };
 }
 /**
@@ -168,25 +168,24 @@ export interface TransactionMetadata {
 export interface TransactionCustomMetadata {
 }
 type AllTransactionsParameter = TransactionsShowParameter | TransactionsQueryParameter | TransactionsInitiateParameter | TransactionsInitiateSpeculativeParameter | TransactionsTransitionParameter | TransactionsTransitionSpeculativeParameter;
-type TransactionsType<P extends AllTransactionsParameter> = 'include' extends keyof P ? (P['include'] extends TransactionsRelationshipsFields[] ? true : false) : false;
-type IncludedType<P extends AllTransactionsParameter> = 'include' extends keyof P ? (P['include'] extends (keyof RelationshipTypeMap)[] ? Array<RelationshipTypeMap[P['include'][number]]> : never) : never;
+type TransactionsType<P extends AllTransactionsParameter> = "include" extends keyof P ? P["include"] extends TransactionsRelationshipsFields[] ? true : false : false;
+type IncludedType<P extends AllTransactionsParameter> = "include" extends keyof P ? P["include"] extends (keyof RelationshipTypeMap)[] ? Array<RelationshipTypeMap[P["include"][number]]> : never : never;
 type ExpandReturnType<P extends AllTransactionsParameter, EP> = EP extends {
     expand: true;
 } ? TransactionType<TransactionsType<P>> : EP extends {
     expand: false;
-} ? Omit<TransactionType<TransactionsType<P>>, 'attributes'> : Omit<TransactionType<TransactionsType<P>>, 'attributes'>;
+} ? Omit<TransactionType<TransactionsType<P>>, "attributes"> : Omit<TransactionType<TransactionsType<P>>, "attributes">;
 /**
  * Defines the data type based on the Transactions API endpoint and parameters.
  */
-type DataType<E extends TransactionsEndpoints, P extends AllTransactionsParameter, EP extends ExtraParameterType> = (E extends 'show' | 'query' ? TransactionType<TransactionsType<P>>[] : never) | (E extends 'initiate' | 'initiateSpeculative' | 'transition' | 'transitionSpeculative' ? ExpandReturnType<P, EP> : never);
+type DataType<E extends TransactionsEndpoints, P extends AllTransactionsParameter, EP extends ExtraParameterType | undefined> = E extends "show" ? TransactionType<TransactionsType<P>> : E extends "query" ? TransactionType<TransactionsType<P>>[] : E extends "transition" ? ExpandReturnType<P, EP> : never;
 /**
  * Response structure for Transactions API calls.
  */
 export type TransactionsResponse<E extends TransactionsEndpoints, P extends AllTransactionsParameter, EP extends ExtraParameterType = undefined> = {
     data: DataType<E, P, EP>;
-} & ('include' extends keyof P ? {
+} & ("include" extends keyof P ? {
     included: IncludedType<P>;
-} : {}) & (E extends 'query' ? {
-    meta: ApiMeta;
 } : {});
 export {};
+//# sourceMappingURL=transactions.d.ts.map

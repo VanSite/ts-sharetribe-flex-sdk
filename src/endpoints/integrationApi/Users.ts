@@ -6,16 +6,17 @@
  * https://www.sharetribe.com/api-reference/integration.html#users
  */
 
-import {AxiosInstance, AxiosResponse} from 'axios';
-import IntegrationApi from './index';
+import { AxiosInstance, AxiosResponse } from "axios";
+import IntegrationApi from "./index";
 import {
   UsersApproveParameter,
   UsersQueryParameter,
   UsersResponse,
-  UsersShowParameter, UsersUpdatePermissionsParameter,
-  UsersUpdateProfileParameter
-} from '../../types/marketplace/user';
-import {ExtraParameter} from "../../types/sharetribe";
+  UsersShowParameter,
+  UsersUpdatePermissionsParameter,
+  UsersUpdateProfileParameter,
+} from "../../types/marketplace/user";
+import { ExtraParameter } from "../../types/sharetribe";
 
 /**
  * Class representing the Users API.
@@ -33,7 +34,7 @@ class Users {
    * @param {IntegrationApi} api - The Integration API instance providing configuration and request handling.
    */
   constructor(api: IntegrationApi) {
-    this.endpoint = api.endpoint + '/users';
+    this.endpoint = api.endpoint + "/users";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -54,12 +55,12 @@ class Users {
    */
   async show<P extends UsersShowParameter<true>>(
     params: P
-  ): Promise<AxiosResponse<UsersResponse<'show', P>>> {
-    if (!params.id && !params.email) {
+  ): Promise<AxiosResponse<UsersResponse<"show", P>>> {
+    if (!params.id || !params.email) {
       throw new Error("Either 'id' or 'email' must be provided.");
     }
 
-    return this.axios.get<UsersResponse<'show', P>>(`${this.endpoint}/show`, {
+    return this.axios.get<UsersResponse<"show", P>>(`${this.endpoint}/show`, {
       ...this.headers,
       params,
     });
@@ -80,8 +81,8 @@ class Users {
    */
   async query<P extends UsersQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<UsersResponse<'query', P>>> {
-    return this.axios.get<UsersResponse<'query', P>>(`${this.endpoint}/query`, {
+  ): Promise<AxiosResponse<UsersResponse<"query", P>>> {
+    return this.axios.get<UsersResponse<"query", P>>(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });
@@ -105,11 +106,14 @@ class Users {
    * });
    * const updatedProfile = response.data;
    */
-  async updateProfile<P extends UsersUpdateProfileParameter, EP extends ExtraParameter>(
+  async updateProfile<
+    P extends UsersUpdateProfileParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<UsersResponse<'updateProfile', P, EP>>> {
-    return this.axios.post<UsersResponse<'updateProfile', P, EP>>(
+  ): Promise<AxiosResponse<UsersResponse<"updateProfile", P, EP>>> {
+    return this.axios.post<UsersResponse<"updateProfile", P, EP>>(
       `${this.endpoint}/update_profile`,
       { ...params, ...extraParams },
       { headers: this.headers }
@@ -132,10 +136,14 @@ class Users {
   async approve<P extends UsersApproveParameter, EP extends ExtraParameter>(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<UsersResponse<'approve', P, EP>>> {
-    return this.axios.post<UsersResponse<'approve', P, EP>>(`${this.endpoint}/approve`, { ...params, ...extraParams }, {
-      headers: this.headers,
-    });
+  ): Promise<AxiosResponse<UsersResponse<"approve", P, EP>>> {
+    return this.axios.post<UsersResponse<"approve", P, EP>>(
+      `${this.endpoint}/approve`,
+      { ...params, ...extraParams },
+      {
+        headers: this.headers,
+      }
+    );
   }
 
   /**
@@ -154,11 +162,14 @@ class Users {
    * );
    * const updatedPermissions = response.data;
    */
-  async updatePermissions<P extends UsersUpdatePermissionsParameter, EP extends ExtraParameter>(
+  async updatePermissions<
+    P extends UsersUpdatePermissionsParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<UsersResponse<'updatePermissions', P, EP>>> {
-    return this.axios.post<UsersResponse<'updatePermissions', P, EP>>(
+  ): Promise<AxiosResponse<UsersResponse<"updatePermissions", P, EP>>> {
+    return this.axios.post<UsersResponse<"updatePermissions", P, EP>>(
       `${this.endpoint}/update_permissions`,
       { ...params, ...extraParams },
       { headers: this.headers }

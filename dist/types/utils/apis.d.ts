@@ -1,4 +1,4 @@
-import { ApiConfigs } from '../types/apiConfigs';
+import { ApiConfigs } from "../types/apiConfigs";
 /**
  * Creates API configurations for the SDK.
  *
@@ -6,3 +6,4 @@ import { ApiConfigs } from '../types/apiConfigs';
  * @returns An object containing API configurations for the standard SDK or Integration SDK.
  */
 export declare const createApisConfigs: <I extends boolean = false>(isIntegrationSdk?: I) => ApiConfigs<I>;
+//# sourceMappingURL=apis.d.ts.map

@@ -1,41 +1,45 @@
-import {SdkConfig} from './types/config';
-import {createApisConfigs} from './utils/apis';
-import {ApiConfigs} from './types/apiConfigs';
-import axios, {AxiosInstance, AxiosResponse} from 'axios';
+import { SdkConfig } from "./types/config";
+import { createApisConfigs } from "./utils/apis";
+import { ApiConfigs } from "./types/apiConfigs";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 import AuthenticationApi from "./endpoints/auth";
-import MarketplaceApi from './endpoints/marketplace';
-import prepareAxiosInstance from './utils/prepare-axios-instance';
-import Listings from './endpoints/marketplace/Listings';
-import AvailabilityExceptions from './endpoints/marketplace/AvailabilityExceptions';
-import Bookings from './endpoints/marketplace/Bookings';
-import CurrentUser from './endpoints/marketplace/CurrentUser';
-import Images from './endpoints/marketplace/Images';
-import Marketplace from './endpoints/marketplace/Marketplace';
-import Messages from './endpoints/marketplace/Messages';
-import OwnListings from './endpoints/marketplace/OwnListings';
-import PasswordReset from './endpoints/marketplace/PasswordReset';
-import ProcessTransitions from './endpoints/marketplace/ProcessTransitions';
-import Reviews from './endpoints/marketplace/Reviews';
-import Stock from './endpoints/marketplace/Stock';
-import StockAdjustments from './endpoints/marketplace/StockAdjustments';
-import StripeAccount from './endpoints/marketplace/StripeAccount';
-import StripeAccountLinks from './endpoints/marketplace/StripeAccountLinks';
-import StripeCustomer from './endpoints/marketplace/StripeCustomer';
-import StripePersons from './endpoints/marketplace/StripePersons';
-import StripeSetupIntents from './endpoints/marketplace/StripeSetupIntents';
-import TimeSlots from './endpoints/marketplace/TimeSlots';
-import Transactions from './endpoints/marketplace/Transactions';
-import Users from './endpoints/marketplace/Users';
+import MarketplaceApi from "./endpoints/marketplace";
+import {
+  prepareAxiosInstance,
+  createAxiosConfig,
+} from "./utils/prepare-axios-instance";
+import Listings from "./endpoints/marketplace/Listings";
+import AvailabilityExceptions from "./endpoints/marketplace/AvailabilityExceptions";
+import Bookings from "./endpoints/marketplace/Bookings";
+import CurrentUser from "./endpoints/marketplace/CurrentUser";
+import Images from "./endpoints/marketplace/Images";
+import Marketplace from "./endpoints/marketplace/Marketplace";
+import Messages from "./endpoints/marketplace/Messages";
+import OwnListings from "./endpoints/marketplace/OwnListings";
+import PasswordReset from "./endpoints/marketplace/PasswordReset";
+import ProcessTransitions from "./endpoints/marketplace/ProcessTransitions";
+import Reviews from "./endpoints/marketplace/Reviews";
+import Stock from "./endpoints/marketplace/Stock";
+import StockAdjustments from "./endpoints/marketplace/StockAdjustments";
+import StripeAccount from "./endpoints/marketplace/StripeAccount";
+import StripeAccountLinks from "./endpoints/marketplace/StripeAccountLinks";
+import StripeCustomer from "./endpoints/marketplace/StripeCustomer";
+import StripePersons from "./endpoints/marketplace/StripePersons";
+import StripeSetupIntents from "./endpoints/marketplace/StripeSetupIntents";
+import TimeSlots from "./endpoints/marketplace/TimeSlots";
+import Transactions from "./endpoints/marketplace/Transactions";
+import Users from "./endpoints/marketplace/Users";
 import {
   AuthInfoResponse,
   LoginParameter,
+  LoginParameterType,
   LoginWithIdpParameter,
   RevokeResponse,
   Scope,
-  TokenResponse
-} from './types/authentication';
-import AssetsApi from './endpoints/assets';
-import {DefaultSdkConfig} from "./utils/config";
+  TokenResponse,
+} from "./types/authentication";
+import AssetsApi from "./endpoints/assets";
+import { DefaultSdkConfig } from "./utils/config";
 
 class SharetribeSdk {
   /**
@@ -191,16 +195,16 @@ class SharetribeSdk {
   // Asset Endpoints
 
   /** @type {AssetsApi['assetByAlias']} */
-  assetByAlias: AssetsApi['assetByAlias'];
+  assetByAlias: AssetsApi["assetByAlias"];
 
   /** @type {AssetsApi['assetsByAlias']} */
-  assetsByAlias: AssetsApi['assetsByAlias'];
+  assetsByAlias: AssetsApi["assetsByAlias"];
 
   /** @type {AssetsApi['assetByVersion']} */
-  assetByVersion: AssetsApi['assetByVersion'];
+  assetByVersion: AssetsApi["assetByVersion"];
 
   /** @type {AssetsApi['assetsByVersion']} */
-  assetsByVersion: AssetsApi['assetsByVersion'];
+  assetsByVersion: AssetsApi["assetsByVersion"];
 
   /**
    * Creates an instance of the Sharetribe SDK.
@@ -215,9 +219,13 @@ class SharetribeSdk {
     };
 
     this.apisConfigs = createApisConfigs();
-    this.axios = axios.create({
-      baseURL: `${this.sdkConfig.baseUrl}/${this.sdkConfig.version}/`,
-    });
+    this.axios = axios.create(
+      createAxiosConfig(this, {
+        baseURL: `${this.sdkConfig.baseUrl}/${this.sdkConfig.version}/`,
+        httpAgent: this.sdkConfig.httpAgent,
+        httpsAgent: this.sdkConfig.httpsAgent,
+      })
+    );
     prepareAxiosInstance(this);
 
     this.auth = new AuthenticationApi(this);
@@ -261,11 +269,31 @@ class SharetribeSdk {
    * @param {LoginParameter} params - The login parameters.
    * @returns {Promise<AuthToken>} - The authentication token.
    */
-  async login(params: LoginParameter): Promise<AxiosResponse<TokenResponse<"user">>> {
-    return this.auth.token<'user'>({
+  async login<T extends LoginParameterType>(
+    params: LoginParameter<T>
+  ): Promise<AxiosResponse<TokenResponse<"user">>> {
+    return this.auth.token<"user">({
       client_id: this.sdkConfig.clientId,
-      grant_type: 'password',
-      scope: 'user',
+      scope: "user",
+      grant_type: "code" in params ? "authorization_code" : "password",
+      ...params,
+    });
+  }
+
+  /**
+   * Logs in the marketplace operator as the marketplace user and returns a Promise
+   *
+   * @async
+   * @param {LoginAsParameter} params - The login parameters.
+   * @returns {Promise<AuthToken>} - The authentication token.
+   */
+  async loginAs(
+    params: LoginParameter<"auth_code">
+  ): Promise<AxiosResponse<TokenResponse<"user">>> {
+    return this.auth.token<"user">({
+      client_id: this.sdkConfig.clientId,
+      grant_type: "authorization_code",
+      scope: "user",
       ...params,
     });
   }
@@ -277,9 +305,11 @@ class SharetribeSdk {
    * @param {LoginWithIdpParameter} params - The IDP login parameters.
    * @returns {Promise<AuthToken>} - The authentication token.
    */
-  async loginWithIdp(params: LoginWithIdpParameter): Promise<AxiosResponse<TokenResponse<"user">>> {
+  async loginWithIdp(
+    params: LoginWithIdpParameter
+  ): Promise<AxiosResponse<TokenResponse<"user">>> {
     if (this.sdkConfig.clientSecret === undefined) {
-      throw new Error('clientSecret is required to login with idp');
+      throw new Error("clientSecret is required to login with idp");
     }
     return this.auth.authWithIdp({
       client_id: this.sdkConfig.clientId,
@@ -295,7 +325,7 @@ class SharetribeSdk {
    * @returns {Promise<void>} - Resolves when the user is logged out.
    */
   async logout(): Promise<AxiosResponse<RevokeResponse>> {
-    const {access_token} = (await this.sdkConfig.tokenStore!.getToken())!;
+    const { access_token } = (await this.sdkConfig.tokenStore!.getToken())!;
     return this.auth.revoke(access_token);
   }
 
@@ -306,15 +336,15 @@ class SharetribeSdk {
    * @returns {Promise<AuthToken>} - The exchanged token.
    */
   async exchangeToken(): Promise<AxiosResponse<TokenResponse<"trusted:user">>> {
-    const {access_token} = (await this.sdkConfig.tokenStore!.getToken())!;
+    const { access_token } = (await this.sdkConfig.tokenStore!.getToken())!;
     if (this.sdkConfig.clientSecret === undefined) {
-      throw new Error('clientSecret is required to exchange token');
+      throw new Error("clientSecret is required to exchange token");
     }
-    return this.auth.token<'trusted:user'>({
+    return this.auth.token<"trusted:user">({
       client_id: this.sdkConfig.clientId,
       client_secret: this.sdkConfig.clientSecret!,
-      grant_type: 'token_exchange',
-      scope: 'trusted:user',
+      grant_type: "token_exchange",
+      scope: "trusted:user",
       subject_token: access_token,
     });
   }
@@ -329,12 +359,12 @@ class SharetribeSdk {
     const storedToken = await this.sdkConfig.tokenStore!.getToken();
     if (storedToken && storedToken.scope) {
       const tokenScope = storedToken.scope;
-      const scopes = tokenScope.split(' ') as Scope[];
-      const isAnonymous = tokenScope === 'public-read';
+      const scopes = tokenScope.split(" ") as Scope[];
+      const isAnonymous = tokenScope === "public-read";
 
-      const grantType = isAnonymous ? 'client_credentials' : 'refresh_token';
+      const grantType = isAnonymous ? "client_credentials" : "refresh_token";
 
-      return {scopes, isAnonymous, grantType};
+      return { scopes, isAnonymous, grantType };
     }
 
     return {};

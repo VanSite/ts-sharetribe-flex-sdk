@@ -9,6 +9,7 @@
     "ignoreDeprecations": "5.0",
     "declaration": true,
     "declarationDir": "./dist/types",
+    "declarationMap": true,
     "emitDeclarationOnly": false,
     "outDir": "./dist",
     "esModuleInterop": true,
@@ -19,13 +20,12 @@
     "jsx": "preserve",
     "incremental": true,
     "sourceMap": true,
-    "plugins": [{
-      "name": "next"
-    }],
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/app/types"
-    ]
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "typeRoots": ["./node_modules/@types", "./src/app/types"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"] // Exclude generated output folders

@@ -5,9 +5,9 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#time-slots
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { TimeSlotsQueryParameter, TimeSlotsResponse } from '../../types/marketplace/timeSlots';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { TimeSlotsQueryParameter, TimeSlotsResponse } from "../../types/marketplace/timeSlots";
 /**
  * Class representing the Time Slots API.
  *
@@ -38,6 +38,7 @@ declare class TimeSlots {
      * });
      * const timeSlots = response.data;
      */
-    query<P extends TimeSlotsQueryParameter>(params: P): Promise<AxiosResponse<TimeSlotsResponse<'query'>>>;
+    query<P extends TimeSlotsQueryParameter>(params: P): Promise<AxiosResponse<TimeSlotsResponse<"query">>>;
 }
 export default TimeSlots;
+//# sourceMappingURL=TimeSlots.d.ts.map

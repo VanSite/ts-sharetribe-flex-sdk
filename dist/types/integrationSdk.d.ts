@@ -1,5 +1,5 @@
-import { SdkConfig } from './types/config';
-import { AxiosInstance } from 'axios';
+import { SdkConfig } from "./types/config";
+import { AxiosInstance } from "axios";
 import { ApiConfigs } from "./types/apiConfigs";
 import IntegrationApi from "./endpoints/integrationApi";
 import AuthenticationApi from "./endpoints/auth";
@@ -18,7 +18,7 @@ import Users from "./endpoints/integrationApi/Users";
  *
  * @class
  */
-declare class SharetribeIntegrationSdk {
+declare class IntegrationSdk {
     /**
      * Configuration for the SDK.
      *
@@ -117,4 +117,5 @@ declare class SharetribeIntegrationSdk {
      */
     constructor(config: SdkConfig);
 }
-export default SharetribeIntegrationSdk;
+export default IntegrationSdk;
+//# sourceMappingURL=integrationSdk.d.ts.map

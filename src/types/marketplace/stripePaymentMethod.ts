@@ -3,14 +3,14 @@
  * This file defines the structure of a Stripe Payment Method, including its attributes.
  */
 
-import { UUID } from '../sharetribe';
+import { UUID } from "../sharetribe";
 
 /**
  * Represents a Stripe Payment Method object.
  */
 export interface StripePaymentMethod {
   id: UUID; // The unique identifier for the payment method.
-  type: 'stripePaymentMethod'; // The type of the object, always 'stripePaymentMethod'.
+  type: "stripePaymentMethod"; // The type of the object, always 'stripePaymentMethod'.
   attributes: {
     type: string; // The type of the payment method (e.g., 'card').
     stripePaymentMethodId: string; // The ID of the payment method in Stripe.

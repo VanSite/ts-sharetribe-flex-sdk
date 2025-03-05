@@ -6,15 +6,15 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#stripe-customer
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
 import {
   StripeCustomerAddPaymentMethodParameter,
   StripeCustomerCreateParameter,
   StripeCustomerDeletePaymentMethodParameter,
   StripeCustomerResponse,
-} from '../../types/marketplace/stripeCustomer';
-import { ExtraParameter } from '../../types/sharetribe';
+} from "../../types/marketplace/stripeCustomer";
+import { ExtraParameter } from "../../types/sharetribe";
 
 /**
  * Class representing the Stripe Customer API.
@@ -33,7 +33,7 @@ class StripeCustomer {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/stripe_customer';
+    this.endpoint = api.endpoint + "/stripe_customer";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -54,11 +54,14 @@ class StripeCustomer {
    * });
    * const customer = response.data;
    */
-  async create<P extends StripeCustomerCreateParameter, EP extends ExtraParameter>(
+  async create<
+    P extends StripeCustomerCreateParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StripeCustomerResponse<'create', P, EP>>> {
-    return this.axios.post<StripeCustomerResponse<'create', P, EP>>(
+  ): Promise<AxiosResponse<StripeCustomerResponse<"create", P, EP>>> {
+    return this.axios.post<StripeCustomerResponse<"create", P, EP>>(
       `${this.endpoint}/create`,
       { ...params, ...extraParams },
       { headers: this.headers }
@@ -80,11 +83,14 @@ class StripeCustomer {
    * });
    * const updatedCustomer = response.data;
    */
-  async addPaymentMethod<P extends StripeCustomerAddPaymentMethodParameter, EP extends ExtraParameter>(
+  async addPaymentMethod<
+    P extends StripeCustomerAddPaymentMethodParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StripeCustomerResponse<'addPaymentMethod', P, EP>>> {
-    return this.axios.post<StripeCustomerResponse<'addPaymentMethod', P, EP>>(
+  ): Promise<AxiosResponse<StripeCustomerResponse<"addPaymentMethod", P, EP>>> {
+    return this.axios.post<StripeCustomerResponse<"addPaymentMethod", P, EP>>(
       `${this.endpoint}/add_payment_method`,
       { ...params, ...extraParams },
       { headers: this.headers }
@@ -104,11 +110,18 @@ class StripeCustomer {
    * const response = await sdk.stripeCustomer.deletePaymentMethod({ customer_id: 'customer-id', payment_method_id: 'payment-method-id' });
    * const result = response.data;
    */
-  async deletePaymentMethod<P extends StripeCustomerDeletePaymentMethodParameter, EP extends ExtraParameter>(
+  async deletePaymentMethod<
+    P extends StripeCustomerDeletePaymentMethodParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StripeCustomerResponse<'deletePaymentMethod', P, EP>>> {
-    return this.axios.post<StripeCustomerResponse<'deletePaymentMethod', P, EP>>(
+  ): Promise<
+    AxiosResponse<StripeCustomerResponse<"deletePaymentMethod", P, EP>>
+  > {
+    return this.axios.post<
+      StripeCustomerResponse<"deletePaymentMethod", P, EP>
+    >(
       `${this.endpoint}/delete_payment_method`,
       { ...params, ...extraParams },
       { headers: this.headers }

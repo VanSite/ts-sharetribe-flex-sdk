@@ -6,10 +6,14 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#messages
  */
 
-import {AxiosInstance, AxiosResponse} from 'axios';
-import MarketplaceApi from './index';
-import { ExtraParameter } from '../../types/sharetribe';
-import { MessagesQueryParameter, MessagesResponse, MessagesSendParameter } from '../../types/marketplace/messages';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { ExtraParameter } from "../../types/sharetribe";
+import {
+  MessagesQueryParameter,
+  MessagesResponse,
+  MessagesSendParameter,
+} from "../../types/marketplace/messages";
 
 /**
  * Class representing the Messages API.
@@ -27,7 +31,7 @@ class Messages {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/messages';
+    this.endpoint = api.endpoint + "/messages";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -45,11 +49,14 @@ class Messages {
    */
   async query<P extends MessagesQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<MessagesResponse<'query', P>>> {
-    return this.axios.get<MessagesResponse<'query', P>>(`${this.endpoint}/query`, {
-      headers: this.headers,
-      params,
-    });
+  ): Promise<AxiosResponse<MessagesResponse<"query", P>>> {
+    return this.axios.get<MessagesResponse<"query", P>>(
+      `${this.endpoint}/query`,
+      {
+        headers: this.headers,
+        params,
+      }
+    );
   }
 
   /**
@@ -70,8 +77,8 @@ class Messages {
   async send<P extends MessagesSendParameter, EP extends ExtraParameter>(
     params: P,
     extraParams: EP | void
-  ): Promise<AxiosResponse<MessagesResponse<'send', P, EP>>> {
-    return this.axios.post<MessagesResponse<'send', P, EP>>(
+  ): Promise<AxiosResponse<MessagesResponse<"send", P, EP>>> {
+    return this.axios.post<MessagesResponse<"send", P, EP>>(
       `${this.endpoint}/create`,
       { ...params, ...extraParams },
       this.headers

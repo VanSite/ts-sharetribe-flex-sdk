@@ -2,29 +2,29 @@
  * @fileoverview Type definitions for Users in the Sharetribe Marketplace API.
  * This file defines the structure of users, their parameters, and response types for API requests.
  */
-import { ApiMeta, ApiParameter, ExtraParameter, ExtraParameterType, QueryMeta, QueryPriv, QueryProt, QueryPub, Relationship, RelationshipTypeMap, UUID } from '../sharetribe';
+import { ApiMeta, ApiParameter, ExtraParameter, ExtraParameterType, QueryMeta, QueryPriv, QueryProt, QueryPub, Relationship, RelationshipTypeMap, UUID } from "../sharetribe";
 /**
  * Available endpoints for the Users API.
  */
-export type UsersEndpoints = 'show' | 'query' | 'updateProfile' | 'approve' | 'updatePermissions';
+export type UsersEndpoints = "show" | "query" | "updateProfile" | "approve" | "updatePermissions";
 /**
  * Fields available for relationships in users.
  */
-export type UsersRelationshipsFields = 'marketplace' | 'profileImage' | 'stripeAccount' | 'effectivePermissionSet';
+export type UsersRelationshipsFields = "marketplace" | "profileImage" | "stripeAccount" | "effectivePermissionSet";
 /**
  * Possible states for a user.
  */
-export type UserState = 'active' | 'banned' | 'pendingApproval';
+export type UserState = "active" | "banned" | "pendingApproval";
 /**
  * Permission levels for user actions.
  */
-export type Permissions = 'permission/allow' | 'permission/deny';
+export type Permissions = "permission/allow" | "permission/deny";
 /**
  * Defines the structure of a user.
  */
 export interface User<I extends boolean = false> {
     id: UUID;
-    type: 'user';
+    type: "user";
     attributes: UserAttributes<I>;
 }
 type UserAttributes<I extends boolean> = {
@@ -65,11 +65,11 @@ type UserAttributesProfile<I extends boolean> = {
  */
 export interface UserWithRelationships<I extends boolean = false> extends User<I> {
     relationships: {
-        marketplace: Relationship<false, 'marketplace'>;
-        profileImage: Relationship<false, 'profileImage'>;
+        marketplace: Relationship<false, "marketplace">;
+        profileImage: Relationship<false, "profileImage">;
     };
 }
-export type UserType<R extends boolean> = R extends true ? UserWithRelationships : User;
+export type UserType<R extends boolean, I extends boolean = false> = R extends true ? UserWithRelationships<I> : User<I>;
 /**
  * Base parameters for Users API requests.
  */
@@ -141,25 +141,26 @@ export interface UserCustomProfilePrivateData {
 export interface UserCustomProfileMetadata {
 }
 type AllUsersParameter = UsersShowParameter | UsersQueryParameter | UsersUpdateProfileParameter | UsersApproveParameter | UsersUpdatePermissionsParameter;
-type UsersType<P extends AllUsersParameter> = 'include' extends keyof P ? (P['include'] extends UsersRelationshipsFields[] ? true : false) : false;
-type IncludedType<P extends AllUsersParameter> = 'include' extends keyof P ? (P['include'] extends (keyof RelationshipTypeMap)[] ? Array<RelationshipTypeMap[P['include'][number]]>[] : never) : never;
+type UsersType<P extends AllUsersParameter> = "include" extends keyof P ? P["include"] extends UsersRelationshipsFields[] ? true : false : false;
+type IncludedType<P extends AllUsersParameter, I extends boolean> = "include" extends keyof P ? P["include"] extends (keyof RelationshipTypeMap<I>)[] ? Array<RelationshipTypeMap<I>[P["include"][number]]> : never : never;
 type ExpandReturnType<P extends AllUsersParameter, EP> = EP extends {
     expand: true;
 } ? UserType<UsersType<P>> : EP extends {
     expand: false;
-} ? Omit<UserType<UsersType<P>>, 'attributes'> : Omit<UserType<UsersType<P>>, 'attributes'>;
+} ? Omit<UserType<UsersType<P>>, "attributes"> : Omit<UserType<UsersType<P>>, "attributes">;
 /**
  * Defines the data type based on the Users API endpoint and parameters.
  */
-type DataType<E extends UsersEndpoints, P extends AllUsersParameter, EP extends ExtraParameter | undefined> = (E extends 'show' ? UserType<UsersType<P>> : never) | (E extends 'query' ? UserType<UsersType<P>>[] : never) | (E extends 'updateProfile' | 'approve' | 'updatePermissions' ? ExpandReturnType<P, EP> : never);
+type DataType<E extends UsersEndpoints, P extends AllUsersParameter, EP extends ExtraParameter | undefined, I extends boolean = false> = (E extends "show" ? UserType<UsersType<P>, I> : never) | (E extends "query" ? UserType<UsersType<P>, I>[] : never) | (E extends "updateProfile" | "approve" | "updatePermissions" ? ExpandReturnType<P, EP> : never);
 /**
  * Response structure for Users API calls.
  */
-export type UsersResponse<E extends UsersEndpoints, P extends AllUsersParameter, EP extends ExtraParameterType = undefined> = {
-    data: DataType<E, P, EP>;
-} & ('include' extends keyof P ? {
-    included: IncludedType<P>;
-} : {}) & (E extends 'query' ? {
+export type UsersResponse<E extends UsersEndpoints, P extends AllUsersParameter, EP extends ExtraParameterType = undefined, I extends boolean = false> = {
+    data: DataType<E, P, EP, I>;
+} & ("include" extends keyof P ? {
+    included: IncludedType<P, I>;
+} : {}) & (E extends "query" ? {
     meta: ApiMeta;
 } : {});
 export {};
+//# sourceMappingURL=user.d.ts.map

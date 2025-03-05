@@ -5,9 +5,9 @@
  * For more information, refer to the Asset Delivery API reference:
  * https://www.sharetribe.com/api-reference/asset-delivery-api.html
  */
-import SharetribeSdk from '../../sdk';
-import { AxiosInstance, AxiosResponse } from 'axios';
-import { AssetByAliasParameter, AssetByVersionParameter, AssetResponse, AssetsByAliasParameter, AssetsByVersionParameter } from '../../types/assets';
+import SharetribeSdk from "../../sdk";
+import { AxiosInstance, AxiosResponse } from "axios";
+import { AssetByAliasParameter, AssetByVersionParameter, AssetResponse, AssetsByAliasParameter, AssetsByVersionParameter } from "../../types/assets";
 /**
  * Class representing the Assets API for interacting with the Sharetribe Asset Delivery API.
  */
@@ -29,7 +29,7 @@ declare class AssetsApi {
      * @returns {Promise<AssetResponse<'assetByAlias', P>>} - A promise resolving to the asset response.
      * @throws {Error} If the path starts with a leading slash.
      */
-    assetByAlias<P extends AssetByAliasParameter>(params: P): Promise<AxiosResponse<AssetResponse<'assetByAlias', P>>>;
+    assetByAlias<P extends AssetByAliasParameter>(params: P): Promise<AxiosResponse<AssetResponse<"assetByAlias", P>>>;
     /**
      * Retrieves multiple assets by alias.
      *
@@ -38,7 +38,7 @@ declare class AssetsApi {
      * @returns {Promise<AssetResponse<'assetsByAlias', P>>} - A promise resolving to the assets response.
      * @throws {Error} If any path starts with a leading slash or if paths are empty.
      */
-    assetsByAlias<P extends AssetsByAliasParameter>(params: P): Promise<AxiosResponse<AssetResponse<'assetsByAlias', P>>>;
+    assetsByAlias<P extends AssetsByAliasParameter>(params: P): Promise<AxiosResponse<AssetResponse<"assetsByAlias", P>>>;
     /**
      * Retrieves a single asset by version.
      *
@@ -47,7 +47,7 @@ declare class AssetsApi {
      * @returns {Promise<AssetResponse<'assetByVersion', P>>} - A promise resolving to the asset response.
      * @throws {Error} If the path starts with a leading slash.
      */
-    assetByVersion<P extends AssetByVersionParameter>(params: P): Promise<AxiosResponse<AssetResponse<'assetByVersion', P>>>;
+    assetByVersion<P extends AssetByVersionParameter>(params: P): Promise<AxiosResponse<AssetResponse<"assetByVersion", P>>>;
     /**
      * Retrieves multiple assets by version.
      *
@@ -56,6 +56,7 @@ declare class AssetsApi {
      * @returns {Promise<AssetResponse<'assetsByVersion', P>>} - A promise resolving to the assets response.
      * @throws {Error} If any path starts with a leading slash.
      */
-    assetsByVersion<P extends AssetsByVersionParameter>(params: P): Promise<AxiosResponse<AssetResponse<'assetsByVersion', P>>>;
+    assetsByVersion<P extends AssetsByVersionParameter>(params: P): Promise<AxiosResponse<AssetResponse<"assetsByVersion", P>>>;
 }
 export default AssetsApi;
+//# sourceMappingURL=index.d.ts.map

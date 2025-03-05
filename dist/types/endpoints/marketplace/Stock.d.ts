@@ -5,10 +5,10 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#stock
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { StockCompareAndSetParameter, StockResponse } from '../../types/marketplace/stock';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { StockCompareAndSetParameter, StockResponse } from "../../types/marketplace/stock";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Stock API.
  *
@@ -41,6 +41,7 @@ declare class Stock {
      * });
      * const stockUpdateResult = response.data;
      */
-    compareAndSet<P extends StockCompareAndSetParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<StockResponse<'compareAndSet', EP>>>;
+    compareAndSet<P extends StockCompareAndSetParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<StockResponse<"compareAndSet", EP>>>;
 }
 export default Stock;
+//# sourceMappingURL=Stock.d.ts.map

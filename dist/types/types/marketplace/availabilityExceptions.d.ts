@@ -2,12 +2,12 @@
  * @fileoverview Type definitions for managing availability exceptions in the Sharetribe Marketplace API.
  * These types define the structure of availability exception-related parameters, responses, and relationships.
  */
-import { ApiMeta, ApiParameter, ExtraParameterType, Relationship, RelationshipTypeMap, UUID } from '../sharetribe';
-export type AvailabilityExceptionsEndpoints = 'query' | 'create' | 'delete';
-export type AvailabilityExceptionsRelationshipsFields = 'ownListing';
+import { ApiMeta, ApiParameter, ExtraParameterType, Relationship, RelationshipTypeMap, UUID } from "../sharetribe";
+export type AvailabilityExceptionsEndpoints = "query" | "create" | "delete";
+export type AvailabilityExceptionsRelationshipsFields = "ownListing" | "ownListing.marketplace" | "ownListing.author" | "ownListing.images" | "ownListing.currentStock";
 export interface AvailabilityException {
     id: UUID;
-    type: 'availabilityException';
+    type: "availabilityException";
     attributes?: {
         seats: number;
         start: Date;
@@ -16,7 +16,7 @@ export interface AvailabilityException {
 }
 export interface AvailabilityExceptionWithRelationships extends AvailabilityException {
     relationships: {
-        ownListing: Relationship<false, 'ownListing'>;
+        ownListing: Relationship<false, "ownListing">;
     };
 }
 export type AvailabilityExceptionType<R extends boolean> = R extends true ? AvailabilityExceptionWithRelationships : AvailabilityException;
@@ -38,19 +38,20 @@ export interface AvailabilityExceptionsDeleteParameter {
     id: UUID | string;
 }
 type AllAvailabilityExceptionsParameter = AvailabilityExceptionsQueryParameter | AvailabilityExceptionsCreateParameter | AvailabilityExceptionsDeleteParameter;
-type AvailabilityExceptionsType<P extends AllAvailabilityExceptionsParameter> = 'include' extends keyof P ? (P['include'] extends AvailabilityExceptionsRelationshipsFields[] ? true : false) : false;
-type IncludedType<P extends AllAvailabilityExceptionsParameter> = 'include' extends keyof P ? P['include'] extends (keyof RelationshipTypeMap)[] ? Array<RelationshipTypeMap[P['include'][number]]>[] : never : never;
+type AvailabilityExceptionsType<P extends AllAvailabilityExceptionsParameter> = "include" extends keyof P ? P["include"] extends AvailabilityExceptionsRelationshipsFields[] ? true : false : false;
+type IncludedType<P extends AllAvailabilityExceptionsParameter> = "include" extends keyof P ? P["include"] extends (keyof RelationshipTypeMap)[] ? Array<RelationshipTypeMap[P["include"][number]]>[] : never : never;
 type ExpandReturnType<P extends AllAvailabilityExceptionsParameter, EP> = EP extends {
     expand: true;
 } ? AvailabilityExceptionType<AvailabilityExceptionsType<P>> : EP extends {
     expand: false;
-} ? Omit<AvailabilityExceptionType<AvailabilityExceptionsType<P>>, 'attributes'> : Omit<AvailabilityExceptionType<AvailabilityExceptionsType<P>>, 'attributes'>;
-type DataType<E extends AvailabilityExceptionsEndpoints, P extends AllAvailabilityExceptionsParameter, EP extends ExtraParameterType> = E extends 'query' ? AvailabilityExceptionType<AvailabilityExceptionsType<P>>[] : E extends 'create' ? ExpandReturnType<P, EP> : E extends 'delete' ? Pick<AvailabilityException, 'id' | 'type'> : never;
+} ? Omit<AvailabilityExceptionType<AvailabilityExceptionsType<P>>, "attributes"> : Omit<AvailabilityExceptionType<AvailabilityExceptionsType<P>>, "attributes">;
+type DataType<E extends AvailabilityExceptionsEndpoints, P extends AllAvailabilityExceptionsParameter, EP extends ExtraParameterType> = E extends "query" ? AvailabilityExceptionType<AvailabilityExceptionsType<P>>[] : E extends "create" ? ExpandReturnType<P, EP> : E extends "delete" ? Pick<AvailabilityException, "id" | "type"> : never;
 export type AvailabilityExceptionsResponse<E extends AvailabilityExceptionsEndpoints, P extends AllAvailabilityExceptionsParameter, EP extends ExtraParameterType = undefined> = {
     data: DataType<E, P, EP>;
-} & ('include' extends keyof P ? {
+} & ("include" extends keyof P ? {
     included: IncludedType<P>;
-} : {}) & (E extends 'query' ? {
+} : {}) & (E extends "query" ? {
     meta: ApiMeta;
 } : {});
 export {};
+//# sourceMappingURL=availabilityExceptions.d.ts.map

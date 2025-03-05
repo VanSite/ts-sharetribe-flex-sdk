@@ -2,22 +2,22 @@
  * @fileoverview Type definitions for Time Slots in the Sharetribe Marketplace API.
  * This file defines the structure of Time Slots, their parameters, and response types for API requests.
  */
-import { ApiMeta, ApiParameter } from '../sharetribe';
-import UUID from '../../sdkTypes/UUID';
+import { ApiMeta, ApiParameter } from "../sharetribe";
+import UUID from "../../sdkTypes/UUID";
 /**
  * Types of time slots available in the system.
  */
-export type TimeSlotTypes = 'time-slot/day' | 'time-slot/time';
+export type TimeSlotTypes = "time-slot/day" | "time-slot/time";
 /**
  * Endpoints available for Time Slots API.
  */
-export type TimeSlotsEndpoints = 'query';
+export type TimeSlotsEndpoints = "query";
 /**
  * Represents a Time Slot object.
  */
 export interface TimeSlot {
     id: UUID;
-    type: 'timeSlot';
+    type: "timeSlot";
     attributes: {
         type: TimeSlotTypes;
         seats: number;
@@ -41,13 +41,14 @@ export interface TimeSlotsQueryParameter extends TimeSlotsParameter {
 /**
  * Determines the data type based on the API endpoint.
  */
-type DataType<E extends TimeSlotsEndpoints> = E extends 'query' ? TimeSlot[] : never;
+type DataType<E extends TimeSlotsEndpoints> = E extends "query" ? TimeSlot[] : never;
 /**
  * Response type for Time Slots API calls.
  */
 export type TimeSlotsResponse<E extends TimeSlotsEndpoints> = {
     data: DataType<E>;
-} & (E extends 'query' ? {
+} & (E extends "query" ? {
     meta: ApiMeta;
 } : {});
 export {};
+//# sourceMappingURL=timeSlots.d.ts.map

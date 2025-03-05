@@ -6,8 +6,8 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#own-listings
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
 import {
   OwnListingsAddImageParameter,
   OwnListingsCloseParameter,
@@ -19,9 +19,9 @@ import {
   OwnListingsQueryParameter,
   OwnListingsResponse,
   OwnListingsShowParameter,
-  OwnListingsUpdateParameter
-} from '../../types/marketplace/ownListings';
-import { ExtraParameter } from '../../types/sharetribe';
+  OwnListingsUpdateParameter,
+} from "../../types/marketplace/ownListings";
+import { ExtraParameter } from "../../types/sharetribe";
 
 /**
  * Class representing the Own Listings API.
@@ -40,7 +40,7 @@ class OwnListings {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/own_listings';
+    this.endpoint = api.endpoint + "/own_listings";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -58,11 +58,14 @@ class OwnListings {
    */
   async show<P extends OwnListingsShowParameter>(
     params: P
-  ): Promise<AxiosResponse<OwnListingsResponse<'show', P>>> {
-    return this.axios.get<OwnListingsResponse<'show', P>>(`${this.endpoint}/show`, {
-      headers: this.headers,
-      params,
-    });
+  ): Promise<AxiosResponse<OwnListingsResponse<"show", P>>> {
+    return this.axios.get<OwnListingsResponse<"show", P>>(
+      `${this.endpoint}/show`,
+      {
+        headers: this.headers,
+        params,
+      }
+    );
   }
 
   /**
@@ -78,11 +81,14 @@ class OwnListings {
    */
   async query<P extends OwnListingsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<OwnListingsResponse<'query', P>>> {
-    return this.axios.get<OwnListingsResponse<'query', P>>(`${this.endpoint}/query`, {
-      headers: this.headers,
-      params,
-    });
+  ): Promise<AxiosResponse<OwnListingsResponse<"query", P>>> {
+    return this.axios.get<OwnListingsResponse<"query", P>>(
+      `${this.endpoint}/query`,
+      {
+        headers: this.headers,
+        params,
+      }
+    );
   }
 
   /**
@@ -108,8 +114,8 @@ class OwnListings {
   async create<P extends OwnListingsCreateParameter, EP extends ExtraParameter>(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<OwnListingsResponse<'create', P, EP>>> {
-    return this.axios.post<OwnListingsResponse<'create', P, EP>>(
+  ): Promise<AxiosResponse<OwnListingsResponse<"create", P, EP>>> {
+    return this.axios.post<OwnListingsResponse<"create", P, EP>>(
       `${this.endpoint}/create`,
       { ...params, ...extraParams },
       { headers: this.headers }
@@ -132,11 +138,14 @@ class OwnListings {
    * });
    * const draft = response.data;
    */
-  async createDraft<P extends OwnListingsCreateDraftParameter, EP extends ExtraParameter>(
+  async createDraft<
+    P extends OwnListingsCreateDraftParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<OwnListingsResponse<'createDraft', P, EP>>> {
-    return this.axios.post<OwnListingsResponse<'createDraft', P, EP>>(
+  ): Promise<AxiosResponse<OwnListingsResponse<"createDraft", P, EP>>> {
+    return this.axios.post<OwnListingsResponse<"createDraft", P, EP>>(
       `${this.endpoint}/create_draft`,
       { ...params, ...extraParams },
       { headers: this.headers }
@@ -162,8 +171,8 @@ class OwnListings {
   async update<P extends OwnListingsUpdateParameter, EP extends ExtraParameter>(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<OwnListingsResponse<'update', P, EP>>> {
-    return this.axios.post<OwnListingsResponse<'update', P, EP>>(
+  ): Promise<AxiosResponse<OwnListingsResponse<"update", P, EP>>> {
+    return this.axios.post<OwnListingsResponse<"update", P, EP>>(
       `${this.endpoint}/update`,
       { ...params, ...extraParams },
       { headers: this.headers }
@@ -185,11 +194,14 @@ class OwnListings {
    * });
    * const publishedListing = response.data;
    */
-  async publishDraft<P extends OwnListingsPublishDraftParameter, EP extends ExtraParameter>(
+  async publishDraft<
+    P extends OwnListingsPublishDraftParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<OwnListingsResponse<'publishDraft', P, EP>>> {
-    return this.axios.post<OwnListingsResponse<'publishDraft', P, EP>>(
+  ): Promise<AxiosResponse<OwnListingsResponse<"publishDraft", P, EP>>> {
+    return this.axios.post<OwnListingsResponse<"publishDraft", P, EP>>(
       `${this.endpoint}/publish_draft`,
       { ...params, ...extraParams },
       { headers: this.headers }
@@ -209,8 +221,8 @@ class OwnListings {
    */
   async discardDraft<P extends OwnListingsDiscardDraftParameter>(
     params: P
-  ): Promise<AxiosResponse<OwnListingsResponse<'discardDraft', P>>> {
-    return this.axios.post<OwnListingsResponse<'discardDraft', P>>(
+  ): Promise<AxiosResponse<OwnListingsResponse<"discardDraft", P>>> {
+    return this.axios.post<OwnListingsResponse<"discardDraft", P>>(
       `${this.endpoint}/discard_draft`,
       params,
       { headers: this.headers }
@@ -233,8 +245,8 @@ class OwnListings {
   async close<P extends OwnListingsCloseParameter, EP extends ExtraParameter>(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<OwnListingsResponse<'close', P>>> {
-    return this.axios.post<OwnListingsResponse<'close', P>>(
+  ): Promise<AxiosResponse<OwnListingsResponse<"close", P>>> {
+    return this.axios.post<OwnListingsResponse<"close", P>>(
       `${this.endpoint}/close`,
       { ...params, ...extraParams },
       { headers: this.headers }
@@ -257,8 +269,8 @@ class OwnListings {
   async open<P extends OwnListingsOpenParameter, EP extends ExtraParameter>(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<OwnListingsResponse<'open', P>>> {
-    return this.axios.post<OwnListingsResponse<'open', P>>(
+  ): Promise<AxiosResponse<OwnListingsResponse<"open", P>>> {
+    return this.axios.post<OwnListingsResponse<"open", P>>(
       `${this.endpoint}/open`,
       { ...params, ...extraParams },
       { headers: this.headers }
@@ -280,11 +292,14 @@ class OwnListings {
    * });
    * const updatedListing = response.data;
    */
-  async addImage<P extends OwnListingsAddImageParameter, EP extends ExtraParameter>(
+  async addImage<
+    P extends OwnListingsAddImageParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<OwnListingsResponse<'addImage', P>>> {
-    return this.axios.post<OwnListingsResponse<'addImage', P>>(
+  ): Promise<AxiosResponse<OwnListingsResponse<"addImage", P>>> {
+    return this.axios.post<OwnListingsResponse<"addImage", P>>(
       `${this.endpoint}/add_image`,
       { ...params, ...extraParams },
       { headers: this.headers }

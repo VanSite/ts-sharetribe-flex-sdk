@@ -5,10 +5,10 @@
  * For more details, refer to the Integration API documentation:
  * https://www.sharetribe.com/api-reference/integration.html#transactions
  */
-import { AxiosResponse } from 'axios';
-import IntegrationApi from './index';
-import { TransactionsQueryParameter, TransactionsResponse, TransactionsShowParameter, TransactionsTransitionParameter, TransactionsTransitionSpeculativeParameter, TransactionsUpdateMetadataParameter } from '../../types/marketplace/transaction';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import IntegrationApi from "./index";
+import { TransactionsQueryParameter, TransactionsResponse, TransactionsShowParameter, TransactionsTransitionParameter, TransactionsTransitionSpeculativeParameter, TransactionsUpdateMetadataParameter } from "../../types/marketplace/transactions";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Transactions API.
  *
@@ -39,7 +39,7 @@ declare class Transactions {
      *
      * const transactionDetails = response.data;
      */
-    show<P extends TransactionsShowParameter>(params: P): Promise<AxiosResponse<TransactionsResponse<'show', P>>>;
+    show<P extends TransactionsShowParameter>(params: P): Promise<AxiosResponse<TransactionsResponse<"show", P>>>;
     /**
      * Queries transactions based on specified filters.
      *
@@ -59,7 +59,7 @@ declare class Transactions {
      *
      * const transactions = response.data;
      */
-    query<P extends TransactionsQueryParameter<true>>(params: P): Promise<AxiosResponse<TransactionsResponse<'query', P>>>;
+    query<P extends TransactionsQueryParameter<true>>(params: P): Promise<AxiosResponse<TransactionsResponse<"query", P>>>;
     /**
      * Transitions a transaction to a new state.
      *
@@ -78,7 +78,7 @@ declare class Transactions {
      *
      * const updatedTransaction = response.data;
      */
-    transition<P extends TransactionsTransitionParameter, EP extends ExtraParameter>(params: P, extraParams: EP | void): Promise<AxiosResponse<TransactionsResponse<'transition', P, EP>>>;
+    transition<P extends TransactionsTransitionParameter, EP extends ExtraParameter>(params: P, extraParams: EP | void): Promise<AxiosResponse<TransactionsResponse<"transition", P, EP>>>;
     /**
      * Transitions a transaction speculatively to a new state without persisting the transition.
      *
@@ -97,7 +97,7 @@ declare class Transactions {
      *
      * const speculativeResult = response.data;
      */
-    transitionSpeculative<P extends TransactionsTransitionSpeculativeParameter, EP extends ExtraParameter>(params: P, extraParams: EP | void): Promise<AxiosResponse<TransactionsResponse<'transitionSpeculative', P, EP>>>;
+    transitionSpeculative<P extends TransactionsTransitionSpeculativeParameter, EP extends ExtraParameter>(params: P, extraParams: EP | void): Promise<AxiosResponse<TransactionsResponse<"transitionSpeculative", P, EP>>>;
     /**
      * Updates metadata for a transaction.
      *
@@ -115,6 +115,7 @@ declare class Transactions {
      *
      * const updatedMetadata = response.data;
      */
-    updateMetadata<P extends TransactionsUpdateMetadataParameter, EP extends ExtraParameter>(params: P, extraParams: EP | void): Promise<AxiosResponse<TransactionsResponse<'updateMetadata', P, EP>>>;
+    updateMetadata<P extends TransactionsUpdateMetadataParameter, EP extends ExtraParameter>(params: P, extraParams: EP | void): Promise<AxiosResponse<TransactionsResponse<"updateMetadata", P, EP>>>;
 }
 export default Transactions;
+//# sourceMappingURL=Transactions.d.ts.map

@@ -2,14 +2,16 @@
  * @fileoverview Provides the UUID class for handling universally unique identifiers (UUIDs).
  * This class allows for the creation and validation of UUIDs, using the `uuid` library.
  */
+import { SdkType } from "../types/sdk-types";
+declare const UUID_SDK_TYPE = "UUID";
 /**
  * Class representing a UUID (Universally Unique Identifier).
  *
  * The UUID class ensures that a valid UUID is created or used, with the option to generate one if none is provided.
  */
-declare class UUID {
+declare class UUID implements SdkType {
     uuid: string;
-    readonly _sdkType: 'UUID';
+    readonly _sdkType: typeof UUID_SDK_TYPE;
     /**
      * Creates an instance of the UUID class.
      *
@@ -33,3 +35,5 @@ declare class UUID {
     toString(): string;
 }
 export default UUID;
+export type UUIDInstance = InstanceType<typeof UUID>;
+//# sourceMappingURL=UUID.d.ts.map

@@ -2,14 +2,14 @@
  * @fileoverview Type definitions for Stripe Setup Intents in the Sharetribe Marketplace API.
  * This file includes the structure of Stripe Setup Intents, their attributes, parameters, and response types.
  */
-import { ApiParameter, ExtraParameterType, UUID } from '../sharetribe';
-export type StripeSetupIntentsEndpoints = 'create';
+import { ApiParameter, ExtraParameterType, UUID } from "../sharetribe";
+export type StripeSetupIntentsEndpoints = "create";
 /**
  * Represents a Stripe Setup Intent object.
  */
 export interface StripeSetupIntents {
     id: UUID;
-    type: 'stripeSetupIntent';
+    type: "stripeSetupIntent";
     attributes: {
         stripeSetupIntentId: string;
         clientSecret: string;
@@ -32,11 +32,11 @@ type ExpandReturnType<EP> = EP extends {
     expand: true;
 } ? StripeSetupIntents : EP extends {
     expand: false;
-} ? Omit<StripeSetupIntents, 'attributes'> : Omit<StripeSetupIntents, 'attributes'>;
+} ? Omit<StripeSetupIntents, "attributes"> : Omit<StripeSetupIntents, "attributes">;
 /**
  * Determines the data type based on the endpoint.
  */
-type DataType<E extends StripeSetupIntentsEndpoints, EP extends ExtraParameterType> = E extends 'create' ? ExpandReturnType<EP> : never;
+type DataType<E extends StripeSetupIntentsEndpoints, EP extends ExtraParameterType> = E extends "create" ? ExpandReturnType<EP> : never;
 /**
  * The response type for Stripe Setup Intents API calls.
  */
@@ -44,3 +44,4 @@ export type StripeSetupIntentsResponse<E extends StripeSetupIntentsEndpoints, EP
     data: DataType<E, EP>;
 };
 export {};
+//# sourceMappingURL=stripeSetupIntents.d.ts.map

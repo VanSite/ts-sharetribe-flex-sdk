@@ -5,10 +5,10 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#current-user
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { CurrentUserChangeEmailParameter, CurrentUserChangePasswordParameter, CurrentUserCreateParameter, CurrentUserCreateWithIdpParameter, CurrentUserDeleteParameter, CurrentUserResponse, CurrentUserShowParameter, CurrentUserUpdateProfileParameter, CurrentUserVerifyEmailParameter } from '../../types/marketplace/currentUser';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { CurrentUserChangeEmailParameter, CurrentUserChangePasswordParameter, CurrentUserCreateParameter, CurrentUserCreateWithIdpParameter, CurrentUserDeleteParameter, CurrentUserResponse, CurrentUserShowParameter, CurrentUserUpdateProfileParameter, CurrentUserVerifyEmailParameter } from "../../types/marketplace/currentUser";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Current User API.
  *
@@ -37,7 +37,7 @@ declare class CurrentUser {
      * const response = await sdk.currentUser.show({});
      * const user = response.data;
      */
-    show<P extends CurrentUserShowParameter>(params: P): Promise<AxiosResponse<CurrentUserResponse<'show', P>>>;
+    show<P extends CurrentUserShowParameter>(params: P): Promise<AxiosResponse<CurrentUserResponse<"show", P>>>;
     /**
      * Deletes the current authenticated user's account.
      *
@@ -51,7 +51,7 @@ declare class CurrentUser {
      * const response = await sdk.currentUser.delete();
      * const result = response.data;
      */
-    delete<P extends CurrentUserDeleteParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<'delete', P>>>;
+    delete<P extends CurrentUserDeleteParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<"delete", P>>>;
     /**
      * Creates a new user account.
      *
@@ -70,7 +70,7 @@ declare class CurrentUser {
      * });
      * const newUser = response.data;
      */
-    create<P extends CurrentUserCreateParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<'create', P>>>;
+    create<P extends CurrentUserCreateParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<"create", P>>>;
     /**
      * Creates a new user account using an identity provider.
      *
@@ -88,7 +88,7 @@ declare class CurrentUser {
      * });
      * const newUser = response.data;
      */
-    createWithIdp<P extends CurrentUserCreateWithIdpParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<'create_with_idp', P>>>;
+    createWithIdp<P extends CurrentUserCreateWithIdpParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<"create_with_idp", P>>>;
     /**
      * Updates the current authenticated user's profile.
      *
@@ -105,7 +105,7 @@ declare class CurrentUser {
      * });
      * const updatedUser = response.data;
      */
-    updateProfile<P extends CurrentUserUpdateProfileParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<'update_profile', P>>>;
+    updateProfile<P extends CurrentUserUpdateProfileParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<"update_profile", P>>>;
     /**
      * Changes the current authenticated user's password.
      *
@@ -122,7 +122,7 @@ declare class CurrentUser {
      * });
      * const result = response.data;
      */
-    changePassword<P extends CurrentUserChangePasswordParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<'change_password', P>>>;
+    changePassword<P extends CurrentUserChangePasswordParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<"change_password", P>>>;
     /**
      * Changes the current authenticated user's email address.
      *
@@ -139,7 +139,7 @@ declare class CurrentUser {
      * });
      * const result = response.data;
      */
-    changeEmail<P extends CurrentUserChangeEmailParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<'change_email', P>>>;
+    changeEmail<P extends CurrentUserChangeEmailParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<"change_email", P>>>;
     /**
      * Verifies the current authenticated user's email address.
      *
@@ -155,7 +155,7 @@ declare class CurrentUser {
      * });
      * const result = response.data;
      */
-    verifyEmail<P extends CurrentUserVerifyEmailParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<'verify_email', P>>>;
+    verifyEmail<P extends CurrentUserVerifyEmailParameter, EP extends ExtraParameter>(params: P, extraParams: EP): Promise<AxiosResponse<CurrentUserResponse<"verify_email", P>>>;
     /**
      * Sends a verification email to the current authenticated user.
      *
@@ -166,7 +166,7 @@ declare class CurrentUser {
      * const response = await sdk.currentUser.sendVerificationEmail();
      * const result = response.data;
      */
-    sendVerificationEmail<P extends void>(): Promise<AxiosResponse<CurrentUserResponse<'send_verification_email', P>>>;
+    sendVerificationEmail<P extends void>(): Promise<AxiosResponse<CurrentUserResponse<"send_verification_email", P>>>;
     /**
      * @deprecated This API endpoint is DEPRECATED. Use /stripe_account/create instead!
      * Throws an error to indicate that this method should not be used.
@@ -179,3 +179,4 @@ declare class CurrentUser {
     updateStripeAccount(): Promise<void>;
 }
 export default CurrentUser;
+//# sourceMappingURL=CurrentUser.d.ts.map

@@ -6,12 +6,12 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#process-transitions
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
 import {
   ProcessTransitionsQueryParameter,
   ProcessTransitionsResponse,
-} from '../../types/marketplace/processTransitions';
+} from "../../types/marketplace/processTransitions";
 
 /**
  * Class representing the Process Transitions API.
@@ -30,7 +30,7 @@ class ProcessTransitions {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/process_transitions';
+    this.endpoint = api.endpoint + "/process_transitions";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -50,11 +50,14 @@ class ProcessTransitions {
    */
   async query<P extends ProcessTransitionsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<ProcessTransitionsResponse<'query'>>> {
-    return this.axios.get<ProcessTransitionsResponse<'query'>>(`${this.endpoint}/query`, {
-      headers: this.headers,
-      params,
-    });
+  ): Promise<AxiosResponse<ProcessTransitionsResponse<"query">>> {
+    return this.axios.get<ProcessTransitionsResponse<"query">>(
+      `${this.endpoint}/query`,
+      {
+        headers: this.headers,
+        params,
+      }
+    );
   }
 }
 

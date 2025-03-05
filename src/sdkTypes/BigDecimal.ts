@@ -4,9 +4,15 @@
  * The BigDecimal class ensures that large decimal numbers are stored as strings
  * to avoid precision loss during computations.
  */
-class BigDecimal {
+
+import { SdkType } from "../types/sdk-types";
+
+// Define a static class name
+const BIGDECIMAL_SDK_TYPE = "BigDecimal";
+
+class BigDecimal implements SdkType {
   value: string;
-  readonly _sdkType: 'BigDecimal';
+  readonly _sdkType: typeof BIGDECIMAL_SDK_TYPE;
 
   /**
    * Creates an instance of the BigDecimal class.
@@ -16,10 +22,12 @@ class BigDecimal {
    * const bigDecimal = new BigDecimal('123456789.123456789');
    */
   constructor(value: any) {
-    this._sdkType = 'BigDecimal';
+    this._sdkType = BIGDECIMAL_SDK_TYPE;
 
-    if (typeof value !== 'string') {
-      console.warn("BigDecimal must be initialized with a string to ensure precision.");
+    if (typeof value !== "string") {
+      console.warn(
+        "BigDecimal must be initialized with a string to ensure precision."
+      );
     }
     // Convert the value to a string to maintain compatibility and precision.
     this.value = String(value);
@@ -38,4 +46,5 @@ class BigDecimal {
   }
 }
 
+// Default export for backward compatibility
 export default BigDecimal;

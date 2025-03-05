@@ -56,3 +56,4 @@ declare class IntegrationApi {
     constructor(sdk: IntegrationSdk);
 }
 export default IntegrationApi;
+//# sourceMappingURL=index.d.ts.map

@@ -6,9 +6,12 @@
  * https://www.sharetribe.com/api-reference/marketplace.html#show-user
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { UsersResponse, UsersShowParameter } from '../../types/marketplace/user';
+import { AxiosInstance, AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import {
+  UsersResponse,
+  UsersShowParameter,
+} from "../../types/marketplace/user";
 
 /**
  * Class representing the Users API.
@@ -26,7 +29,7 @@ class Users {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + '/users';
+    this.endpoint = api.endpoint + "/users";
     this.axios = api.axios;
     this.headers = api.headers;
   }
@@ -46,8 +49,8 @@ class Users {
    */
   async show<P extends UsersShowParameter>(
     params: P
-  ): Promise<AxiosResponse<UsersResponse<'show', P>>> {
-    return this.axios.get<UsersResponse<'show', P>>(`${this.endpoint}/show`, {
+  ): Promise<AxiosResponse<UsersResponse<"show", P>>> {
+    return this.axios.get<UsersResponse<"show", P>>(`${this.endpoint}/show`, {
       headers: this.headers,
       params,
     });

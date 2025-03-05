@@ -6,10 +6,13 @@
  * https://www.sharetribe.com/api-reference/integration.html#stock
  */
 
-import { AxiosInstance, AxiosResponse } from 'axios';
-import IntegrationApi from './index';
-import { StockCompareAndSetParameter, StockResponse } from '../../types/marketplace/stock';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosInstance, AxiosResponse } from "axios";
+import IntegrationApi from "./index";
+import {
+  StockCompareAndSetParameter,
+  StockResponse,
+} from "../../types/marketplace/stock";
+import { ExtraParameter } from "../../types/sharetribe";
 
 /**
  * Class representing the Stock API.
@@ -27,7 +30,7 @@ class Stock {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: IntegrationApi) {
-    this.endpoint = api.endpoint + '/stock';
+    this.endpoint = api.endpoint + "/stock";
     this.axios = api.axios;
   }
 
@@ -49,11 +52,14 @@ class Stock {
    *
    * const updatedStock = response.data;
    */
-  async compareAndSet<P extends StockCompareAndSetParameter, EP extends ExtraParameter>(
+  async compareAndSet<
+    P extends StockCompareAndSetParameter,
+    EP extends ExtraParameter
+  >(
     params: P,
     extraParams: EP
-  ): Promise<AxiosResponse<StockResponse<'compareAndSet', EP>>> {
-    return this.axios.post<StockResponse<'compareAndSet', EP>>(
+  ): Promise<AxiosResponse<StockResponse<"compareAndSet", EP>>> {
+    return this.axios.post<StockResponse<"compareAndSet", EP>>(
       `${this.endpoint}/compare_and_set`,
       { ...params, ...extraParams }
     );

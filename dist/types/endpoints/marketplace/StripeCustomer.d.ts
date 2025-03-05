@@ -5,10 +5,10 @@
  * For more details, refer to the Marketplace API documentation:
  * https://www.sharetribe.com/api-reference/marketplace.html#stripe-customer
  */
-import { AxiosResponse } from 'axios';
-import MarketplaceApi from './index';
-import { StripeCustomerAddPaymentMethodParameter, StripeCustomerCreateParameter, StripeCustomerDeletePaymentMethodParameter, StripeCustomerResponse } from '../../types/marketplace/stripeCustomer';
-import { ExtraParameter } from '../../types/sharetribe';
+import { AxiosResponse } from "axios";
+import MarketplaceApi from "./index";
+import { StripeCustomerAddPaymentMethodParameter, StripeCustomerCreateParameter, StripeCustomerDeletePaymentMethodParameter, StripeCustomerResponse } from "../../types/marketplace/stripeCustomer";
+import { ExtraParameter } from "../../types/sharetribe";
 /**
  * Class representing the Stripe Customer API.
  *
@@ -41,7 +41,7 @@ declare class StripeCustomer {
      * });
      * const customer = response.data;
      */
-    create<P extends StripeCustomerCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripeCustomerResponse<'create', P, EP>>>;
+    create<P extends StripeCustomerCreateParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripeCustomerResponse<"create", P, EP>>>;
     /**
      * Adds a payment method to a Stripe customer.
      *
@@ -57,7 +57,7 @@ declare class StripeCustomer {
      * });
      * const updatedCustomer = response.data;
      */
-    addPaymentMethod<P extends StripeCustomerAddPaymentMethodParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripeCustomerResponse<'addPaymentMethod', P, EP>>>;
+    addPaymentMethod<P extends StripeCustomerAddPaymentMethodParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripeCustomerResponse<"addPaymentMethod", P, EP>>>;
     /**
      * Deletes a payment method from a Stripe customer.
      *
@@ -71,6 +71,7 @@ declare class StripeCustomer {
      * const response = await sdk.stripeCustomer.deletePaymentMethod({ customer_id: 'customer-id', payment_method_id: 'payment-method-id' });
      * const result = response.data;
      */
-    deletePaymentMethod<P extends StripeCustomerDeletePaymentMethodParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripeCustomerResponse<'deletePaymentMethod', P, EP>>>;
+    deletePaymentMethod<P extends StripeCustomerDeletePaymentMethodParameter, EP extends ExtraParameter>(params: P, extraParams?: EP): Promise<AxiosResponse<StripeCustomerResponse<"deletePaymentMethod", P, EP>>>;
 }
 export default StripeCustomer;
+//# sourceMappingURL=StripeCustomer.d.ts.map

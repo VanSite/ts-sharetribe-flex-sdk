@@ -6,10 +6,41 @@
  * https://www.sharetribe.com/api-reference/authentication.html
  */
 
-import { AuthWithIdpParameter, Endpoint, RevokeResponse, ScopeType, TokenResponse } from '../../types/authentication';
-import {AxiosInstance, AxiosResponse} from 'axios';
-import SharetribeSdk from '../../sdk';
+import {
+  AuthWithIdpParameter,
+  Endpoint,
+  RevokeResponse,
+  ScopeType,
+  TokenResponse,
+} from "../../types/authentication";
+import { AxiosInstance, AxiosResponse } from "axios";
+import SharetribeSdk from "../../sdk";
 import IntegrationSdk from "../../integrationSdk";
+
+/**
+ * Converts an object to URL-encoded form data string.
+ *
+ * @param {Record<string, any> | void} obj - The object to convert
+ * @returns {string} URL-encoded form data string
+ */
+function urlEncodeFormData(obj: Record<string, any> | void): string {
+  if (!obj) {
+    return "";
+  }
+
+  return Object.keys(obj)
+    .map((key) => {
+      const value = obj[key];
+      if (value === undefined || value === null) {
+        return "";
+      }
+      const encodedKey = encodeURIComponent(key);
+      const encodedValue = encodeURIComponent(value);
+      return `${encodedKey}=${encodedValue}`;
+    })
+    .filter(Boolean)
+    .join("&");
+}
 
 /**
  * Class representing the Authentication API for obtaining and managing access tokens.
@@ -42,10 +73,14 @@ class AuthenticationApi {
    * @param {Endpoint<S>} params - Parameters including grant type and necessary credentials.
    * @returns {Promise<TokenResponse<S>>} - A promise resolving to the token response.
    */
-  async token<S extends ScopeType>(params: Endpoint<S>): Promise<AxiosResponse<TokenResponse<S>>> {
-    return this.axios.post<TokenResponse<S>>(`${this.endpoint}/token`, params, {  // Replace `any` with the actual type
-      headers: this.headers,
-    });
+  async token<S extends ScopeType>(
+    params: Endpoint<S>
+  ): Promise<AxiosResponse<TokenResponse<S>>> {
+    return this.axios.post<TokenResponse<S>>(
+      `${this.endpoint}/token`,
+      urlEncodeFormData(params),
+      this.headers
+    );
   }
 
   /**
@@ -54,10 +89,14 @@ class AuthenticationApi {
    * @param {AuthWithIdpParameter} params - Parameters including IdP token and provider details.
    * @returns {Promise<TokenResponse<'user'>>} - A promise resolving to the token response.
    */
-  async authWithIdp<P extends AuthWithIdpParameter>(params: P): Promise<AxiosResponse<TokenResponse<"user">>> {  // Replace `any` with the actual type
-    return this.axios.post<TokenResponse<"user">>(`${this.endpoint}/auth_with_idp`, params, {
-      headers: this.headers
-    });
+  async authWithIdp<P extends AuthWithIdpParameter>(
+    params: P
+  ): Promise<AxiosResponse<TokenResponse<"user">>> {
+    return this.axios.post<TokenResponse<"user">>(
+      `${this.endpoint}/auth_with_idp`,
+      urlEncodeFormData(params),
+      this.headers
+    );
   }
 
   /**
@@ -66,10 +105,12 @@ class AuthenticationApi {
    * @param {string} token - The refresh token to be revoked.
    * @returns {Promise<RevokeResponse>} - A promise resolving to the revoke response.
    */
-  async revoke(token: string): Promise<AxiosResponse<RevokeResponse>> {  // Replace `any` with the actual type
-    return this.axios.post<RevokeResponse>(`${this.endpoint}/revoke`, {token}, {
-      headers: this.headers,
-    });
+  async revoke(token: string): Promise<AxiosResponse<RevokeResponse>> {
+    return this.axios.post<RevokeResponse>(
+      `${this.endpoint}/revoke`,
+      urlEncodeFormData({ token }),
+      this.headers
+    );
   }
 
   /**
@@ -77,12 +118,12 @@ class AuthenticationApi {
    *
    * @returns {Promise<TokenResponse<'details'>>} - A promise resolving to the token details response.
    */
-  async details(): Promise<AxiosResponse<TokenResponse<'details'>>> {
-    return this.axios.get<TokenResponse<'details'>>(`${this.endpoint}/details`, {
-      headers: this.headers,
-    });
+  async details(): Promise<AxiosResponse<TokenResponse<"details">>> {
+    return this.axios.get<TokenResponse<"details">>(
+      `${this.endpoint}/details`,
+      this.headers
+    );
   }
-
 }
 
 export default AuthenticationApi;

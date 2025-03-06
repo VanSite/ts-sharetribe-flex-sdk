@@ -32,7 +32,7 @@ const commonConfig = {
   devtool: "source-map",
   plugins: [],
   optimization: {
-    minimize: false,
+    minimize: true,
     concatenateModules: false,
     minimizer: [
       new TerserPlugin({

@@ -1,6 +1,6 @@
 {
   "name": "@vansite/ts-sharetribe-flex-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This is a TypeScript SDK for Sharetribe Flex API. It reduces the complexity of the API and provides a more user-friendly interface.",
   "main": "./dist/ts-sharetribe-flex-sdk.cjs",
   "module": "./dist/ts-sharetribe-flex-sdk.mjs",
@@ -14,6 +14,10 @@
   },
   "author": "DKogan90 <david_kogan@hotmail.de>",
   "homepage": "https://github.com/VanSite/ts-sharetribe-flex-sdk",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VanSite/ts-sharetribe-flex-sdk.git"
+  },
   "license": "MIT",
   "private": false,
   "files": [

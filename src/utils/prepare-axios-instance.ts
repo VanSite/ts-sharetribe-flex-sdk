@@ -155,13 +155,13 @@ export async function handleRequestSuccess(
         prepareAuthorizationHeader(authToken);
     } else {
       let response: AxiosResponse<any>;
-      if (sdk.constructor.name === "SharetribeSdk") {
+      if (sdk instanceof SharetribeSdk) {
         response = await sdk.auth.token<"public-read">({
           client_id: sdk.sdkConfig.clientId,
           grant_type: "client_credentials",
           scope: "public-read",
         });
-      } else if (sdk.constructor.name === "IntegrationSdk") {
+      } else if (sdk instanceof IntegrationSdk) {
         if (!sdk.sdkConfig.clientSecret) {
           throw new Error("clientSecret is required for integration SDK");
         }

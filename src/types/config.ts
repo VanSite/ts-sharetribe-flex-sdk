@@ -69,13 +69,13 @@ export interface TokenStore {
    * Retrieves the current token.
    * @returns A promise resolving to the token or null if no token is available.
    */
-  getToken: () => Promise<{
+  getToken: () => {
     access_token: string;
     token_type: "bearer";
     expires_in: number;
     scope?: "public-read" | "trusted:user" | "user" | "integ";
     refresh_token?: string;
-  } | null>;
+  } | null;
 
   /**
    * Sets a new token.

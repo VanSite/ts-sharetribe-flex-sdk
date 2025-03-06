@@ -143,7 +143,7 @@ const writeHandlers = flatten(
     const handler = transit.makeWriteHandler({
       tag: () => tag,
       rep: sdkTypeWriter.writer,
-      stringRep: (v: any) => String(sdkTypeWriter.writer(v)),
+      stringRep: (v: any) => sdkTypeWriter.writer(v.toString()),
     });
 
     return [typeClass, handler];

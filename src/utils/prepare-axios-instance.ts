@@ -19,6 +19,20 @@ export const QUERY_PARAMETERS = [
   "limit",
 ];
 
+const isTransit = (res: any) => {
+  const headers = res.headers || {};
+  const contentType = headers["content-type"] || "";
+
+  return contentType.startsWith("application/transit+json");
+};
+
+const isJson = (res: any) => {
+  const headers = res.headers || {};
+  const contentType = headers["content-type"] || "";
+
+  return contentType.startsWith("application/json");
+};
+
 // Utility functions
 export const isTokenUnauthorized = (status: number) => [401].includes(status);
 export const isTokenExpired = (status: number) => [401, 403].includes(status);
@@ -40,22 +54,26 @@ export const routeNeedsTrustedUser = (
   }) as [string, { authRequired: boolean }] | undefined;
   return found && found[1].authRequired;
 };
+
 export const prepareAuthorizationHeader = (data: any) =>
   `${data.token_type} ${data.access_token}`;
 
 // Interceptor handlers
 export function handleResponseSuccess(sdk: SharetribeSdk | IntegrationSdk) {
   return function onFulfilled(response: AxiosResponse): AxiosResponse {
-    if (typeof response.data === "string") {
+    if (isTransit(response)) {
       const { reader } = createTransitConverters(sdk.sdkConfig.typeHandlers, {
         verbose: sdk.sdkConfig.transitVerbose,
       });
       response.data = reader.read(response.data);
+    } else if (isJson(response)) {
+      response.data = JSON.parse(response.data);
     }
 
     if (response?.data?.access_token) {
       sdk.sdkConfig.tokenStore!.setToken(response.data);
     }
+
     if (response?.data?.revoked) {
       sdk.sdkConfig.tokenStore!.removeToken();
     }
@@ -70,18 +88,20 @@ export async function handleResponseFailure(
 ) {
   const originalRequest = error.config as ExtendedInternalAxiosRequestConfig;
 
-  if (typeof error.response.data === "string") {
+  if (isTransit(error.response)) {
     const { reader } = createTransitConverters(sdk.sdkConfig.typeHandlers, {
       verbose: sdk.sdkConfig.transitVerbose,
     });
     error.response.data = reader.read(error.response.data);
+  } else if (isJson(error.response)) {
+    error.response.data = JSON.parse(error.response.data);
   }
 
   if (
     isTokenUnauthorized(error.response?.status) &&
     routeNeedsTrustedUser(originalRequest, sdk)
   ) {
-    const token = await sdk.sdkConfig.tokenStore!.getToken();
+    const token = sdk.sdkConfig.tokenStore!.getToken();
     if (token?.scope !== "trusted:user") {
       console.error("Token is not trusted:user");
       return Promise.reject(error);
@@ -89,7 +109,7 @@ export async function handleResponseFailure(
   }
 
   if (isTokenExpired(error.response?.status) && !originalRequest._retry) {
-    const token = await sdk.sdkConfig.tokenStore!.getToken();
+    const token = sdk.sdkConfig.tokenStore!.getToken();
     if (token && token.refresh_token) {
       originalRequest._retry = true;
       const response = await sdk.auth.token<"refresh-token">({
@@ -111,26 +131,52 @@ export async function handleRequestSuccess(
   sdk: SharetribeSdk | IntegrationSdk,
   requestConfig: InternalAxiosRequestConfig
 ): Promise<InternalAxiosRequestConfig> {
+  if (
+    requestConfig.headers["Content-Type"] ===
+    "application/x-www-form-urlencoded"
+  ) {
+    return requestConfig;
+  }
+
   // Anonymous requests are allowed to use the public-read scope
   const isAnonymousRequest =
     requestConfig?.data?.grant_type === "client_credentials" &&
-    requestConfig.data.scope === "public-read";
+    requestConfig?.data?.scope === "public-read";
   if (isAnonymousRequest) {
     return requestConfig;
   }
 
   // when the request has no Authorization header, we need to add it
   if (!requestConfig.headers.Authorization) {
-    const authToken = await sdk.sdkConfig.tokenStore!.getToken();
+    const authToken = sdk.sdkConfig.tokenStore!.getToken();
     if (authToken) {
       requestConfig.headers.Authorization =
         prepareAuthorizationHeader(authToken);
     } else {
-      const response = await sdk.auth.token<"public-read">({
-        client_id: sdk.sdkConfig.clientId,
-        grant_type: "client_credentials",
-        scope: "public-read",
-      });
+      let response: AxiosResponse<any>;
+      if (sdk.constructor.name === "SharetribeSdk") {
+        response = await sdk.auth.token<"public-read">({
+          client_id: sdk.sdkConfig.clientId,
+          grant_type: "client_credentials",
+          scope: "public-read",
+        });
+      } else if (sdk.constructor.name === "IntegrationSdk") {
+        if (!sdk.sdkConfig.clientSecret) {
+          throw new Error("clientSecret is required for integration SDK");
+        }
+
+        response = await sdk.auth.token<"integ">({
+          client_id: sdk.sdkConfig.clientId,
+          client_secret: sdk.sdkConfig.clientSecret,
+          grant_type: "client_credentials",
+          scope: "integ",
+        });
+      } else {
+        throw new Error("Invalid SDK instance");
+      }
+
+      sdk.sdkConfig.tokenStore!.setToken(response.data);
+
       requestConfig.headers.Authorization = prepareAuthorizationHeader(
         response.data
       );
@@ -154,6 +200,16 @@ export async function handleRequestSuccess(
       }
     });
   }
+
+  // Turn sdkTypes into non sdkType objects
+  if (requestConfig.method === "post") {
+    const { writer } = createTransitConverters(sdk.sdkConfig.typeHandlers, {
+      verbose: sdk.sdkConfig.transitVerbose,
+    });
+    requestConfig.headers["Content-Type"] = "application/transit+json";
+    requestConfig.data = writer.write(requestConfig.data);
+  }
+
   return requestConfig;
 }
 

@@ -79,7 +79,7 @@ class AuthenticationApi {
     return this.axios.post<TokenResponse<S>>(
       `${this.endpoint}/token`,
       urlEncodeFormData(params),
-      this.headers
+      { headers: this.headers }
     );
   }
 
@@ -95,7 +95,7 @@ class AuthenticationApi {
     return this.axios.post<TokenResponse<"user">>(
       `${this.endpoint}/auth_with_idp`,
       urlEncodeFormData(params),
-      this.headers
+      { headers: this.headers }
     );
   }
 
@@ -109,7 +109,7 @@ class AuthenticationApi {
     return this.axios.post<RevokeResponse>(
       `${this.endpoint}/revoke`,
       urlEncodeFormData({ token }),
-      this.headers
+      { headers: this.headers }
     );
   }
 
@@ -121,7 +121,7 @@ class AuthenticationApi {
   async details(): Promise<AxiosResponse<TokenResponse<"details">>> {
     return this.axios.get<TokenResponse<"details">>(
       `${this.endpoint}/details`,
-      this.headers
+      { headers: this.headers }
     );
   }
 }

@@ -1,5 +1,6 @@
 import MemoryStore from "./stores/MemoryStore";
 import { TypeHandler } from "../types/config";
+import BrowserStore from "./stores/BrowserStore";
 
 type DefaultSdkConfigType = {
   baseUrl: string;

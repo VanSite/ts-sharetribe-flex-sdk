@@ -11,6 +11,7 @@ import UUID from "./sdkTypes/UUID";
 import LatLng from "./sdkTypes/LatLng";
 import LatLngBounds from "./sdkTypes/LatLngBounds";
 import Money from "./sdkTypes/Money";
+import { replacer, reviver } from "./utils/convert-types";
 import MemoryStore from "./utils/stores/MemoryStore";
 import BrowserStore from "./utils/stores/BrowserStore";
 import ExpressStore from "./utils/stores/ExpressStore";
@@ -64,6 +65,10 @@ export const sdkTypes = {
   Money,
   /** A universally unique identifier (UUID). */
   UUID,
+  /** Replacer function for JSON serialization. */
+  replacer,
+  /** Reviver function for JSON deserialization. */
+  reviver,
 };
 
 /**
@@ -104,7 +109,7 @@ export default {
   /** Export of the Sharetribe SDK. */
   SharetribeSdk: SharetribeSdkExport,
   /** Export of the Integration SDK. */
-  IntegrationSdk: IntegrationSdkExport,
+  SharetribeIntegrationSdk: IntegrationSdkExport,
   /** Export of available token stores. */
   TokenStore,
   /** Export of SDK-specific types. */

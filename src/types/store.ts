@@ -16,7 +16,7 @@ export interface TokenStore {
    * Retrieves the current authentication token.
    * @returns A promise resolving to the current token or null if no token exists.
    */
-  getToken: () => Promise<AuthToken | null>;
+  getToken: () => AuthToken | null;
 
   /**
    * Sets a new authentication token.

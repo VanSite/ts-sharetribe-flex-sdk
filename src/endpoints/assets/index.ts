@@ -53,7 +53,7 @@ class AssetsApi {
    * @param {SharetribeSdk} sdk - The Sharetribe SDK instance for configuration and request handling.
    */
   constructor(sdk: SharetribeSdk) {
-    const config = sdk.apisConfigs.api(sdk.sdkConfig);
+    const config = sdk.apisConfigs.assets(sdk.sdkConfig);
     this.endpoint = config.baseUrl + `/pub/${sdk.sdkConfig.clientId}`;
     this.headers = config.headers;
     this.axios = sdk.axios;

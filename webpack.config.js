@@ -32,12 +32,18 @@ const commonConfig = {
   devtool: "source-map",
   plugins: [],
   optimization: {
-    minimize: true,
+    minimize: false,
     concatenateModules: false,
     minimizer: [
       new TerserPlugin({
         terserOptions: {
+          keep_classnames: true,
+          keep_fnames: true,
           mangle: {
+            keep_classnames: true,
+            keep_fnames: true,
+          },
+          compress: {
             keep_classnames: true,
             keep_fnames: true,
           },
@@ -51,7 +57,7 @@ const cjsConfig = {
   ...commonConfig,
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "ts-sharetribe-flex-sdk.cjs.js",
+    filename: "ts-sharetribe-flex-sdk.cjs",
     library: {
       type: "commonjs2",
     },

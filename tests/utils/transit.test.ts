@@ -250,8 +250,6 @@ describe("transit", () => {
 
     const { reader, writer } = createTransitConverters([], { verbose: true });
 
-    expect(reader.read(testData)).toEqual();
-
     expect(reader.read(writer.write(testData))).toEqual(testData);
   });
 });

@@ -6,7 +6,6 @@ import {
   prepareAuthorizationHeader,
 } from "../../src/utils/prepare-axios-instance";
 import SharetribeSdk from "../../src/sdk";
-import { dataToType, typeToData } from "../../src/utils/convert-types";
 import { AxiosError } from "axios";
 
 describe("Utility Functions", () => {
@@ -57,12 +56,6 @@ describe("handleResponseSuccess", () => {
     expect(sdk.sdkConfig.tokenStore!.setToken).toHaveBeenCalledWith(
       response.data
     );
-  });
-
-  it("should call dataToType with correct arguments", () => {
-    const response = { data: {} };
-    onFulfilled(response);
-    expect(dataToType).toHaveBeenCalledWith(response.data, sdk);
   });
 
   it("should return the response", () => {
@@ -189,11 +182,5 @@ describe("handleRequestSuccess", () => {
     expect(requestConfig.params.include).toBe("value2,value3");
     expect(requestConfig.data.param1).toBeUndefined();
     expect(requestConfig.data.param2).toBeUndefined();
-  });
-
-  it("should call typeToData with correct arguments", async () => {
-    requestConfig.data = { someData: "data" };
-    await handleRequestSuccess(sdk, requestConfig);
-    expect(typeToData).toHaveBeenCalledWith(requestConfig.data, sdk);
   });
 });

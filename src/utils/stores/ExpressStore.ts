@@ -49,7 +49,7 @@ class ExpressStore implements TokenStore {
    * Retrieves the authentication token, either from cache or from the request cookies.
    * @returns A promise that resolves to the `AuthToken` or null if no token exists.
    */
-  async getToken(): Promise<AuthToken | null> {
+  getToken(): AuthToken | null {
     this.currentToken = this.currentToken || this.readCookie();
     return this.currentToken;
   }

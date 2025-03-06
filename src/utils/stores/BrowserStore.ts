@@ -33,7 +33,7 @@ class BrowserStore implements TokenStore {
    * Retrieves the authentication token from browser cookies.
    * @returns A promise that resolves to the `AuthToken` or null if no token exists.
    */
-  async getToken(): Promise<AuthToken | null> {
+  getToken(): AuthToken | null {
     const cookie = Cookies.get(this.key);
     return cookie ? (JSON.parse(cookie) as AuthToken) : null;
   }

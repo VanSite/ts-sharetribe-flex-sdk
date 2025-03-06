@@ -12,7 +12,7 @@ class MemoryStore implements TokenStore {
    * Retrieves the stored authentication token.
    * @returns A promise resolving to the `AuthToken` or `null` if no token is stored.
    */
-  async getToken(): Promise<AuthToken | null> {
+  getToken(): AuthToken | null {
     return this.token;
   }
 

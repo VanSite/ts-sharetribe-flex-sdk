@@ -97,17 +97,6 @@ export async function handleResponseFailure(
     error.response.data = JSON.parse(error.response.data);
   }
 
-  if (
-    isTokenUnauthorized(error.response?.status) &&
-    routeNeedsTrustedUser(originalRequest, sdk)
-  ) {
-    const token = sdk.sdkConfig.tokenStore!.getToken();
-    if (token?.scope !== "trusted:user") {
-      console.error("Token is not trusted:user");
-      return Promise.reject(error);
-    }
-  }
-
   if (isTokenExpired(error.response?.status) && !originalRequest._retry) {
     const token = sdk.sdkConfig.tokenStore!.getToken();
     if (token && token.refresh_token) {
@@ -124,6 +113,18 @@ export async function handleResponseFailure(
       return sdk.axios(originalRequest);
     }
   }
+
+  if (
+    isTokenUnauthorized(error.response?.status) &&
+    routeNeedsTrustedUser(originalRequest, sdk)
+  ) {
+    const token = sdk.sdkConfig.tokenStore!.getToken();
+    if (token?.scope !== "trusted:user") {
+      console.error("Token is not trusted:user");
+      return Promise.reject(error);
+    }
+  }
+
   return Promise.reject(error);
 }
 

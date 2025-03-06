@@ -70,10 +70,13 @@ describe("handleResponseFailure", () => {
   let originalRequest: any;
 
   beforeEach(() => {
-    sdk = {
+    // Create a proper mock that passes the constructor.name check
+    const mockSdk = Object.create(SharetribeSdk.prototype);
+    sdk = Object.assign(mockSdk, {
       sdkConfig: {
+        clientId: "test-client-id",
         tokenStore: {
-          getToken: jest.fn().mockResolvedValue({
+          getToken: jest.fn().mockReturnValue({
             refresh_token: "refresh-token",
           }),
           setToken: jest.fn(),
@@ -87,8 +90,8 @@ describe("handleResponseFailure", () => {
           },
         }),
       },
-      axios: jest.fn(),
-    } as any;
+      axios: jest.fn().mockResolvedValue({ data: "success" }),
+    }) as any;
 
     originalRequest = { _retry: false, headers: {} };
     error = {
@@ -116,7 +119,7 @@ describe("handleResponseFailure", () => {
 
   it("should reject if no refresh_token is present", async () => {
     // @ts-ignore
-    sdk.sdkConfig.tokenStore!.getToken.mockResolvedValue({});
+    sdk.sdkConfig.tokenStore!.getToken.mockReturnValue({});
     await expect(handleResponseFailure(sdk, error)).rejects.toEqual(error);
   });
 
@@ -138,10 +141,13 @@ describe("handleRequestSuccess", () => {
   let requestConfig: any;
 
   beforeEach(() => {
-    sdk = {
+    // Create a proper mock that passes the constructor.name check
+    const mockSdk = Object.create(SharetribeSdk.prototype);
+    sdk = Object.assign(mockSdk, {
       sdkConfig: {
+        clientId: "test-client-id",
         tokenStore: {
-          getToken: jest.fn().mockResolvedValue(null),
+          getToken: jest.fn().mockReturnValue(null),
           setToken: jest.fn(),
         },
       },
@@ -153,7 +159,7 @@ describe("handleRequestSuccess", () => {
           },
         }),
       },
-    } as any;
+    }) as any;
 
     requestConfig = {
       headers: {},

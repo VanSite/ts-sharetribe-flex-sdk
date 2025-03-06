@@ -13,6 +13,7 @@
     }
   },
   "author": "DKogan90 <david_kogan@hotmail.de>",
+  "homepage": "https://github.com/VanSite/ts-sharetribe-flex-sdk",
   "license": "MIT",
   "private": false,
   "files": [

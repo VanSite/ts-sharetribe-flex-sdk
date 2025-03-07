@@ -4,6 +4,7 @@
  */
 
 import {
+  ApiMeta,
   ApiParameter,
   ExtraParameterType,
   Money,
@@ -286,4 +287,5 @@ export type TransactionsResponse<
   EP extends ExtraParameterType = undefined
 > = {
   data: DataType<E, P, EP>;
-} & ("include" extends keyof P ? { included: IncludedType<P> } : {});
+} & ("include" extends keyof P ? { included: IncludedType<P> } : {}) &
+  (E extends "query" ? { meta: ApiMeta } : {});

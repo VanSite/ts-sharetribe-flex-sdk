@@ -86,46 +86,50 @@ export async function handleResponseFailure(
   sdk: SharetribeSdk | IntegrationSdk,
   error: AxiosError | any
 ) {
-  const originalRequest = error.config as ExtendedInternalAxiosRequestConfig;
+  try {
+    const originalRequest = error.config as ExtendedInternalAxiosRequestConfig;
 
-  if (isTransit(error.response)) {
-    const { reader } = createTransitConverters(sdk.sdkConfig.typeHandlers, {
-      verbose: sdk.sdkConfig.transitVerbose,
-    });
-    error.response.data = reader.read(error.response.data);
-  } else if (isJson(error.response)) {
-    error.response.data = JSON.parse(error.response.data);
-  }
-
-  if (isTokenExpired(error.response?.status) && !originalRequest._retry) {
-    const token = sdk.sdkConfig.tokenStore!.getToken();
-    if (token && token.refresh_token) {
-      originalRequest._retry = true;
-      const response = await sdk.auth.token<"refresh-token">({
-        client_id: sdk.sdkConfig.clientId,
-        grant_type: "refresh_token",
-        refresh_token: token.refresh_token,
+    if (error.response && isTransit(error.response)) {
+      const { reader } = createTransitConverters(sdk.sdkConfig.typeHandlers, {
+        verbose: sdk.sdkConfig.transitVerbose,
       });
-      originalRequest.headers.Authorization = prepareAuthorizationHeader(
-        response.data
-      );
-      sdk.sdkConfig.tokenStore!.setToken(response.data);
-      return sdk.axios(originalRequest);
+      error.response.data = reader.read(error.response.data);
+    } else if (error.response && isJson(error.response)) {
+      error.response.data = JSON.parse(error.response.data);
     }
-  }
 
-  if (
-    isTokenUnauthorized(error.response?.status) &&
-    routeNeedsTrustedUser(originalRequest, sdk)
-  ) {
-    const token = sdk.sdkConfig.tokenStore!.getToken();
-    if (token?.scope !== "trusted:user") {
-      console.error("Token is not trusted:user");
-      return Promise.reject(error);
+    if (isTokenExpired(error.response?.status) && !originalRequest._retry) {
+      const token = sdk.sdkConfig.tokenStore!.getToken();
+      if (token && token.refresh_token) {
+        originalRequest._retry = true;
+        const response = await sdk.auth.token<"refresh-token">({
+          client_id: sdk.sdkConfig.clientId,
+          grant_type: "refresh_token",
+          refresh_token: token.refresh_token,
+        });
+        originalRequest.headers.Authorization = prepareAuthorizationHeader(
+          response.data
+        );
+        sdk.sdkConfig.tokenStore!.setToken(response.data);
+        return sdk.axios(originalRequest);
+      }
     }
-  }
 
-  return Promise.reject(error);
+    if (
+      isTokenUnauthorized(error.response?.status) &&
+      routeNeedsTrustedUser(originalRequest, sdk)
+    ) {
+      const token = sdk.sdkConfig.tokenStore!.getToken();
+      if (token?.scope !== "trusted:user") {
+        console.error("Token is not trusted:user");
+        return Promise.reject(error);
+      }
+    }
+
+    return Promise.reject(error);
+  } catch (e) {
+    return Promise.reject(error);
+  }
 }
 
 export async function handleRequestSuccess(

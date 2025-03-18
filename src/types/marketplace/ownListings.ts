@@ -38,8 +38,10 @@ export type OwnListingsEndpoints =
 // Fields for relationships in the own listing object.
 export type OwnListingsRelationshipsFields =
   | "marketplace"
-  | "author"
   | "author.profileImage"
+  | "author.marketplace"
+  | "author.stripeAccount"
+  | "author.effectivePermissionSet"
   | "images"
   | "currentStock";
 

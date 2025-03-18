@@ -33,6 +33,9 @@ export type ListingsRelationshipsFields =
   | "marketplace"
   | "author"
   | "author.profileImage"
+  | "author.marketplace"
+  | "author.stripeAccount"
+  | "author.effectivePermissionSet"
   | "images"
   | "currentStock";
 

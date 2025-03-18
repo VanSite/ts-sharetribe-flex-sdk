@@ -20,13 +20,19 @@ export type ReviewsEndpoints = "show" | "query";
 export type ReviewsRelationshipsFields =
   | "author"
   | "author.profileImage"
+  | "author.marketplace"
+  | "author.stripeAccount"
+  | "author.effectivePermissionSet"
   | "listing"
   | "listing.marketplace"
   | "listing.author"
   | "listing.images"
   | "listing.currentStock"
   | "subject"
-  | "subject.profileImage";
+  | "subject.profileImage"
+  | "subject.marketplace"
+  | "subject.stripeAccount"
+  | "subject.effectivePermissionSet";
 
 // Types and states applicable to reviews.
 export type ReviewTypes = "ofProvider" | "ofCustomer";

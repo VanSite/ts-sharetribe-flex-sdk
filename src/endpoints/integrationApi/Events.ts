@@ -29,7 +29,7 @@ class Events {
    * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
    */
   constructor(api: IntegrationApi) {
-    this.endpoint = api.endpoint + "/bookings";
+    this.endpoint = api.endpoint + "/events";
     this.axios = api.axios;
     this.headers = api.headers;
   }

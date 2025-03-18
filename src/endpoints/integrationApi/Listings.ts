@@ -85,8 +85,8 @@ class Listings {
    */
   async query<P extends ListingsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<ListingsResponse<"query", P, undefined, false>>> {
-    return this.axios.get<ListingsResponse<"query", P, undefined, false>>(
+  ): Promise<AxiosResponse<ListingsResponse<"query", P, undefined, true>>> {
+    return this.axios.get<ListingsResponse<"query", P, undefined, true>>(
       `${this.endpoint}/query`,
       {
         ...this.headers,

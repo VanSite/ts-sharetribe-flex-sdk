@@ -61,7 +61,7 @@ class Listings {
     return this.axios.get<ListingsResponse<"show", P, undefined, true>>(
       `${this.endpoint}/show`,
       {
-        headers: this.headers,,
+        headers: this.headers,
         params,
       }
     );
@@ -89,7 +89,7 @@ class Listings {
     return this.axios.get<ListingsResponse<"query", P, undefined, true>>(
       `${this.endpoint}/query`,
       {
-        headers: this.headers,,
+        headers: this.headers,
         params,
       }
     );

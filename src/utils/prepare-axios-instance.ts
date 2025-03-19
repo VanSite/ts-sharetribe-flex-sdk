@@ -61,6 +61,10 @@ export const prepareAuthorizationHeader = (data: any) =>
 // Interceptor handlers
 export function handleResponseSuccess(sdk: SharetribeSdk | IntegrationSdk) {
   return function onFulfilled(response: AxiosResponse): AxiosResponse {
+    if (!sdk.sdkConfig.tokenStore) {
+      throw new Error("Token store is not set");
+    }
+
     if (isTransit(response)) {
       const { reader } = createTransitConverters(sdk.sdkConfig.typeHandlers, {
         verbose: sdk.sdkConfig.transitVerbose,
@@ -71,11 +75,11 @@ export function handleResponseSuccess(sdk: SharetribeSdk | IntegrationSdk) {
     }
 
     if (response?.data?.access_token) {
-      sdk.sdkConfig.tokenStore!.setToken(response.data);
+      sdk.sdkConfig.tokenStore.setToken(response.data);
     }
 
     if (response?.data?.revoked) {
-      sdk.sdkConfig.tokenStore!.removeToken();
+      sdk.sdkConfig.tokenStore.removeToken();
     }
 
     return response;
@@ -86,6 +90,10 @@ export async function handleResponseFailure(
   sdk: SharetribeSdk | IntegrationSdk,
   error: AxiosError | any
 ) {
+  if (!sdk.sdkConfig.tokenStore) {
+    throw new Error("Token store is not set");
+  }
+
   try {
     const originalRequest = error.config as ExtendedInternalAxiosRequestConfig;
 
@@ -99,7 +107,7 @@ export async function handleResponseFailure(
     }
 
     if (isTokenExpired(error.response?.status) && !originalRequest._retry) {
-      const token = sdk.sdkConfig.tokenStore!.getToken();
+      const token = sdk.sdkConfig.tokenStore.getToken();
       if (token && token.refresh_token) {
         originalRequest._retry = true;
         const response = await sdk.auth.token<"refresh-token">({
@@ -110,7 +118,7 @@ export async function handleResponseFailure(
         originalRequest.headers.Authorization = prepareAuthorizationHeader(
           response.data
         );
-        sdk.sdkConfig.tokenStore!.setToken(response.data);
+        sdk.sdkConfig.tokenStore.setToken(response.data);
         return sdk.axios(originalRequest);
       }
     }
@@ -119,7 +127,7 @@ export async function handleResponseFailure(
       isTokenUnauthorized(error.response?.status) &&
       routeNeedsTrustedUser(originalRequest, sdk)
     ) {
-      const token = sdk.sdkConfig.tokenStore!.getToken();
+      const token = sdk.sdkConfig.tokenStore.getToken();
       if (token?.scope !== "trusted:user") {
         console.error("Token is not trusted:user");
         return Promise.reject(error);
@@ -136,6 +144,10 @@ export async function handleRequestSuccess(
   sdk: SharetribeSdk | IntegrationSdk,
   requestConfig: InternalAxiosRequestConfig
 ): Promise<InternalAxiosRequestConfig> {
+  if (!sdk.sdkConfig.tokenStore) {
+    throw new Error("Token store is not set");
+  }
+
   if (
     requestConfig.headers["Content-Type"] ===
     "application/x-www-form-urlencoded"
@@ -153,7 +165,7 @@ export async function handleRequestSuccess(
 
   // when the request has no Authorization header, we need to add it
   if (!requestConfig.headers.Authorization) {
-    const authToken = sdk.sdkConfig.tokenStore!.getToken();
+    const authToken = sdk.sdkConfig.tokenStore.getToken();
     if (authToken) {
       requestConfig.headers.Authorization =
         prepareAuthorizationHeader(authToken);
@@ -180,7 +192,7 @@ export async function handleRequestSuccess(
         throw new Error("Invalid SDK instance");
       }
 
-      sdk.sdkConfig.tokenStore!.setToken(response.data);
+      sdk.sdkConfig.tokenStore.setToken(response.data);
 
       requestConfig.headers.Authorization = prepareAuthorizationHeader(
         response.data

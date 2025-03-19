@@ -62,7 +62,7 @@ class AvailabilityExceptions {
     return this.axios.get<AvailabilityExceptionsResponse<"query", P>>(
       `${this.endpoint}/query`,
       {
-        ...this.headers,
+        headers: this.headers,
         params,
       }
     );
@@ -98,7 +98,7 @@ class AvailabilityExceptions {
     return this.axios.post<AvailabilityExceptionsResponse<"create", P, EP>>(
       `${this.endpoint}/create`,
       { ...params, ...extraParams },
-      this.headers
+      { headers: this.headers }
     );
   }
 
@@ -123,7 +123,7 @@ class AvailabilityExceptions {
     return this.axios.post<AvailabilityExceptionsResponse<"delete", P>>(
       `${this.endpoint}/delete`,
       params,
-      this.headers
+      { headers: this.headers }
     );
   }
 }

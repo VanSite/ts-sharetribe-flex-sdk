@@ -59,7 +59,7 @@ class StockAdjustments {
     return this.axios.get<StockAdjustmentsResponse<"query", P>>(
       `${this.endpoint}/query`,
       {
-        ...this.headers,
+        headers: this.headers,
         params,
       }
     );
@@ -92,7 +92,7 @@ class StockAdjustments {
     return this.axios.post<StockAdjustmentsResponse<"create", P, EP>>(
       `${this.endpoint}/create`,
       { ...params, ...extraParams },
-      this.headers
+      { headers: this.headers }
     );
   }
 }

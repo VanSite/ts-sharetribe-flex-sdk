@@ -57,7 +57,7 @@ class Events {
     params: P
   ): Promise<AxiosResponse<EventsResponse<"query">>> {
     return this.axios.get<EventsResponse<"query">>(`${this.endpoint}/query`, {
-      ...this.headers,
+      headers: this.headers,
       params,
     });
   }

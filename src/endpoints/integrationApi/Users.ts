@@ -61,7 +61,7 @@ class Users {
     }
 
     return this.axios.get<UsersResponse<"show", P>>(`${this.endpoint}/show`, {
-      ...this.headers,
+      headers: this.headers,
       params,
     });
   }

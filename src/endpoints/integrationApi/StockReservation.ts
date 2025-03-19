@@ -53,10 +53,7 @@ class StockReservation {
   ): Promise<AxiosResponse<StockReservationsResponse<"show", P>>> {
     return this.axios.get<StockReservationsResponse<"show", P>>(
       `${this.endpoint}/show`,
-      {
-        ...this.headers,
-        params,
-      }
+      { headers: this.headers, params }
     );
   }
 }

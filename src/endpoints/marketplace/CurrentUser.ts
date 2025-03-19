@@ -61,7 +61,7 @@ class CurrentUser {
     return this.axios.get<CurrentUserResponse<"show", P>>(
       `${this.endpoint}/show`,
       {
-        ...this.headers,
+        headers: this.headers,
         params,
       }
     );
@@ -87,7 +87,7 @@ class CurrentUser {
     return this.axios.post<CurrentUserResponse<"delete", P>>(
       `${this.endpoint}/delete`,
       { ...params, ...extraParams },
-      { ...this.headers }
+      { headers: this.headers }
     );
   }
 
@@ -116,7 +116,7 @@ class CurrentUser {
     return this.axios.post<CurrentUserResponse<"create", P>>(
       `${this.endpoint}/create`,
       { ...params, ...extraParams },
-      { ...this.headers }
+      { headers: this.headers }
     );
   }
 
@@ -147,7 +147,7 @@ class CurrentUser {
     return this.axios.post<CurrentUserResponse<"create_with_idp", P>>(
       `${this.endpoint}/create_with_idp`,
       { ...params, ...extraParams },
-      { ...this.headers }
+      { headers: this.headers }
     );
   }
 
@@ -177,7 +177,7 @@ class CurrentUser {
     return this.axios.post<CurrentUserResponse<"update_profile", P>>(
       `${this.endpoint}/update_profile`,
       { ...params, ...extraParams },
-      { ...this.headers }
+      { headers: this.headers }
     );
   }
 
@@ -207,7 +207,7 @@ class CurrentUser {
     return this.axios.post<CurrentUserResponse<"change_password", P>>(
       `${this.endpoint}/change_password`,
       { ...params, ...extraParams },
-      { ...this.headers }
+      { headers: this.headers }
     );
   }
 
@@ -237,7 +237,7 @@ class CurrentUser {
     return this.axios.post<CurrentUserResponse<"change_email", P>>(
       `${this.endpoint}/change_email`,
       { ...params, ...extraParams },
-      { ...this.headers }
+      { headers: this.headers }
     );
   }
 
@@ -266,7 +266,7 @@ class CurrentUser {
     return this.axios.post<CurrentUserResponse<"verify_email", P>>(
       `${this.endpoint}/verify_email`,
       { ...params, ...extraParams },
-      { ...this.headers }
+      { headers: this.headers }
     );
   }
 
@@ -286,7 +286,7 @@ class CurrentUser {
     return this.axios.post<CurrentUserResponse<"send_verification_email", P>>(
       `${this.endpoint}/send_verification_email`,
       null,
-      { ...this.headers }
+      { headers: this.headers }
     );
   }
 

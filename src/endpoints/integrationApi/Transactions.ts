@@ -60,7 +60,7 @@ class Transactions {
     return this.axios.get<TransactionsResponse<"show", P>>(
       `${this.endpoint}/show`,
       {
-        ...this.headers,
+        headers: this.headers,
         params,
       }
     );
@@ -91,7 +91,7 @@ class Transactions {
     return this.axios.get<TransactionsResponse<"query", P>>(
       `${this.endpoint}/query`,
       {
-        ...this.headers,
+        headers: this.headers,
         params,
       }
     );
@@ -125,7 +125,7 @@ class Transactions {
     return this.axios.post<TransactionsResponse<"transition", P, EP>>(
       `${this.endpoint}/transition`,
       { ...params, ...extraParams },
-      this.headers
+      { headers: this.headers }
     );
   }
 
@@ -161,7 +161,7 @@ class Transactions {
     >(
       `${this.endpoint}/transition_speculative`,
       { ...params, ...extraParams },
-      this.headers
+      { headers: this.headers }
     );
   }
 
@@ -192,7 +192,7 @@ class Transactions {
     return this.axios.post<TransactionsResponse<"updateMetadata", P, EP>>(
       `${this.endpoint}/update_metadata`,
       { ...params, ...extraParams },
-      this.headers
+      { headers: this.headers }
     );
   }
 }

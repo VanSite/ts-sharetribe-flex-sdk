@@ -60,7 +60,7 @@ class Images {
     return this.axios.post<ImagesResponse<"upload", EP>>(
       `${this.endpoint}/upload`,
       { ...params, ...extraParams },
-      { ...this.headers }
+      { headers: this.headers }
     );
   }
 }

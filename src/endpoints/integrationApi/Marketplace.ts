@@ -44,9 +44,7 @@ class Marketplace {
   async show(): Promise<AxiosResponse<MarketplaceResponse<"show">>> {
     return this.axios.get<MarketplaceResponse<"show">>(
       `${this.endpoint}/show`,
-      {
-        ...this.headers,
-      }
+      { headers: this.headers }
     );
   }
 }

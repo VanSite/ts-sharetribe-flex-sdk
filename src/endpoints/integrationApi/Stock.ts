@@ -22,6 +22,7 @@ import { ExtraParameter } from "../../types/sharetribe";
 class Stock {
   private readonly endpoint: string;
   private readonly axios: AxiosInstance;
+  private readonly headers: Record<string, string>;
   public readonly authRequired = true;
 
   /**
@@ -32,6 +33,7 @@ class Stock {
   constructor(api: IntegrationApi) {
     this.endpoint = api.endpoint + "/stock";
     this.axios = api.axios;
+    this.headers = api.headers;
   }
 
   /**
@@ -61,7 +63,8 @@ class Stock {
   ): Promise<AxiosResponse<StockResponse<"compareAndSet", EP>>> {
     return this.axios.post<StockResponse<"compareAndSet", EP>>(
       `${this.endpoint}/compare_and_set`,
-      { ...params, ...extraParams }
+      { ...params, ...extraParams },
+      { headers: this.headers }
     );
   }
 }

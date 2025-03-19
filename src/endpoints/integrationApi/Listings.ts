@@ -61,7 +61,7 @@ class Listings {
     return this.axios.get<ListingsResponse<"show", P, undefined, true>>(
       `${this.endpoint}/show`,
       {
-        ...this.headers,
+        headers: this.headers,,
         params,
       }
     );
@@ -89,7 +89,7 @@ class Listings {
     return this.axios.get<ListingsResponse<"query", P, undefined, true>>(
       `${this.endpoint}/query`,
       {
-        ...this.headers,
+        headers: this.headers,,
         params,
       }
     );
@@ -121,7 +121,7 @@ class Listings {
     return this.axios.post<ListingsResponse<"create", P, EP, true>>(
       `${this.endpoint}/create`,
       { ...params, ...extraParams },
-      {}
+      { headers: this.headers }
     );
   }
 
@@ -149,7 +149,7 @@ class Listings {
     return this.axios.post<ListingsResponse<"update", P, EP, true>>(
       `${this.endpoint}/update`,
       { ...params, ...extraParams },
-      {}
+      { headers: this.headers }
     );
   }
 
@@ -176,7 +176,7 @@ class Listings {
     return this.axios.post<ListingsResponse<"close", P, EP, true>>(
       `${this.endpoint}/close`,
       { ...params, ...extraParams },
-      {}
+      { headers: this.headers }
     );
   }
 
@@ -203,7 +203,7 @@ class Listings {
     return this.axios.post<ListingsResponse<"open", P, EP, true>>(
       `${this.endpoint}/open`,
       { ...params, ...extraParams },
-      {}
+      { headers: this.headers }
     );
   }
 
@@ -230,7 +230,7 @@ class Listings {
     return this.axios.post<ListingsResponse<"approve", P, EP, true>>(
       `${this.endpoint}/approve`,
       { ...params, ...extraParams },
-      {}
+      { headers: this.headers }
     );
   }
 }

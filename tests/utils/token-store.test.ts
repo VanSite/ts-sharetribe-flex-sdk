@@ -124,32 +124,21 @@ describe("TokenStore functionality with login and logout", () => {
         refresh_token: "new-refresh-token",
       });
 
-    // Create a 401 error to trigger token refresh
-    const error = {
-      response: { status: 401 },
-      config: {
-        _retry: false,
-        headers: {},
-        url: "https://flex-api.sharetribe.com/v1/some-endpoint",
-      },
-    };
+    mockAdapter
+      .onGet("https://flex-api.sharetribe.com/v1/api/users/show")
+      .reply((config) => {
+        // Check if this is the first request with the old token
+        if (config.headers?.Authorization === "bearer old-access-token") {
+          return [401, { error: "Unauthorized" }];
+        } else if (
+          config.headers?.Authorization === "bearer new-access-token"
+        ) {
+          return [200, { data: { id: "1" } }];
+        }
+        return [404, { error: "Not found" }];
+      });
 
-    // Import the handleResponseFailure function
-    const {
-      handleResponseFailure,
-    } = require("../../src/utils/prepare-axios-instance");
-
-    // Mock axios call to prevent actual request
-    const originalAxios = sdk.axios;
-    sdk.axios = jest
-      .fn()
-      .mockResolvedValue({ data: "success" }) as unknown as AxiosInstance;
-
-    // Trigger token refresh by simulating a 401 error
-    await handleResponseFailure(sdk, error);
-
-    // Restore original axios
-    sdk.axios = originalAxios;
+    await sdk.users.show({ id: "1" });
 
     // Verify token is updated
     const updatedToken = tokenStore.getToken();

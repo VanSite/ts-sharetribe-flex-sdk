@@ -9,7 +9,7 @@ import SharetribeSdk from "../sdk";
 import parameterSerializer from "./parameter-serializer";
 import IntegrationSdk from "../integrationSdk";
 import { createTransitConverters } from "./transit";
-
+import axiosRetry, { IAxiosRetryConfig } from "axios-retry";
 export const QUERY_PARAMETERS = [
   "include",
   "page",
@@ -97,34 +97,44 @@ export async function handleResponseFailure(
   try {
     const originalRequest = error.config as ExtendedInternalAxiosRequestConfig;
 
+    // Parse response data if needed
     if (error.response && isTransit(error.response)) {
       const { reader } = createTransitConverters(sdk.sdkConfig.typeHandlers, {
         verbose: sdk.sdkConfig.transitVerbose,
       });
-      error.response.data = reader.read(error.response.data);
+      error.response.data = reader.read(error.response.data as string);
     } else if (error.response && isJson(error.response)) {
-      error.response.data = JSON.parse(error.response.data);
+      error.response.data = JSON.parse(error.response.data as string);
     }
 
-    if (isTokenExpired(error.response?.status) && !originalRequest._retry) {
+    // Handle token refresh on 401/403 errors
+    if (error.response && isTokenExpired(error.response.status)) {
       const token = sdk.sdkConfig.tokenStore.getToken();
       if (token && token.refresh_token) {
-        originalRequest._retry = true;
+        // Get a new token
         const response = await sdk.auth.token<"refresh-token">({
           client_id: sdk.sdkConfig.clientId,
           grant_type: "refresh_token",
           refresh_token: token.refresh_token,
         });
+
+        // Update the request with the new token
         originalRequest.headers.Authorization = prepareAuthorizationHeader(
           response.data
         );
+
+        // Store the new token
         sdk.sdkConfig.tokenStore.setToken(response.data);
+
+        // Retry the request
         return sdk.axios(originalRequest);
       }
     }
 
+    // Handle trusted user check
     if (
-      isTokenUnauthorized(error.response?.status) &&
+      error.response &&
+      isTokenUnauthorized(error.response.status) &&
       routeNeedsTrustedUser(originalRequest, sdk)
     ) {
       const token = sdk.sdkConfig.tokenStore.getToken();
@@ -136,7 +146,8 @@ export async function handleResponseFailure(
 
     return Promise.reject(error);
   } catch (e) {
-    return Promise.reject(error);
+    console.error("Error in handleResponseFailure:", e);
+    return Promise.reject(e);
   }
 }
 
@@ -248,6 +259,18 @@ export function createAxiosConfig(
 
 // Main setup function
 export function prepareAxiosInstance(sdk: SharetribeSdk | IntegrationSdk) {
+  try {
+    const retryConfig: IAxiosRetryConfig = {
+      retries: 3, // Number of retries
+      retryDelay: axiosRetry.exponentialDelay,
+    };
+
+    // Use type assertion to bypass TypeScript error
+    (axiosRetry as any)(sdk.axios, retryConfig);
+  } catch (e) {
+    console.warn("Failed to initialize axios-retry:", e);
+  }
+
   sdk.axios.interceptors.response.use(
     handleResponseSuccess(sdk),
     (error: AxiosError) => handleResponseFailure(sdk, error)

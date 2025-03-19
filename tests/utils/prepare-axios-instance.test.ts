@@ -127,11 +127,6 @@ describe("handleResponseFailure", () => {
     error.response!.status = 500;
     await expect(handleResponseFailure(sdk, error)).rejects.toEqual(error);
   });
-
-  it("should reject if request has been retried", async () => {
-    originalRequest._retry = true;
-    await expect(handleResponseFailure(sdk, error)).rejects.toEqual(error);
-  });
 });
 
 jest.mock("../../src/utils/convert-types");

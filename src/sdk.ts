@@ -40,8 +40,6 @@ import {
 } from "./types/authentication";
 import AssetsApi from "./endpoints/assets";
 import { DefaultSdkConfig } from "./utils/config";
-import BrowserStore from "./utils/stores/BrowserStore";
-import ExpressStore from "./utils/stores/ExpressStore";
 
 class SharetribeSdk {
   /**

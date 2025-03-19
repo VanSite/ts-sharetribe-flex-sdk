@@ -68,7 +68,7 @@ The Sdk loader is not needed anymore, because there is no difference between the
 - Remove the sdkLoader file
 - Exchange all sdkTypes with the types from the new sdk
 
-**brefore**
+**before**
 
 ```javascript
 import { types as sdkTypes } from "./sdkLoader";

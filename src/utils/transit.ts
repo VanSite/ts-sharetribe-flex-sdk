@@ -1,6 +1,12 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_sdkType"] }] */
 
-import transit from "transit-js";
+import {
+  makeWriteHandler,
+  reader as transitReader,
+  keyword,
+  map as transitMap,
+  writer as transitWriter,
+} from "transit-js";
 import LatLng from "../sdkTypes/LatLng";
 import UUID from "../sdkTypes/UUID";
 import Money from "../sdkTypes/Money";
@@ -140,7 +146,7 @@ const writeHandlers = flatten(
       throw new Error(`SDK type writer not found for tag: ${tag}`);
     }
 
-    const handler = transit.makeWriteHandler({
+    const handler = makeWriteHandler({
       tag: () => tag,
       rep: sdkTypeWriter.writer,
       stringRep: (v: any) => sdkTypeWriter.writer(v.toString()),
@@ -162,7 +168,7 @@ const mapBuilder = {
 export const reader = (appTypeReaders: TransitReader[] = []) => {
   const handlers = constructReadHandlers(appTypeReaders);
 
-  return transit.reader("json", {
+  return transitReader("json", {
     handlers: {
       ...handlers,
 
@@ -189,14 +195,14 @@ export const reader = (appTypeReaders: TransitReader[] = []) => {
 // Convert JS object to transit map
 const MapHandlers = [
   Object,
-  transit.makeWriteHandler({
+  makeWriteHandler({
     tag: () => "map",
     rep: (v: any) =>
       entries(v).reduce((map: any, entry: [string, any]) => {
         const [key, val] = entry;
-        map.set(transit.keyword(key), val);
+        map.set(keyword(key), val);
         return map;
-      }, transit.map()),
+      }, transitMap()),
     stringRep: (v: any) => JSON.stringify(v),
   }),
 ];
@@ -208,8 +214,8 @@ export const writer = (
   const { verbose } = opts;
   const transitType = verbose ? "json-verbose" : "json";
 
-  return transit.writer(transitType, {
-    handlers: transit.map([...writeHandlers, ...MapHandlers]),
+  return transitWriter(transitType, {
+    handlers: transitMap([...writeHandlers, ...MapHandlers]),
 
     // @ts-ignore - Adding custom properties to transit writer
     transform: (v: any) => {

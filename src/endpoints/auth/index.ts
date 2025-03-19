@@ -19,11 +19,14 @@ import IntegrationSdk from "../../integrationSdk";
 
 /**
  * Converts an object to URL-encoded form data string.
+ * Properly handles nested objects, arrays, and special types.
  *
  * @param {Record<string, any> | void} obj - The object to convert
  * @returns {string} URL-encoded form data string
  */
-function urlEncodeFormData(obj: Record<string, any> | void): string {
+export function urlEncodeFormData(
+  obj: Record<string, any> | null | undefined | void
+): string {
   if (!obj) {
     return "";
   }
@@ -34,11 +37,27 @@ function urlEncodeFormData(obj: Record<string, any> | void): string {
       if (value === undefined || value === null) {
         return "";
       }
+
       const encodedKey = encodeURIComponent(key);
-      const encodedValue = encodeURIComponent(value);
+      let encodedValue: string;
+
+      // Handle different value types
+      if (typeof value === "object") {
+        if (Array.isArray(value)) {
+          // Handle arrays by joining with commas
+          encodedValue = encodeURIComponent(value.join(","));
+        } else {
+          // Handle objects by JSON stringifying
+          encodedValue = encodeURIComponent(JSON.stringify(value));
+        }
+      } else {
+        // Handle primitive values (string, number, boolean)
+        encodedValue = encodeURIComponent(String(value));
+      }
+
       return `${encodedKey}=${encodedValue}`;
     })
-    .filter(Boolean)
+    .filter(Boolean) // Remove empty strings
     .join("&");
 }
 

@@ -5,6 +5,14 @@
   "main": "./dist/ts-sharetribe-flex-sdk.cjs",
   "module": "./dist/ts-sharetribe-flex-sdk.mjs",
   "types": "./dist/types/index.d.ts",
+  "keywords": [
+    "sharetribe",
+    "flex",
+    "sdk",
+    "typescript",
+    "api",
+    "client"
+  ],
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",

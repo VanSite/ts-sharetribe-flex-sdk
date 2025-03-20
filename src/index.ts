@@ -70,7 +70,7 @@ export const sdkTypes = {
   /** Reviver function for JSON deserialization. */
   reviver,
 };
-
+export type SdkTypes = typeof sdkTypes;
 /**
  * Token store implementations for managing authentication tokens.
  */
@@ -82,6 +82,7 @@ export const TokenStore = {
   /** Express.js-compatible token store using request and response cookies. */
   ExpressStore,
 };
+export type TokenStore = typeof TokenStore;
 
 /**
  * Transit utilities for reading and writing transit data.
@@ -90,12 +91,15 @@ export const transit = {
   read,
   write,
 };
-
+export type Transit = typeof transit;
 /**
  * Export the Sharetribe SDK and Integration SDK.
  */
 export const SharetribeSdk = SharetribeSdkExport;
+export type SharetribeSdk = SharetribeSdkExport;
+
 export const IntegrationSdk = IntegrationSdkExport;
+export type IntegrationSdk = IntegrationSdkExport;
 
 /**
  * Utility functions for data manipulation.
@@ -104,8 +108,9 @@ export const util = {
   /** Serializes an object into a custom query string format. */
   objectQueryString,
 };
+export type Util = typeof util;
 
-export default {
+const defaultExport = {
   /** Export of the Sharetribe SDK. */
   SharetribeSdk: SharetribeSdkExport,
   /** Export of the Integration SDK. */
@@ -119,3 +124,4 @@ export default {
   /** Export of Transit utilities. */
   transit,
 };
+export default defaultExport;

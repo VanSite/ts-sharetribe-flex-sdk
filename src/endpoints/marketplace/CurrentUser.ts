@@ -82,7 +82,7 @@ class CurrentUser {
    */
   async delete<P extends CurrentUserDeleteParameter, EP extends ExtraParameter>(
     params: P,
-    extraParams: EP
+    extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<CurrentUserResponse<"delete", P>>> {
     return this.axios.post<CurrentUserResponse<"delete", P>>(
       `${this.endpoint}/delete`,
@@ -111,7 +111,7 @@ class CurrentUser {
    */
   async create<P extends CurrentUserCreateParameter, EP extends ExtraParameter>(
     params: P,
-    extraParams: EP
+    extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<CurrentUserResponse<"create", P>>> {
     return this.axios.post<CurrentUserResponse<"create", P>>(
       `${this.endpoint}/create`,
@@ -142,7 +142,7 @@ class CurrentUser {
     EP extends ExtraParameter
   >(
     params: P,
-    extraParams: EP
+    extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<CurrentUserResponse<"create_with_idp", P>>> {
     return this.axios.post<CurrentUserResponse<"create_with_idp", P>>(
       `${this.endpoint}/create_with_idp`,
@@ -172,7 +172,7 @@ class CurrentUser {
     EP extends ExtraParameter
   >(
     params: P,
-    extraParams: EP
+    extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<CurrentUserResponse<"update_profile", P>>> {
     return this.axios.post<CurrentUserResponse<"update_profile", P>>(
       `${this.endpoint}/update_profile`,
@@ -202,7 +202,7 @@ class CurrentUser {
     EP extends ExtraParameter
   >(
     params: P,
-    extraParams: EP
+    extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<CurrentUserResponse<"change_password", P>>> {
     return this.axios.post<CurrentUserResponse<"change_password", P>>(
       `${this.endpoint}/change_password`,
@@ -232,7 +232,7 @@ class CurrentUser {
     EP extends ExtraParameter
   >(
     params: P,
-    extraParams: EP
+    extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<CurrentUserResponse<"change_email", P>>> {
     return this.axios.post<CurrentUserResponse<"change_email", P>>(
       `${this.endpoint}/change_email`,
@@ -261,7 +261,7 @@ class CurrentUser {
     EP extends ExtraParameter
   >(
     params: P,
-    extraParams: EP
+    extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<CurrentUserResponse<"verify_email", P>>> {
     return this.axios.post<CurrentUserResponse<"verify_email", P>>(
       `${this.endpoint}/verify_email`,

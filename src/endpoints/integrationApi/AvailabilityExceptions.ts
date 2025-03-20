@@ -93,7 +93,7 @@ class AvailabilityExceptions {
     EP extends ExtraParameter
   >(
     params: P,
-    extraParams: EP | void
+    extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<AvailabilityExceptionsResponse<"create", P, EP>>> {
     return this.axios.post<AvailabilityExceptionsResponse<"create", P, EP>>(
       `${this.endpoint}/create`,

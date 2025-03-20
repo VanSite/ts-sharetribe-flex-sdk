@@ -54,7 +54,7 @@ class Images {
    */
   async upload<P extends ImagesUploadParameter, EP extends ExtraParameter>(
     params: P,
-    extraParams: EP
+    extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<ImagesResponse<"upload", EP>>> {
     return this.axios.post<ImagesResponse<"upload", EP>>(
       `${this.endpoint}/upload`,

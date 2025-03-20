@@ -87,7 +87,7 @@ class StockAdjustments {
     EP extends ExtraParameter | undefined
   >(
     params: P,
-    extraParams: EP
+    extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<StockAdjustmentsResponse<"create", P, EP>>> {
     return this.axios.post<StockAdjustmentsResponse<"create", P, EP>>(
       `${this.endpoint}/create`,

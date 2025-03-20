@@ -59,7 +59,7 @@ class Stock {
     EP extends ExtraParameter
   >(
     params: P,
-    extraParams: EP
+    extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<StockResponse<"compareAndSet", EP>>> {
     return this.axios.post<StockResponse<"compareAndSet", EP>>(
       `${this.endpoint}/compare_and_set`,

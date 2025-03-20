@@ -76,7 +76,7 @@ class Messages {
    */
   async send<P extends MessagesSendParameter, EP extends ExtraParameter>(
     params: P,
-    extraParams: EP | void
+    extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<MessagesResponse<"send", P, EP>>> {
     return this.axios.post<MessagesResponse<"send", P, EP>>(
       `${this.endpoint}/create`,

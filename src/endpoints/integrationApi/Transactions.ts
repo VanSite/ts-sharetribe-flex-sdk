@@ -120,7 +120,7 @@ class Transactions {
     EP extends ExtraParameter
   >(
     params: P,
-    extraParams: EP | void
+    extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<TransactionsResponse<"transition", P, EP>>> {
     return this.axios.post<TransactionsResponse<"transition", P, EP>>(
       `${this.endpoint}/transition`,
@@ -152,7 +152,7 @@ class Transactions {
     EP extends ExtraParameter
   >(
     params: P,
-    extraParams: EP | void
+    extraParams: EP | void = {} as EP
   ): Promise<
     AxiosResponse<TransactionsResponse<"transitionSpeculative", P, EP>>
   > {
@@ -187,7 +187,7 @@ class Transactions {
     EP extends ExtraParameter
   >(
     params: P,
-    extraParams: EP | void
+    extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<TransactionsResponse<"updateMetadata", P, EP>>> {
     return this.axios.post<TransactionsResponse<"updateMetadata", P, EP>>(
       `${this.endpoint}/update_metadata`,

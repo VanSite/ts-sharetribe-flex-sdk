@@ -44,7 +44,7 @@ class Users {
    *
    * @template P
    * @param {P & UsersShowParameter} params - The parameters to identify the user.
-   * @returns {Promise<AxiosResponse<UsersResponse<'show', P>>>} - A promise resolving to the user details.
+   * @returns {Promise<AxiosResponse<UsersResponse<'show', P, undefined, true>>>} - A promise resolving to the user details.
    *
    * @example
    * const response = await integrationSdk.users.show({
@@ -55,15 +55,18 @@ class Users {
    */
   async show<P extends UsersShowParameter<true>>(
     params: P
-  ): Promise<AxiosResponse<UsersResponse<"show", P>>> {
+  ): Promise<AxiosResponse<UsersResponse<"show", P, undefined, true>>> {
     if (!params.id || !params.email) {
       throw new Error("Either 'id' or 'email' must be provided.");
     }
 
-    return this.axios.get<UsersResponse<"show", P>>(`${this.endpoint}/show`, {
-      headers: this.headers,
-      params,
-    });
+    return this.axios.get<UsersResponse<"show", P, undefined, true>>(
+      `${this.endpoint}/show`,
+      {
+        headers: this.headers,
+        params,
+      }
+    );
   }
 
   /**
@@ -71,7 +74,7 @@ class Users {
    *
    * @template P
    * @param {P & UsersQueryParameter} params - Query parameters for filtering users.
-   * @returns {Promise<AxiosResponse<UsersResponse<'query', P>>>} - A promise resolving to the list of users.
+   * @returns {Promise<AxiosResponse<UsersResponse<'query', P, undefined, true>>>} - A promise resolving to the list of users.
    *
    * @example
    * const response = await integrationSdk.users.query({
@@ -81,11 +84,14 @@ class Users {
    */
   async query<P extends UsersQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<UsersResponse<"query", P>>> {
-    return this.axios.get<UsersResponse<"query", P>>(`${this.endpoint}/query`, {
-      headers: this.headers,
-      params,
-    });
+  ): Promise<AxiosResponse<UsersResponse<"query", P, undefined, true>>> {
+    return this.axios.get<UsersResponse<"query", P, undefined, true>>(
+      `${this.endpoint}/query`,
+      {
+        headers: this.headers,
+        params,
+      }
+    );
   }
 
   /**
@@ -95,7 +101,7 @@ class Users {
    * @template EP
    * @param {P & UsersUpdateProfileParameter} params - Parameters to update the user's profile.
    * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<UsersResponse<'updateProfile', P, EP>>>} - A promise resolving to the updated profile details.
+   * @returns {Promise<AxiosResponse<UsersResponse<'updateProfile', P, EP, true>>>} - A promise resolving to the updated profile details.
    *
    * @example
    * const response = await integrationSdk.users.updateProfile({
@@ -112,8 +118,8 @@ class Users {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<UsersResponse<"updateProfile", P, EP>>> {
-    return this.axios.post<UsersResponse<"updateProfile", P, EP>>(
+  ): Promise<AxiosResponse<UsersResponse<"updateProfile", P, EP, true>>> {
+    return this.axios.post<UsersResponse<"updateProfile", P, EP, true>>(
       `${this.endpoint}/update_profile`,
       { ...params, ...extraParams },
       { headers: this.headers }
@@ -127,7 +133,7 @@ class Users {
    * @template EP
    * @param {P & UsersApproveParameter} params - Parameters to approve the user.
    * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<UsersResponse<'approve', P>>>} - A promise resolving to the approval confirmation.
+   * @returns {Promise<AxiosResponse<UsersResponse<'approve', P, EP, true>>>} - A promise resolving to the approval confirmation.
    *
    * @example
    * const response = await integrationSdk.users.approve({ id: 'user-id' });
@@ -136,8 +142,8 @@ class Users {
   async approve<P extends UsersApproveParameter, EP extends ExtraParameter>(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<UsersResponse<"approve", P, EP>>> {
-    return this.axios.post<UsersResponse<"approve", P, EP>>(
+  ): Promise<AxiosResponse<UsersResponse<"approve", P, EP, true>>> {
+    return this.axios.post<UsersResponse<"approve", P, EP, true>>(
       `${this.endpoint}/approve`,
       { ...params, ...extraParams },
       {
@@ -153,7 +159,7 @@ class Users {
    * @template EP
    * @param {P & UsersUpdatePermissionsParameter} params - Parameters to update the user's permissions.
    * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<UsersResponse<'updatePermissions', P, EP>>>} - A promise resolving to the updated permissions details.
+   * @returns {Promise<AxiosResponse<UsersResponse<'updatePermissions', P, EP, true>>>} - A promise resolving to the updated permissions details.
    *
    * @example
    * const response = await integrationSdk.users.updatePermissions(
@@ -168,8 +174,8 @@ class Users {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<UsersResponse<"updatePermissions", P, EP>>> {
-    return this.axios.post<UsersResponse<"updatePermissions", P, EP>>(
+  ): Promise<AxiosResponse<UsersResponse<"updatePermissions", P, EP, true>>> {
+    return this.axios.post<UsersResponse<"updatePermissions", P, EP, true>>(
       `${this.endpoint}/update_permissions`,
       { ...params, ...extraParams },
       { headers: this.headers }

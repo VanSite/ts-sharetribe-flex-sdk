@@ -82,21 +82,99 @@ export type RelationshipTypeMap<I extends boolean = false> = {
   "transaction.stockReservation": StockReservation;
 };
 
+export type ApiErrorStatuses =
+  | 400
+  | 401
+  | 402
+  | 403
+  | 404
+  | 409
+  | 413
+  | 429
+  | 500;
+
+export type ApiErrorCodes<S extends ApiErrorStatuses> = S extends 400
+  ?
+      | "unsupported-content-type"
+      | "bad-request"
+      | "validation-disallowed-key"
+      | "validation-invalid-value"
+      | "validation-invalid-params"
+      | "validation-missing-key"
+  : S extends 401
+  ? "auth-invalid-access-token" | "auth-missing-access-token"
+  : S extends 402
+  ? "transaction-payment-failed"
+  : S extends 403
+  ? "forbidden"
+  : S extends 404
+  ? "not-found"
+  : S extends 409
+  ?
+      | "conflict"
+      | "image-invalid"
+      | "image-invalid-content"
+      | "email-taken"
+      | "email-already-verified"
+      | "email-unverified"
+      | "email-not-found"
+      | "listing-not-found"
+      | "listing-invalid-state"
+      | "stripe-account-not-found"
+      | "stripe-missing-api-key"
+      | "stripe-invalid-payment-intent-status"
+      | "stripe-customer-not-found"
+      | "stripe-multiple-payment-methods-not-supported"
+      | "stripe-payment-method-type-not-supported"
+      | "user-missing-stripe-account"
+      | "user-is-banned"
+      | "user-not-found"
+      | "transaction-locked	"
+      | "transaction-not-found"
+      | "transaction-listing-not-found"
+      | "transaction-booking-state-not-pending"
+      | "transaction-booking-state-not-accepted"
+      | "transaction-invalid-transition"
+      | "transaction-invalid-action-sequence"
+      | "transaction-missing-listing-price"
+      | "transaction-missing-stripe-account"
+      | "transaction-same-author-and-customer"
+      | "transaction-stripe-account-disabled-charges"
+      | "transaction-stripe-account-disabled-payouts"
+      | "transaction-charge-zero-payin"
+      | "transaction-charge-zero-payout"
+      | "transaction-zero-payin"
+      | "transaction-unknown-alias"
+      | "transaction-provider-banned-or-deleted"
+      | "transaction-customer-banned-or-deleted"
+  : S extends 413
+  ? "request-larger-than-content-length" | "request-upload-over-limit"
+  : S extends 429
+  ? "too-many-requests"
+  : never;
+
 /**
  * Represents an API error returned by the backend.
  */
-export type ApiError = {
+export type ApiError<S extends ApiErrorStatuses = ApiErrorStatuses> = {
   data: {
     id: string; // Unique ID for each instance of an error
-    status: number; // HTTP status code
-    code: string; // Specific error code
+    status: S; // HTTP status code
+    code: ApiErrorCodes<S>; // Specific error code
     title: string; // Human-readable error title
     details?: string; // Optional explanation for debugging
     source?: {
       path: string[]; // Path to the parameter causing the error
-      type: string; // Indicates body or query parameter
+      type: "body" | "query"; // Indicates body or query parameter
     };
   };
+};
+
+/**
+ * Represents an API error response.
+ */
+export type ApiErrorResponse = {
+  errors: ApiError[];
 };
 
 /**
@@ -145,14 +223,6 @@ export interface ApiParameter {
   [keyof: QueryLimit]: number | never;
 
   [keyof: ImageVariant]: string | never;
-}
-
-/**
- * Represents a generic API response, optionally containing errors and metadata.
- */
-export interface ApiResponse {
-  errors?: ApiError[];
-  meta?: ApiMeta;
 }
 
 /**

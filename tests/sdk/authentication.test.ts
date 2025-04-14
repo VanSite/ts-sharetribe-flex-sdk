@@ -45,7 +45,7 @@ describe("Authentication process", () => {
         });
 
       await sharetribeSdk.marketplace.show();
-      const token = await sharetribeSdk.sdkConfig.tokenStore!.getToken();
+      const token = sharetribeSdk.sdkConfig.tokenStore!.getToken();
       expect(token).toEqual({
         access_token: "test-access-token",
         token_type: "bearer",
@@ -69,7 +69,7 @@ describe("Authentication process", () => {
         password: "test-password",
       });
 
-      const token = await sharetribeSdk.sdkConfig.tokenStore!.getToken();
+      const token = sharetribeSdk.sdkConfig.tokenStore!.getToken();
       expect(token).toEqual({
         access_token: "test-access-token",
         token_type: "bearer",
@@ -100,8 +100,71 @@ describe("Authentication process", () => {
 
       await sharetribeSdk.logout();
 
-      const token = await sharetribeSdk.sdkConfig.tokenStore!.getToken();
+      const token = sharetribeSdk.sdkConfig.tokenStore!.getToken();
       expect(token).toEqual(null);
+    });
+
+    it("should logout the user and get a public-read token", async () => {
+      mockAdapter
+        .onPost("https://flex-api.sharetribe.com/v1/auth/token")
+        .reply(200, {
+          access_token: "test-access-token",
+          token_type: "bearer",
+          expires_in: 86400,
+          scope: "user",
+        });
+
+      await sharetribeSdk.login({
+        username: "test-username",
+        password: "test-password",
+      });
+
+      let token = sharetribeSdk.sdkConfig.tokenStore!.getToken();
+      expect(token).toEqual({
+        access_token: "test-access-token",
+        token_type: "bearer",
+        expires_in: 86400,
+        scope: "user",
+      });
+
+      mockAdapter
+        .onPost("https://flex-api.sharetribe.com/v1/auth/token")
+        .reply(200, {
+          access_token: "test-access-token",
+          token_type: "bearer",
+          expires_in: 86400,
+          scope: "public-read",
+        });
+
+      mockAdapter
+        .onPost("https://flex-api.sharetribe.com/v1/auth/revoke")
+        .reply(200, {
+          revoked: true,
+        });
+
+      await sharetribeSdk.logout();
+      mockAdapter
+        .onGet("https://flex-api.sharetribe.com/v1/api/marketplace/show")
+        .reply(200, {
+          data: {
+            id: { uuid: "16c6a4b8-88ee-429b-835a-6725206cd08c" },
+            type: "marketplace",
+            attributes: {
+              name: "My Marketplace",
+              description: "My marketplace",
+            },
+          },
+        });
+
+      await sharetribeSdk.marketplace.show();
+      token = sharetribeSdk.sdkConfig.tokenStore!.getToken();
+
+      expect(token).toEqual({
+        access_token: "test-access-token",
+        token_type: "bearer",
+        expires_in: 86400,
+        scope: "public-read",
+      });
     });
   });
 
@@ -138,7 +201,7 @@ describe("Authentication process", () => {
       expect(response.data.access_token).toEqual("test-trusted-access-token");
       expect(response.data.scope).toEqual("trusted:user");
 
-      const token = await sharetribeSdk.sdkConfig.tokenStore!.getToken();
+      const token = sharetribeSdk.sdkConfig.tokenStore!.getToken();
       expect(token).toEqual({
         access_token: "test-trusted-access-token",
         token_type: "bearer",

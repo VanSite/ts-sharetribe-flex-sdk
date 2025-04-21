@@ -234,6 +234,14 @@ export type LatLng = {
 };
 
 /**
+ * Represents a latitude/longitude bounding box.
+ */
+export type LatLngBounds = {
+  ne: LatLng;
+  sw: LatLng;
+};
+
+/**
  * Query types for public, metadata, private, and protected data.
  */
 export type QueryPub = `pub_${string}`;

@@ -57,9 +57,18 @@ class Images {
     params: P,
     extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<ImagesResponse<"upload", EP>>> {
+    const formDataObj = Object.entries({ ...params, ...extraParams }).reduce(
+      (fd, entry) => {
+        const [key, val] = entry;
+        fd.append(key, val);
+        return fd;
+      },
+      new FormData()
+    );
+
     return this.axios.post<ImagesResponse<"upload", EP>>(
       `${this.endpoint}/upload`,
-      { ...params, ...extraParams },
+      formDataObj,
       { headers: this.headers }
     );
   }

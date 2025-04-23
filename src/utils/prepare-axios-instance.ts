@@ -231,11 +231,15 @@ export async function handleRequestSuccess(
 
   // Turn sdkTypes into non sdkType objects
   if (requestConfig.method === "post") {
-    const { writer } = createTransitConverters(sdk.sdkConfig.typeHandlers, {
-      verbose: sdk.sdkConfig.transitVerbose,
-    });
-    requestConfig.headers["Content-Type"] = "application/transit+json";
-    requestConfig.data = writer.write(requestConfig.data);
+    if (requestConfig.url?.endsWith("/upload")) {
+      requestConfig.headers["Content-Type"] = "multipart/form-data";
+    } else {
+      const { writer } = createTransitConverters(sdk.sdkConfig.typeHandlers, {
+        verbose: sdk.sdkConfig.transitVerbose,
+      });
+      requestConfig.data = writer.write(requestConfig.data);
+      requestConfig.headers["Content-Type"] = "application/transit+json";
+    }
   }
 
   return requestConfig;

@@ -40,7 +40,7 @@ export type ListingsRelationshipsFields =
   | "currentStock";
 
 // State and availability types for listings.
-export type ListingState = "published" | "closed";
+export type ListingState = "published" | "closed" | "draft" | "pendingApproval";
 export type ListingAvailability =
   | "day-full"
   | "day-partial"

@@ -18,7 +18,7 @@ import StockAdjustments from "./endpoints/integrationApi/StockAdjustments";
 import StockReservation from "./endpoints/integrationApi/StockReservation";
 import Transactions from "./endpoints/integrationApi/Transactions";
 import Users from "./endpoints/integrationApi/Users";
-import { DefaultSdkConfig } from "./utils/config";
+import { DefaultIntegrationSdkConfig } from "./utils/config";
 
 /**
  * The main Sharetribe Integration SDK for interacting with the Sharetribe Integration API.
@@ -141,7 +141,7 @@ class IntegrationSdk {
    */
   constructor(config: SdkConfig) {
     this.sdkConfig = {
-      ...DefaultSdkConfig,
+      ...DefaultIntegrationSdkConfig,
       ...config,
     };
 

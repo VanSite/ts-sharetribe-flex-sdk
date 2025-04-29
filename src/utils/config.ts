@@ -1,14 +1,17 @@
 import MemoryStore from "./stores/MemoryStore";
 import { TypeHandler } from "../types/config";
-import BrowserStore from "./stores/BrowserStore";
+import { Agent as HttpAgent } from "http";
+import { Agent as HttpsAgent } from "https";
 
 type DefaultSdkConfigType = {
   baseUrl: string;
-  assetCdnBaseUrl: string;
+  assetCdnBaseUrl?: string;
   version: string;
   transitVerbose: boolean;
-  tokenStore: MemoryStore;
-  typeHandlers: TypeHandler[];
+  tokenStore?: MemoryStore;
+  typeHandlers?: TypeHandler[];
+  httpAgent?: HttpAgent;
+  httpsAgent?: HttpsAgent;
 };
 
 /**
@@ -21,4 +24,13 @@ export const DefaultSdkConfig: DefaultSdkConfigType = {
   transitVerbose: false, // Toggle for verbose transit serialization
   tokenStore: new MemoryStore(), // Default token store (in-memory)
   typeHandlers: [], // Array to handle custom data types
+};
+
+export const DefaultIntegrationSdkConfig: DefaultSdkConfigType = {
+  baseUrl: "https://flex-integ-api.sharetribe.com",
+  version: "v1",
+  transitVerbose: false,
+  httpAgent: new HttpAgent({ keepAlive: true, maxSockets: 10 }),
+  httpsAgent: new HttpsAgent({ keepAlive: true, maxSockets: 10 }),
+  typeHandlers: [],
 };

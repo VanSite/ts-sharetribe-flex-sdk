@@ -8,6 +8,7 @@ import UUID from "../../src/sdkTypes/UUID";
 import LatLng from "../../src/sdkTypes/LatLng";
 import Money from "../../src/sdkTypes/Money";
 import BigDecimal from "../../src/sdkTypes/BigDecimal";
+import { TypeHandler } from "../../src/types/config";
 
 describe("serializer", () => {
   it("reads and writes transit", () => {
@@ -230,6 +231,23 @@ describe("serializer", () => {
     // Test that adding a custom writer doesn't break the default writer
     expect(r.read(w.write({ id: new UUID(data) })).id).toEqual(new UUID(data));
   });
+
+  it("allows conversion of BigDecimal to Number using custom handler", () => {
+    const r = reader([
+      {
+        sdkType: BigDecimal,
+        reader: (v) => Number(v.value),
+      },
+    ]);
+
+    const w = writer();
+
+    const data = new BigDecimal("123.456");
+    const result = r.read(w.write({ value: data }));
+
+    expect(result.value).toBe(123.456);
+    expect(typeof result.value).toBe("number");
+  });
 });
 
 describe("transit", () => {
@@ -251,5 +269,49 @@ describe("transit", () => {
     const { reader, writer } = createTransitConverters([], { verbose: true });
 
     expect(reader.read(writer.write(testData))).toEqual(testData);
+  });
+
+  it("allows conversion of BigDecimal to Number using custom handler", () => {
+    const testData = JSON.stringify({
+      "~:data": {
+        "~:id": "~u67875bd7-6720-463e-9f37-fac891e99922",
+        "~:type": "~:transaction",
+        "~:attributes": {
+          "~:processName": "~:default-booking-process",
+          "~:transitions": [],
+          "~:payoutTotal": { "~#mn": [0, "EUR"] },
+          "~:processVersion": 26,
+          "~:createdAt": "~t2025-01-15T06:55:19.845Z",
+          "~:lastTransitionedAt": "~t2025-01-15T06:55:28.755Z",
+          "~:protectedData": {},
+          "~:lineItems": [
+            {
+              "~:code": "~:line-item/night",
+              "~:unitPrice": { "~#mn": [2000, "EUR"] },
+              "~:lineTotal": { "~#mn": [4000, "EUR"] },
+              "~:reversal": false,
+              "~:includeFor": { "~#set": ["~:customer"] },
+              "~:quantity": "~f2",
+            },
+          ],
+          "~:lastTransition": "~:transition/withdraw",
+          "~:payinTotal": { "~#mn": [4000, "EUR"] },
+          "~:metadata": {},
+        },
+      },
+    });
+
+    const typeHandler = {
+      sdkType: BigDecimal,
+      reader: (v: any) => Number(v.value),
+      appType: Number,
+      writer: (v: any) => new BigDecimal(v.toString()),
+    };
+
+    const { reader, writer } = createTransitConverters([typeHandler], {
+      verbose: true,
+    });
+    const result = reader.read(testData);
+    expect(result.data.attributes.lineItems[0].quantity).toBe(2);
   });
 });

@@ -55,6 +55,7 @@ const commonConfig = {
 
 const cjsConfig = {
   ...commonConfig,
+  target: "node", // ✅ Add this line
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "ts-sharetribe-flex-sdk.cjs",

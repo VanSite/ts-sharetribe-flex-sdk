@@ -14,23 +14,34 @@ type DefaultSdkConfigType = {
   httpsAgent?: HttpsAgent;
 };
 
+type DefaultIntegrationSdkConfigType = {
+  baseUrl: string;
+  version: string;
+  transitVerbose: boolean;
+  tokenStore?: MemoryStore;
+  httpAgent?: HttpAgent;
+  httpsAgent?: HttpsAgent;
+  typeHandlers?: TypeHandler[];
+};
+
 /**
  * Default SDK configuration object for the Sharetribe Flex API.
  */
 export const DefaultSdkConfig: DefaultSdkConfigType = {
-  baseUrl: "https://flex-api.sharetribe.com", // Base URL for the API
   assetCdnBaseUrl: "https://cdn.st-api.com", // Base URL for assets
-  version: "v1", // API version
-  transitVerbose: false, // Toggle for verbose transit serialization
+  baseUrl: "https://flex-api.sharetribe.com", // Base URL for the API
   tokenStore: new MemoryStore(), // Default token store (in-memory)
+  transitVerbose: false, // Toggle for verbose transit serialization
   typeHandlers: [], // Array to handle custom data types
+  version: "v1", // API version
 };
 
-export const DefaultIntegrationSdkConfig: DefaultSdkConfigType = {
+export const DefaultIntegrationSdkConfig: DefaultIntegrationSdkConfigType = {
   baseUrl: "https://flex-integ-api.sharetribe.com",
-  version: "v1",
-  transitVerbose: false,
-  httpAgent: new HttpAgent({ keepAlive: true, maxSockets: 10 }),
-  httpsAgent: new HttpsAgent({ keepAlive: true, maxSockets: 10 }),
-  typeHandlers: [],
+  httpAgent: new HttpAgent({ keepAlive: true, maxSockets: 10 }), // Default HTTP agent
+  httpsAgent: new HttpsAgent({ keepAlive: true, maxSockets: 10 }), // Default HTTPS agent
+  tokenStore: new MemoryStore(), // Default token store (in-memory)
+  transitVerbose: false, // Toggle for verbose transit serialization
+  typeHandlers: [], // Array to handle custom data types
+  version: "v1", // API version
 };

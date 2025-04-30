@@ -24,6 +24,8 @@ type DefaultIntegrationSdkConfigType = {
   typeHandlers?: TypeHandler[];
 };
 
+const isNode = typeof window === "undefined";
+
 /**
  * Default SDK configuration object for the Sharetribe Flex API.
  */
@@ -36,10 +38,15 @@ export const DefaultSdkConfig: DefaultSdkConfigType = {
   version: "v1", // API version
 };
 
+/**
+ * Default SDK configuration object for the Sharetribe Flex Integration API.
+ */
 export const DefaultIntegrationSdkConfig: DefaultIntegrationSdkConfigType = {
   baseUrl: "https://flex-integ-api.sharetribe.com",
-  httpAgent: new HttpAgent({ keepAlive: true, maxSockets: 10 }), // Default HTTP agent
-  httpsAgent: new HttpsAgent({ keepAlive: true, maxSockets: 10 }), // Default HTTPS agent
+  ...(isNode && {
+    httpAgent: new HttpAgent({ keepAlive: true, maxSockets: 10 }), // Default HTTP agent
+    httpsAgent: new HttpsAgent({ keepAlive: true, maxSockets: 10 }), // Default HTTPS agent
+  }),
   tokenStore: new MemoryStore(), // Default token store (in-memory)
   transitVerbose: false, // Toggle for verbose transit serialization
   typeHandlers: [], // Array to handle custom data types

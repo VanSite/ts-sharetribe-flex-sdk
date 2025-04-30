@@ -19,6 +19,11 @@ const commonConfig = {
   entry: "./src/index.ts",
   resolve: {
     extensions: [".ts", ".js"],
+    fallback: {
+      http: false,
+      https: false,
+      url: false,
+    },
   },
   module: {
     rules: [
@@ -96,7 +101,6 @@ const umdConfig = {
     pathinfo: true,
     globalObject: "this",
   },
-  plugins: isAnalyze ? [createAnalyzerPlugin("umd")] : [],
 };
 
 module.exports = [cjsConfig, esmConfig, umdConfig];

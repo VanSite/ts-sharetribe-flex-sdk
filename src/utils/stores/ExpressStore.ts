@@ -32,6 +32,11 @@ class ExpressStore implements TokenStore {
   constructor({ clientId, req, res, secure }: ExpressStoreOptions) {
     this.key = generateKey(clientId, this.namespace);
     this.secure = secure;
+
+    if (!req || !res) {
+      throw new Error("Request and Response are required");
+    }
+
     this.req = req;
     this.res = res;
   }
@@ -63,7 +68,6 @@ class ExpressStore implements TokenStore {
     const secureFlag = this.secure ? { secure: true } : {};
     this.res.cookie(this.key, JSON.stringify(token), {
       maxAge: 1000 * 60 * 60 * 24 * this.expiration, // Convert expiration to milliseconds
-      httpOnly: true, // Ensures cookie is only accessible via HTTP(S)
       ...secureFlag,
     });
   }

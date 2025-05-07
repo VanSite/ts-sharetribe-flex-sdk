@@ -25,6 +25,22 @@ type DefaultIntegrationSdkConfigType = {
 };
 
 const isNode = typeof window === "undefined";
+const hasAgents =
+  typeof HttpAgent === "function" && typeof HttpsAgent === "function";
+
+// Create safe agent creators that work in both ESM and CommonJS environments
+let httpAgentCreator: (options: any) => any = () => undefined;
+let httpsAgentCreator: (options: any) => any = () => undefined;
+
+// Only initialize agents if we're in a Node.js environment and the modules are available
+if (isNode && hasAgents) {
+  try {
+    httpAgentCreator = (options: any) => new HttpAgent(options);
+    httpsAgentCreator = (options: any) => new HttpsAgent(options);
+  } catch (e) {
+    console.warn("Failed to initialize HTTP/HTTPS agents:", e);
+  }
+}
 
 /**
  * Default SDK configuration object for the Sharetribe Flex API.
@@ -44,8 +60,8 @@ export const DefaultSdkConfig: DefaultSdkConfigType = {
 export const DefaultIntegrationSdkConfig: DefaultIntegrationSdkConfigType = {
   baseUrl: "https://flex-integ-api.sharetribe.com",
   ...(isNode && {
-    httpAgent: new HttpAgent({ keepAlive: true, maxSockets: 10 }), // Default HTTP agent
-    httpsAgent: new HttpsAgent({ keepAlive: true, maxSockets: 10 }), // Default HTTPS agent
+    httpAgent: httpAgentCreator({ keepAlive: true, maxSockets: 10 }), // Default HTTP agent
+    httpsAgent: httpsAgentCreator({ keepAlive: true, maxSockets: 10 }), // Default HTTPS agent
   }),
   tokenStore: new MemoryStore(), // Default token store (in-memory)
   transitVerbose: false, // Toggle for verbose transit serialization

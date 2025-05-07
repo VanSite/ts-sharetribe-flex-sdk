@@ -69,11 +69,18 @@ const cjsConfig = {
     },
     pathinfo: true,
   },
+  externals: {
+    // Don't bundle node core modules
+    http: "commonjs http",
+    https: "commonjs https",
+    url: "commonjs url",
+  },
   plugins: isAnalyze ? [createAnalyzerPlugin("cjs")] : [],
 };
 
 const esmConfig = {
   ...commonConfig,
+  target: ["web", "es2020"],
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "ts-sharetribe-flex-sdk.mjs",
@@ -81,9 +88,19 @@ const esmConfig = {
       type: "module",
     },
     pathinfo: true,
+    environment: {
+      module: true,
+    },
   },
   experiments: {
     outputModule: true,
+  },
+  // For ESM, mark Node.js built-ins as external
+  externalsType: "import",
+  externals: {
+    http: "node:http",
+    https: "node:https",
+    url: "node:url",
   },
   plugins: isAnalyze ? [createAnalyzerPlugin("esm")] : [],
 };

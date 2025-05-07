@@ -1,6 +1,6 @@
 {
   "name": "@vansite/ts-sharetribe-flex-sdk",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "description": "This is a TypeScript SDK for Sharetribe Flex API. It reduces the complexity of the API and provides a more user-friendly interface.",
   "main": "./dist/ts-sharetribe-flex-sdk.cjs",
   "module": "./dist/ts-sharetribe-flex-sdk.mjs",
@@ -37,6 +37,7 @@
     "build": "yarn clean && webpack --mode production",
     "build:test": "webpack --mode development",
     "build:types": "tsc --emitDeclarationOnly",
+    "publish": "yarn run build && npm publish",
     "analyze": "ANALYZE=true yarn build",
     "test": "jest"
   },

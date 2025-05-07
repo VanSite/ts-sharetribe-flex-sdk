@@ -8,11 +8,13 @@ import {
   ApiParameter,
   ExtraParameterType,
   Money,
+  QueryMeta,
+  QueryProt,
   Relationship,
   RelationshipTypeMap,
   UUID,
 } from "../sharetribe";
-
+import { BookingState } from "./bookings";
 /**
  * Available endpoints for the Transactions API.
  */
@@ -147,20 +149,39 @@ export interface TransactionsShowParameter extends TransactionsParameter {
  * Parameters for querying transactions.
  */
 export type TransactionsQueryParameter<I extends boolean = false> =
-  TransactionsParameter &
-    (I extends false
+  TransactionsParameter & {
+    [keyof: QueryMeta]: string;
+    [keyof: QueryProt]: string;
+    bookingEnd?: string;
+    bookingStart?: string;
+    bookingStates?: Array<BookingState>;
+    createdAtEnd?: string;
+    createdAtStart?: string;
+    hasBooking?: boolean;
+    hasMessage?: boolean;
+    hasPayin?: boolean;
+    hasStockReservation?: boolean;
+    lastTransitionedAtStart?: string;
+    lastTransitions?: string[];
+    listingId?: UUID | string;
+    only?: TransactionsVariety;
+    processName?: string;
+    sort?:
+      | "bookingEnd"
+      | "bookingStart"
+      | "createdAt"
+      | "lastMessageAt"
+      | "lastTransitionedAt"
+      | `meta_${string}`
+      | `prot_${string}`;
+    stockReservationStates?: string[];
+    userId?: UUID | string;
+  } & (I extends true
       ? {
-          only?: TransactionsVariety;
-          lastTransitions?: string[];
-        }
-      : {
-          createdAtStart?: string;
-          createdAtEnd?: string;
-          userId?: UUID | string;
           customerId?: UUID | string;
           providerId?: UUID | string;
-          listingId?: UUID | string;
-        });
+        }
+      : {});
 
 /**
  * Parameters for initiating a transaction.

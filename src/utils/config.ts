@@ -1,5 +1,5 @@
 import MemoryStore from "./stores/MemoryStore";
-import { TypeHandler } from "../types/config";
+import { TypeHandler } from "../types";
 import { Agent as HttpAgent } from "http";
 import { Agent as HttpsAgent } from "https";
 

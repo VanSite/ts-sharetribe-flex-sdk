@@ -2,10 +2,8 @@ const path = require("path");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const TerserPlugin = require("terser-webpack-plugin");
 
-// Use an environment variable to check if we should analyze
 const isAnalyze = process.env.ANALYZE === "true";
 
-// Create a function to generate analyzer plugins with different names
 const createAnalyzerPlugin = (name) => {
   return new BundleAnalyzerPlugin({
     analyzerMode: "static",
@@ -70,10 +68,8 @@ const cjsConfig = {
     pathinfo: true,
   },
   externals: {
-    // Don't bundle node core modules
     http: "commonjs http",
     https: "commonjs https",
-    url: "commonjs url",
   },
   plugins: isAnalyze ? [createAnalyzerPlugin("cjs")] : [],
 };
@@ -95,13 +91,7 @@ const esmConfig = {
   experiments: {
     outputModule: true,
   },
-  // For ESM, mark Node.js built-ins as external
   externalsType: "import",
-  externals: {
-    http: "node:http",
-    https: "node:https",
-    url: "node:url",
-  },
   plugins: isAnalyze ? [createAnalyzerPlugin("esm")] : [],
 };
 

@@ -75,14 +75,14 @@ type UserAttributesProfile<I extends boolean> = {
   displayName: string;
   abbreviatedName: string;
   bio: string;
-  publicData: UserCustomProfilePublicData;
-  metadata: UserCustomProfileMetadata;
+  publicData: UserProfilePublicData & UserCustomProfilePublicData;
+  metadata: UserProfileMetadata & UserCustomProfileMetadata;
 } & (I extends true
   ? {
       firstName: string;
       lastName: string;
-      protectedData: UserCustomProfileProtectedData;
-      privateData: UserCustomProfilePrivateData;
+      protectedData: UserProfileProtectedData & UserCustomProfileProtectedData;
+      privateData: UserProfilePrivateData & UserCustomProfilePrivateData;
       permissions: {
         postListings: Permissions;
         initiateTransactions: Permissions;
@@ -99,6 +99,8 @@ export interface UserWithRelationships<I extends boolean = false>
   relationships: {
     marketplace: Relationship<false, "marketplace">;
     profileImage: Relationship<false, "profileImage">;
+    stripeAccount: Relationship<false, "stripeAccount">;
+    effectivePermissionSet: Relationship<false, "effectivePermissionSet">;
   };
 }
 
@@ -151,10 +153,10 @@ export interface UsersUpdateProfileParameter extends UsersParameter {
   lastName?: string;
   displayName?: string;
   bio?: string;
-  publicData?: UserCustomProfilePublicData;
-  protectedData?: UserCustomProfileProtectedData;
-  privateData?: UserCustomProfilePrivateData;
-  metadata?: UserCustomProfileMetadata;
+  publicData?: UserProfilePublicData & UserCustomProfilePublicData;
+  protectedData?: UserProfileProtectedData & UserCustomProfileProtectedData;
+  privateData?: UserProfilePrivateData & UserCustomProfilePrivateData;
+  metadata?: UserProfileMetadata & UserCustomProfileMetadata;
   profileImageId?: UUID | string;
 }
 
@@ -178,9 +180,21 @@ export interface UsersUpdatePermissionsParameter extends UsersParameter {
 /**
  * Custom data types for user profiles.
  */
+export interface UserProfilePublicData {
+  [key: string]: any;
+}
 export interface UserCustomProfilePublicData {}
+export interface UserProfileProtectedData {
+  [key: string]: any;
+}
 export interface UserCustomProfileProtectedData {}
+export interface UserProfilePrivateData {
+  [key: string]: any;
+}
 export interface UserCustomProfilePrivateData {}
+export interface UserProfileMetadata {
+  [key: string]: any;
+}
 export interface UserCustomProfileMetadata {}
 
 type AllUsersParameter =

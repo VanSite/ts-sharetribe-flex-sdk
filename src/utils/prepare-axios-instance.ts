@@ -129,6 +129,25 @@ export async function handleResponseFailure(
         // Retry the request
         return sdk.axios(originalRequest);
       }
+      // Token is a public-read token or does not exist
+      // We need to get a new public-read token
+      if (token && !token.refresh_token || !token) {
+        // Get a new public-read token
+        const response = await sdk.auth.token<"public-read">({
+          client_id: sdk.sdkConfig.clientId,
+          grant_type: "client_credentials",
+          scope: "public-read",
+        });
+
+        originalRequest.headers.Authorization = prepareAuthorizationHeader(
+          response.data
+        );
+
+        // Store the new token
+        sdk.sdkConfig.tokenStore.setToken(response.data);
+
+        return sdk.axios(originalRequest);
+      }
     }
 
     // Handle trusted user check

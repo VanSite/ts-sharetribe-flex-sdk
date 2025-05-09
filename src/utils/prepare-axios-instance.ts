@@ -4,7 +4,7 @@ import {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import { ExtendedInternalAxiosRequestConfig } from "../types/axios";
+import { ExtendedInternalAxiosRequestConfig } from "../types";
 import SharetribeSdk from "../sdk";
 import parameterSerializer from "./parameter-serializer";
 import IntegrationSdk from "../integrationSdk";

@@ -79,7 +79,7 @@ class Messages {
     extraParams: EP | void = {} as EP
   ): Promise<AxiosResponse<MessagesResponse<"send", P, EP>>> {
     return this.axios.post<MessagesResponse<"send", P, EP>>(
-      `${this.endpoint}/create`,
+      `${this.endpoint}/send`,
       { ...params, ...extraParams },
       this.headers
     );

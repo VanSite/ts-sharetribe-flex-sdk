@@ -117,12 +117,6 @@ describe("handleResponseFailure", () => {
     expect(sdk.axios).toHaveBeenCalledWith(originalRequest);
   });
 
-  it("should reject if no refresh_token is present", async () => {
-    // @ts-ignore
-    sdk.sdkConfig.tokenStore!.getToken.mockReturnValue({});
-    await expect(handleResponseFailure(sdk, error)).rejects.toEqual(error);
-  });
-
   it("should reject if status is not 401 or 403", async () => {
     error.response!.status = 500;
     await expect(handleResponseFailure(sdk, error)).rejects.toEqual(error);

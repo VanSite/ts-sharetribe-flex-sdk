@@ -36,6 +36,9 @@ const isJson = (res: any) => {
 // Utility functions
 export const isTokenUnauthorized = (status: number) => [401].includes(status);
 export const isTokenExpired = (status: number) => [401, 403].includes(status);
+export const isAuthTokenUnauthorized = (error: AxiosError) =>
+  error.response?.status === 401 && error?.config?.method === "post" && error?.config?.url?.includes("/auth/token")
+
 export const routeNeedsTrustedUser = (
   requestConfig: InternalAxiosRequestConfig,
   sdk: SharetribeSdk | IntegrationSdk
@@ -129,6 +132,15 @@ export async function handleResponseFailure(
         // Retry the request
         return sdk.axios(originalRequest);
       }
+
+      if (isAuthTokenUnauthorized(error)) {
+        return Promise.reject({
+          status: 401,
+          statusText: 'Unauthorized',
+          data: 'Unauthorized'
+        });
+      }
+
       // Token is a public-read token or does not exist
       // We need to get a new public-read token
       if (token && !token.refresh_token || !token) {

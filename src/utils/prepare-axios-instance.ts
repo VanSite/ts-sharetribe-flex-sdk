@@ -244,26 +244,44 @@ export async function handleRequestSuccess(
 
   // Convert data parameter to query Parameters
   if (requestConfig.data) {
-    Object.keys(requestConfig.data).forEach((key) => {
-      const isQueryParameter = QUERY_PARAMETERS.find(
-        (param) => key === param || key.startsWith(param)
-      );
-      if (isQueryParameter) {
-        requestConfig.params = {
-          ...requestConfig.params,
-          [key]: Array.isArray(requestConfig.data[key])
-            ? requestConfig.data[key].join(",")
-            : requestConfig.data[key],
-        };
-        delete requestConfig.data[key];
-      }
-    });
+    if (requestConfig.data instanceof FormData) {
+      const newFormData = new FormData();
+      requestConfig.data.forEach((value, key) => {
+        const isQueryParameter = QUERY_PARAMETERS.find(
+          (param) => key === param || key.startsWith(param)
+        );
+        if (isQueryParameter) {
+          requestConfig.params = {
+            ...requestConfig.params,
+            [key]: Array.isArray(value) ? value.join(",") : value,
+          };
+        } else {
+          newFormData.append(key, value);
+        }
+      });
+      requestConfig.data = newFormData;
+    } else {
+      Object.keys(requestConfig.data).forEach((key) => {
+        const isQueryParameter = QUERY_PARAMETERS.find(
+          (param) => key === param || key.startsWith(param)
+        );
+        if (isQueryParameter) {
+          requestConfig.params = {
+            ...requestConfig.params,
+            [key]: Array.isArray(requestConfig.data[key])
+              ? requestConfig.data[key].join(",")
+              : requestConfig.data[key],
+          };
+          delete requestConfig.data[key];
+        }
+      });
+    }
   }
 
   // Turn sdkTypes into non sdkType objects
   if (requestConfig.method === "post") {
     if (requestConfig.url?.endsWith("/upload")) {
-      requestConfig.headers["Content-Type"] = "multipart/form-data";
+      delete requestConfig.headers["Content-Type"]
     } else {
       const { writer } = createTransitConverters(sdk.sdkConfig.typeHandlers, {
         verbose: sdk.sdkConfig.transitVerbose,

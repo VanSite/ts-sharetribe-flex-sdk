@@ -110,6 +110,11 @@ export async function handleResponseFailure(
       error.response.data = JSON.parse(error.response.data as string);
     }
 
+    if (error.response && isTokenUnauthorized(error.response.status) && originalRequest.url?.includes("/auth/token")) {
+      sdk.sdkConfig.tokenStore.removeToken();
+      return Promise.reject(error);
+    }
+
     // Handle token refresh on 401/403 errors
     if (error.response && isTokenExpired(error.response.status)) {
       const token = sdk.sdkConfig.tokenStore.getToken();
@@ -188,6 +193,12 @@ export async function handleRequestSuccess(
 ): Promise<InternalAxiosRequestConfig> {
   if (!sdk.sdkConfig.tokenStore) {
     throw new Error("Token store is not set");
+  }
+
+  if (requestConfig.url?.includes("auth/revoke")) {
+    const authToken = sdk.sdkConfig.tokenStore.getToken();
+    requestConfig.headers.Authorization = prepareAuthorizationHeader(authToken);
+    return requestConfig;
   }
 
   if (

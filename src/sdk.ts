@@ -284,7 +284,7 @@ class SharetribeSdk {
    * Logs in the marketplace operator as the marketplace user and returns a Promise
    *
    * @async
-   * @param {LoginAsParameter} params - The login parameters.
+   * @param {LoginParameter} params - The login parameters.
    * @returns {Promise<AuthToken>} - The authentication token.
    */
   async loginAs(
@@ -325,7 +325,7 @@ class SharetribeSdk {
    * @returns {Promise<void>} - Resolves when the user is logged out.
    */
   async logout(): Promise<AxiosResponse<RevokeResponse>> {
-    const { access_token } = (await this.sdkConfig.tokenStore!.getToken())!;
+    const { access_token } = (this.sdkConfig.tokenStore!.getToken())!;
     return this.auth.revoke(access_token);
   }
 
@@ -336,7 +336,7 @@ class SharetribeSdk {
    * @returns {Promise<AuthToken>} - The exchanged token.
    */
   async exchangeToken(): Promise<AxiosResponse<TokenResponse<"trusted:user">>> {
-    const { access_token } = (await this.sdkConfig.tokenStore!.getToken())!;
+    const { access_token } = (this.sdkConfig.tokenStore!.getToken())!;
     if (this.sdkConfig.clientSecret === undefined) {
       throw new Error("clientSecret is required to exchange token");
     }
@@ -356,15 +356,37 @@ class SharetribeSdk {
    * @returns {Promise<AuthInfoResponse>} - The authentication info.
    */
   async authInfo(): Promise<AuthInfoResponse> {
-    const storedToken = await this.sdkConfig.tokenStore!.getToken();
-    if (storedToken && storedToken.scope) {
+    const storedToken = this.sdkConfig.tokenStore!.getToken();
+
+    if (storedToken) {
       const tokenScope = storedToken.scope;
-      const scopes = tokenScope.split(" ") as Scope[];
-      const isAnonymous = tokenScope === "public-read";
 
-      const grantType = isAnonymous ? "client_credentials" : "refresh_token";
+      if (tokenScope) {
+        const scopes = tokenScope.split(' ') as Scope[];
+        const isAnonymous = tokenScope === 'public-read';
 
-      return { scopes, isAnonymous, grantType };
+        // Deprecated attribute, maintained here for client implementations
+        // that rely on this attribute
+        const grantType = isAnonymous ? 'client_credentials' : 'refresh_token';
+
+        return { scopes, isAnonymous, grantType }
+      }
+
+      // Support old tokens that are stored in the client's token store
+      // and possibly do not have the scope attribute
+      const isAnonymous = !storedToken.refresh_token;
+      const grantType = isAnonymous ? 'client_credentials' : 'refresh_token';
+      return { isAnonymous, grantType }
+    }
+
+    const response = await this.auth.token<"public-read">({
+      client_id: this.sdkConfig.clientId,
+      grant_type: "client_credentials",
+      scope: "public-read",
+    })
+
+    if (response.data.access_token) {
+      return { isAnonymous: true, grantType: 'client_credentials', scopes: ["public-read"] };
     }
 
     return {};

@@ -1,19 +1,19 @@
 import UUIDClass from "../sdkTypes/UUID";
-import { User } from "./marketplace/user";
-import { Booking } from "./marketplace/bookings";
-import { Stock } from "./marketplace/stock";
-import { StripePaymentMethod } from "./marketplace/stripePaymentMethod";
-import { Image } from "./marketplace/images";
-import { Listing } from "./marketplace/listings";
-import Marketplace from "../endpoints/marketplace";
-import { Message } from "./marketplace/messages";
-import { OwnListing } from "./marketplace/ownListings";
-import { Review } from "./marketplace/reviews";
-import { StockReservation } from "./marketplace/stockReservations";
-import { StripeAccount } from "./marketplace/stripeAccount";
-import { StripeCustomer } from "./marketplace/stripeCustomer";
-import { Transaction } from "./marketplace/transactions";
-import { CurrentUserPermissionSet } from "./marketplace/currentUser";
+import {User} from "./marketplace/user";
+import {Booking} from "./marketplace/bookings";
+import {Stock} from "./marketplace/stock";
+import {StripePaymentMethod} from "./marketplace/stripePaymentMethod";
+import {Image} from "./marketplace/images";
+import {Listing} from "./marketplace/listings";
+import {Marketplace} from "./marketplace/marketplace";
+import {Message} from "./marketplace/messages";
+import {OwnListing} from "./marketplace/ownListings";
+import {Review} from "./marketplace/reviews";
+import {StockReservation} from "./marketplace/stockReservations";
+import {StripeAccount} from "./marketplace/stripeAccount";
+import {StripeCustomer} from "./marketplace/stripeCustomer";
+import {Transaction} from "./marketplace/transactions";
+import {CurrentUserPermissionSet} from "./marketplace/currentUser";
 
 /**
  * A mapping of relationship types to their corresponding entities.
@@ -58,6 +58,7 @@ export type RelationshipTypeMap<I extends boolean = false> = {
   "reviews.author": User<I>;
   "reviews.listing": Listing<I>;
   "reviews.subject": User<I>;
+  "reviews.author.profileImage": Image;
   sender: User<I>;
   "sender.marketplace": Marketplace;
   "sender.profileImage": Image;
@@ -95,78 +96,76 @@ export type ApiErrorStatuses =
 
 export type ApiErrorCodes<S extends ApiErrorStatuses> = S extends 400
   ?
-      | "unsupported-content-type"
-      | "bad-request"
-      | "validation-disallowed-key"
-      | "validation-invalid-value"
-      | "validation-invalid-params"
-      | "validation-missing-key"
+  | "unsupported-content-type"
+  | "bad-request"
+  | "validation-disallowed-key"
+  | "validation-invalid-value"
+  | "validation-invalid-params"
+  | "validation-missing-key"
   : S extends 401
-  ? "auth-invalid-access-token" | "auth-missing-access-token"
-  : S extends 402
-  ? "transaction-payment-failed"
-  : S extends 403
-  ? "forbidden"
-  : S extends 404
-  ? "not-found"
-  : S extends 409
-  ?
-      | "conflict"
-      | "image-invalid"
-      | "image-invalid-content"
-      | "email-taken"
-      | "email-already-verified"
-      | "email-unverified"
-      | "email-not-found"
-      | "listing-not-found"
-      | "listing-invalid-state"
-      | "stripe-account-not-found"
-      | "stripe-missing-api-key"
-      | "stripe-invalid-payment-intent-status"
-      | "stripe-customer-not-found"
-      | "stripe-multiple-payment-methods-not-supported"
-      | "stripe-payment-method-type-not-supported"
-      | "user-missing-stripe-account"
-      | "user-is-banned"
-      | "user-not-found"
-      | "transaction-locked	"
-      | "transaction-not-found"
-      | "transaction-listing-not-found"
-      | "transaction-booking-state-not-pending"
-      | "transaction-booking-state-not-accepted"
-      | "transaction-invalid-transition"
-      | "transaction-invalid-action-sequence"
-      | "transaction-missing-listing-price"
-      | "transaction-missing-stripe-account"
-      | "transaction-same-author-and-customer"
-      | "transaction-stripe-account-disabled-charges"
-      | "transaction-stripe-account-disabled-payouts"
-      | "transaction-charge-zero-payin"
-      | "transaction-charge-zero-payout"
-      | "transaction-zero-payin"
-      | "transaction-unknown-alias"
-      | "transaction-provider-banned-or-deleted"
-      | "transaction-customer-banned-or-deleted"
-  : S extends 413
-  ? "request-larger-than-content-length" | "request-upload-over-limit"
-  : S extends 429
-  ? "too-many-requests"
-  : never;
+    ? "auth-invalid-access-token" | "auth-missing-access-token"
+    : S extends 402
+      ? "transaction-payment-failed"
+      : S extends 403
+        ? "forbidden"
+        : S extends 404
+          ? "not-found"
+          : S extends 409
+            ?
+            | "conflict"
+            | "image-invalid"
+            | "image-invalid-content"
+            | "email-taken"
+            | "email-already-verified"
+            | "email-unverified"
+            | "email-not-found"
+            | "listing-not-found"
+            | "listing-invalid-state"
+            | "stripe-account-not-found"
+            | "stripe-missing-api-key"
+            | "stripe-invalid-payment-intent-status"
+            | "stripe-customer-not-found"
+            | "stripe-multiple-payment-methods-not-supported"
+            | "stripe-payment-method-type-not-supported"
+            | "user-missing-stripe-account"
+            | "user-is-banned"
+            | "user-not-found"
+            | "transaction-locked	"
+            | "transaction-not-found"
+            | "transaction-listing-not-found"
+            | "transaction-booking-state-not-pending"
+            | "transaction-booking-state-not-accepted"
+            | "transaction-invalid-transition"
+            | "transaction-invalid-action-sequence"
+            | "transaction-missing-listing-price"
+            | "transaction-missing-stripe-account"
+            | "transaction-same-author-and-customer"
+            | "transaction-stripe-account-disabled-charges"
+            | "transaction-stripe-account-disabled-payouts"
+            | "transaction-charge-zero-payin"
+            | "transaction-charge-zero-payout"
+            | "transaction-zero-payin"
+            | "transaction-unknown-alias"
+            | "transaction-provider-banned-or-deleted"
+            | "transaction-customer-banned-or-deleted"
+            : S extends 413
+              ? "request-larger-than-content-length" | "request-upload-over-limit"
+              : S extends 429
+                ? "too-many-requests"
+                : never;
 
 /**
  * Represents an API error returned by the backend.
  */
 export type ApiError<S extends ApiErrorStatuses = ApiErrorStatuses> = {
-  data: {
-    id: string; // Unique ID for each instance of an error
-    status: S; // HTTP status code
-    code: ApiErrorCodes<S>; // Specific error code
-    title: string; // Human-readable error title
-    details?: string; // Optional explanation for debugging
-    source?: {
-      path: string[]; // Path to the parameter causing the error
-      type: "body" | "query"; // Indicates body or query parameter
-    };
+  id: string; // Unique ID for each instance of an error
+  status: S; // HTTP status code
+  code: ApiErrorCodes<S>; // Specific error code
+  title: string; // Human-readable error title
+  details?: string; // Optional explanation for debugging
+  source?: {
+    path: string[]; // Path to the parameter causing the error
+    type: "body" | "query"; // Indicates body or query parameter
   };
 };
 
@@ -174,7 +173,13 @@ export type ApiError<S extends ApiErrorStatuses = ApiErrorStatuses> = {
  * Represents an API error response.
  */
 export type ApiErrorResponse = {
-  errors: ApiError[];
+  name: string;
+  message: string;
+  status: number | undefined;
+  statusText: string | undefined;
+  data: {
+    errors: ApiError[];
+  }
 };
 
 /**

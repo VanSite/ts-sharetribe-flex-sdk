@@ -4,13 +4,12 @@ import {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import {ApiError, ExtendedInternalAxiosRequestConfig} from "../types";
+import {ExtendedInternalAxiosRequestConfig} from "../types";
 import SharetribeSdk from "../sdk";
 import parameterSerializer from "./parameter-serializer";
 import IntegrationSdk from "../integrationSdk";
 import { createTransitConverters } from "./transit";
 import axiosRetry, { IAxiosRetryConfig } from "axios-retry";
-import {uuid} from "transit-js";
 import {createSharetribeApiError} from "./util";
 export const QUERY_PARAMETERS = [
   "include",

@@ -34,7 +34,7 @@ class Money implements SdkType {
 
     // Validate the amount.
     if (!Number.isInteger(amount)) {
-      console.warn("Amount must be an integer.");
+      console.warn("Amount must be an integer.", amount);
       isValid = false;
     }
 

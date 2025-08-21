@@ -4,12 +4,14 @@ import {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import { ExtendedInternalAxiosRequestConfig } from "../types";
+import {ApiError, ExtendedInternalAxiosRequestConfig} from "../types";
 import SharetribeSdk from "../sdk";
 import parameterSerializer from "./parameter-serializer";
 import IntegrationSdk from "../integrationSdk";
 import { createTransitConverters } from "./transit";
 import axiosRetry, { IAxiosRetryConfig } from "axios-retry";
+import {uuid} from "transit-js";
+import {createSharetribeApiError} from "./util";
 export const QUERY_PARAMETERS = [
   "include",
   "page",
@@ -112,7 +114,7 @@ export async function handleResponseFailure(
 
     if (error.response && isTokenUnauthorized(error.response.status) && originalRequest.url?.includes("/auth/token")) {
       sdk.sdkConfig.tokenStore.removeToken();
-      return Promise.reject(error);
+      return Promise.reject(createSharetribeApiError(error));
     }
 
     // Handle token refresh on 401/403 errors
@@ -139,11 +141,7 @@ export async function handleResponseFailure(
       }
 
       if (isAuthTokenUnauthorized(error)) {
-        return Promise.reject({
-          status: 401,
-          statusText: 'Unauthorized',
-          data: 'Unauthorized'
-        });
+        return Promise.reject(createSharetribeApiError(error));
       }
 
       // Token is a public-read token or does not exist
@@ -176,11 +174,12 @@ export async function handleResponseFailure(
       const token = sdk.sdkConfig.tokenStore.getToken();
       if (token?.scope !== "trusted:user") {
         console.error("Token is not trusted:user");
-        return Promise.reject(error);
+        return Promise.reject(createSharetribeApiError(error));
       }
     }
 
-    return Promise.reject(error);
+    // Default error handling
+    return Promise.reject(createSharetribeApiError(error));
   } catch (e) {
     console.error("Error in handleResponseFailure:", e);
     return Promise.reject(e);

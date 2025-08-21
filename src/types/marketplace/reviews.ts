@@ -43,7 +43,7 @@ export interface Review {
   id: UUID;
   type: "reviews";
   attributes: {
-    type: string;
+    type: 'ofProvider' | 'ofCustomer';
     state: "public" | "pending";
     rating: number;
     content: string;

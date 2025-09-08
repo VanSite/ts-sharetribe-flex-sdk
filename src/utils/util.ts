@@ -50,6 +50,6 @@ export const createSharetribeApiError = (error: AxiosError): ApiErrorResponse =>
     message: error.message,
     status: error.status,
     statusText: error.code,
-    data: error.response!.data
+    data: error.response?.data
   } as ApiErrorResponse;
 }

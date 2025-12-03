@@ -266,7 +266,7 @@ class SharetribeSdk {
    * Logs in a user using their credentials.
    *
    * @async
-   * @param {LoginParameter} params - The login parameters.
+   * @param {LoginParameter} params - The login parameters. 
    * @returns {Promise<AuthToken>} - The authentication token.
    */
   async login<T extends LoginParameterType>(

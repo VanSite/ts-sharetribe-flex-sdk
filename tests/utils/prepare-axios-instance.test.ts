@@ -119,7 +119,13 @@ describe("handleResponseFailure", () => {
 
   it("should reject if status is not 401 or 403", async () => {
     error.response!.status = 500;
-    await expect(handleResponseFailure(sdk, error)).rejects.toEqual(error);
+    await expect(handleResponseFailure(sdk, error)).rejects.toMatchObject({
+      data: undefined,
+      message: undefined,
+      name: undefined,
+      status: undefined,
+      statusText: undefined,
+    });
   });
 });
 

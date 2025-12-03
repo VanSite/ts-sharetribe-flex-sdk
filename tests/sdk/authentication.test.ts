@@ -16,10 +16,18 @@ describe("Authentication process", () => {
     });
 
     it("should get auth info", async () => {
+      mockAdapter
+        .onPost("https://flex-api.sharetribe.com/v1/auth/token")
+        .reply(200, {
+          access_token: "test-access-token",
+          token_type: "bearer",
+          expires_in: 86400,
+          scope: "public-read",
+        })
       const authInfo = await sharetribeSdk.authInfo();
-      expect(authInfo.scopes).toEqual(undefined);
-      expect(authInfo.isAnonymous).toEqual(undefined);
-      expect(authInfo.grantType).toEqual(undefined);
+      expect(authInfo.scopes).toEqual(['public-read']);
+      expect(authInfo.isAnonymous).toEqual(true);
+      expect(authInfo.grantType).toEqual('client_credentials');
     });
 
     it("should get auth info for a user that is logged in", async () => {

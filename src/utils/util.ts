@@ -40,7 +40,10 @@ export const objectQueryString = (obj: ObjectQueryStringParam): string => {
 
   return Object.entries(obj)
     .filter(([_, value]) => value !== undefined && value !== null) // Exclude undefined or null values
-    .map(([key, value]) => `${key}:${serializeAttribute(value)}`) // Serialize each key-value pair
+    .map(([key, value]) => {
+      const serializedValue = serializeAttribute(value);
+      return `${key}:${encodeURIComponent(serializedValue)}`;
+    }) // Serialize each key-value pair
     .join(";"); // Join the serialized pairs with semicolons
 };
 

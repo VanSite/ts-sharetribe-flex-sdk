@@ -119,7 +119,7 @@ export async function handleResponseFailure(
 
     // Handle token refresh on 401/403 errors
     if (error.response && isTokenExpired(error.response.status)) {
-      const token = sdk.sdkConfig.tokenStore.getToken();
+      const token = await sdk.sdkConfig.tokenStore.getToken();
       if (token && token.refresh_token) {
         // Get a new token
         const response = await sdk.auth.token<RefreshTokenRequest>({
@@ -171,7 +171,7 @@ export async function handleResponseFailure(
       isTokenUnauthorized(error.response.status) &&
       routeNeedsTrustedUser(originalRequest, sdk)
     ) {
-      const token = sdk.sdkConfig.tokenStore.getToken();
+      const token = await sdk.sdkConfig.tokenStore.getToken();
       if (token?.scope !== "trusted:user") {
         console.error("Token is not trusted:user");
         return Promise.reject(createSharetribeApiError(error));

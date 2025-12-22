@@ -2,9 +2,6 @@
   "name": "@vansite/ts-sharetribe-flex-sdk",
   "version": "2.0.0",
   "description": "This is a TypeScript SDK for Sharetribe Flex API. It reduces the complexity of the API and provides a more user-friendly interface.",
-  "main": "./dist/ts-sharetribe-flex-sdk.cjs",
-  "module": "./dist/ts-sharetribe-flex-sdk.mjs",
-  "types": "./dist/types/index.d.ts",
   "keywords": [
     "sharetribe",
     "flex",
@@ -13,13 +10,22 @@
     "api",
     "client"
   ],
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "browser": "dist/index.umd.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/ts-sharetribe-flex-sdk.mjs",
-      "require": "./dist/ts-sharetribe-flex-sdk.cjs"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "browser": "./dist/index.umd.js",
+      "default": "./dist/index.js"
     }
   },
+  "files": [
+    "dist/**/*"
+  ],
   "author": "DKogan90 <david_kogan@hotmail.de>",
   "homepage": "https://github.com/VanSite/ts-sharetribe-flex-sdk",
   "repository": {
@@ -28,15 +34,12 @@
   },
   "license": "MIT",
   "private": false,
-  "files": [
-    "dist",
-    "types"
-  ],
   "scripts": {
     "clean": "rm -rf dist lib types",
-    "build": "yarn clean && webpack --mode production",
+    "build": "npm run build:bundles && npm run build:types",
+    "build:bundles": "yarn clean && webpack --mode production",
     "build:test": "webpack --mode development",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build:types": "tsc -p tsconfig.build.json",
     "build:publish": "yarn run build && npm publish",
     "analyze": "ANALYZE=true yarn build",
     "test": "jest"
@@ -82,7 +85,6 @@
       "@babel/preset-typescript"
     ]
   },
-  "browser": {},
   "tslint": {
     "extends": [
       "tslint:recommended"

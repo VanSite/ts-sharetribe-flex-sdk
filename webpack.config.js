@@ -61,7 +61,7 @@ const cjsConfig = {
   target: "node",
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "ts-sharetribe-flex-sdk.cjs",
+    filename: "index.js",
     library: {
       type: "commonjs2",
     },
@@ -79,7 +79,7 @@ const esmConfig = {
   target: ["web", "es2020"],
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "ts-sharetribe-flex-sdk.mjs",
+    filename: "index.mjs",
     library: {
       type: "module",
     },
@@ -99,7 +99,7 @@ const umdConfig = {
   ...commonConfig,
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "ts-sharetribe-flex-sdk.js",
+    filename: "index.umd.js",
     library: {
       name: "TsSharetribeFlexSdk",
       type: "umd",
@@ -109,5 +109,6 @@ const umdConfig = {
     globalObject: "this",
   },
 };
+
 
 module.exports = [cjsConfig, esmConfig, umdConfig];

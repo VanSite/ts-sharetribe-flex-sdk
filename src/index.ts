@@ -17,6 +17,7 @@ import BrowserStore from "./utils/stores/BrowserStore";
 import ExpressStore from "./utils/stores/ExpressStore";
 import {objectQueryString} from "./utils/util";
 import {read, write} from "./utils/transit";
+import {generateKey} from "./utils/stores/store";
 
 // Export marketplace types
 export * from "./types/assets";
@@ -128,9 +129,11 @@ export type IntegrationSdk = IntegrationSdkExport;
 export const util = {
   /** Serializes an object into a custom query string format. */
   objectQueryString,
+  generateKey,
 };
 export type Util = {
   objectQueryString: typeof objectQueryString;
+  generateKey: typeof generateKey;
 };
 
 const defaultExport = {

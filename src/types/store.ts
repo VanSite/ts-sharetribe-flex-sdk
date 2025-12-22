@@ -16,16 +16,16 @@ export interface TokenStore {
    * Retrieves the current authentication token.
    * @returns A promise resolving to the current token or null if no token exists.
    */
-  getToken: () => AuthToken | null;
+  getToken: (() => AuthToken | null) | (() => Promise<AuthToken | null>);
 
   /**
    * Sets a new authentication token.
    * @param args - Object containing the token's details.
    */
-  setToken: (args: AuthToken) => void;
+  setToken: ((args: AuthToken) => void) | ((args: AuthToken) => Promise<void>);
 
   /**
    * Removes the current authentication token.
    */
-  removeToken: () => void;
+  removeToken: (() => void) | (() => Promise<void>);
 }

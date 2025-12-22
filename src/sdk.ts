@@ -336,7 +336,7 @@ class SharetribeSdk {
    * @returns {Promise<AuthToken>} - The exchanged token.
    */
   async exchangeToken(): Promise<AxiosResponse<TokenResponse<TrustedUserTokenRequest>>> {
-    const {access_token} = (this.sdkConfig.tokenStore!.getToken())!;
+    const {access_token} = (await this.sdkConfig.tokenStore!.getToken())!;
     if (this.sdkConfig.clientSecret === undefined) {
       throw new Error("clientSecret is required to exchange token");
     }
@@ -356,7 +356,7 @@ class SharetribeSdk {
    * @returns {Promise<AuthInfoResponse>} - The authentication info.
    */
   async authInfo(): Promise<AuthInfoResponse> {
-    const storedToken = this.sdkConfig.tokenStore!.getToken()!;
+    const storedToken = await this.sdkConfig.tokenStore!.getToken()!;
 
     if (storedToken) {
       const tokenScope = storedToken.scope as Scope;

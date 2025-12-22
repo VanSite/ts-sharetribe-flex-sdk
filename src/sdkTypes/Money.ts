@@ -3,7 +3,7 @@
  * This class ensures proper structure and validation of monetary values with an amount and a currency.
  */
 
-import { SdkType } from "../types/sdk-types";
+import {SdkType} from "../types";
 // Define a static class name
 const MONEY_SDK_TYPE = "Money";
 

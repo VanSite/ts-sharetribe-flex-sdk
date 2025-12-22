@@ -1,115 +1,131 @@
 /**
  * @fileoverview Type definitions for Stripe Customer operations in the Sharetribe Marketplace API.
- * This file defines the structure of parameters and responses for the Stripe Customer API endpoints.
  */
 
-import {
-  ApiParameter,
-  UUID,
-  Relationship,
-  RelationshipTypeMap,
-  ExtraParameterType,
-} from "../sharetribe";
+import {ApiParameter, ExtraParameterType, Relationship, RelationshipTypeMap, UUID,} from "../sharetribe";
 
-// Supported API endpoints for Stripe Customer operations.
+/**
+ * Available endpoints
+ */
 export type StripeCustomerEndpoints =
   | "create"
   | "addPaymentMethod"
   | "deletePaymentMethod";
 
-// Possible relationship fields for a Stripe Customer.
+/**
+ * Relationship fields that can be included
+ */
 export type StripeCustomerRelationshipsFields = "defaultPaymentMethod";
 
-// Structure of a Stripe Customer object.
+/**
+ * Stripe Customer resource
+ */
 export interface StripeCustomer {
   id: UUID;
   type: "stripeCustomer";
   attributes: {
-    stripeCustomerId: string; // The ID of the customer in Stripe.
+    stripeCustomerId: string;
   };
 }
 
-// Structure of a Stripe Customer object with relationships.
+/**
+ * Stripe Customer with relationships
+ */
 export interface StripeCustomerWithRelationships extends StripeCustomer {
   relationships: {
-    defaultPaymentMethod: Relationship<false, "defaultPaymentMethod">; // Relationship to the default payment method.
+    defaultPaymentMethod: Relationship<false, "defaultPaymentMethod">;
   };
 }
 
-// Conditional type for a Stripe Customer object, with or without relationships.
-export type StripeCustomerType<R extends boolean> = R extends true
-  ? StripeCustomerWithRelationships
-  : StripeCustomer;
+/**
+ * Select type based on include
+ */
+export type StripeCustomerType<R extends boolean> =
+  R extends true ? StripeCustomerWithRelationships : StripeCustomer;
 
-// Base parameters for Stripe Customer operations.
+/**
+ * Base request parameters
+ */
 export interface StripeCustomerParameter extends ApiParameter {
-  include?: StripeCustomerRelationshipsFields[]; // Relationships to include in the response.
+  include?: StripeCustomerRelationshipsFields[];
 }
 
-// Parameters for creating a Stripe Customer.
+/**
+ * Create endpoint
+ */
 export interface StripeCustomerCreateParameter extends StripeCustomerParameter {
-  stripePaymentMethodId?: string; // Optional payment method ID.
-  stripeCustomerEmail?: string; // Optional customer email.
+  stripePaymentMethodId?: string;
+  stripeCustomerEmail?: string;
 }
 
-// Parameters for adding a payment method to a Stripe Customer.
+/**
+ * Add payment method
+ */
 export interface StripeCustomerAddPaymentMethodParameter
   extends StripeCustomerParameter {
-  stripePaymentMethodId: string; // The payment method ID to add.
+  stripePaymentMethodId: string;
 }
 
-// Parameters for deleting a payment method from a Stripe Customer.
+/**
+ * Delete payment method (no body required)
+ */
 export interface StripeCustomerDeletePaymentMethodParameter
-  extends StripeCustomerParameter {}
+  extends StripeCustomerParameter {
+}
 
-// Union type for all Stripe Customer parameters.
+/**
+ * All parameter types
+ */
 type AllStripeCustomerParameter =
   | StripeCustomerCreateParameter
-  | StripeCustomerAddPaymentMethodParameter;
+  | StripeCustomerAddPaymentMethodParameter
+  | StripeCustomerDeletePaymentMethodParameter;
 
-// Conditional type for determining if relationships should be included in the response.
-type StripeCustomerTypeType<P extends AllStripeCustomerParameter> =
-  "include" extends keyof P
-    ? P["include"] extends StripeCustomerRelationshipsFields[]
-      ? true
-      : false
-    : false;
+/**
+ * Detect if relationships are requested
+ */
+type HasInclude<P> = P extends { include: infer I extends StripeCustomerRelationshipsFields[] }
+  ? I
+  : never;
+type IncludesRelationships<P> = HasInclude<P> extends never ? false : true;
 
-// Conditional type for the included relationships in the response.
-type IncludedType<P extends AllStripeCustomerParameter> =
-  "include" extends keyof P
-    ? P["include"] extends (keyof RelationshipTypeMap)[]
-      ? Array<RelationshipTypeMap[P["include"][number]]>[]
-      : never
+/**
+ * Included resources (when include is used)
+ */
+type IncludedResources<P> =
+  HasInclude<P> extends infer Fields extends StripeCustomerRelationshipsFields[]
+    ? RelationshipTypeMap[Fields[number]][]
     : never;
 
-// Conditional type for expanding or omitting attributes in the response.
-type ExpandReturnType<P extends AllStripeCustomerParameter, EP> = EP extends {
-  expand: true;
-}
-  ? StripeCustomerType<StripeCustomerTypeType<P>>
-  : EP extends { expand: false }
-  ? Omit<StripeCustomerType<StripeCustomerTypeType<P>>, "attributes">
-  : Omit<StripeCustomerType<StripeCustomerTypeType<P>>, "attributes">;
+/**
+ * Expand behavior
+ */
+type ExpandResult<T, EP extends ExtraParameterType | undefined> =
+  EP extends { expand: true }
+    ? T
+    : EP extends { expand: false }
+      ? Omit<T, "attributes">
+      : Omit<T, "attributes">;
 
-// Type for determining the data structure of the response based on the endpoint.
-type DataType<
+/**
+ * Response data per endpoint
+ */
+type ResponseData<
   E extends StripeCustomerEndpoints,
   P extends AllStripeCustomerParameter,
-  EP extends ExtraParameterType
-> = E extends "create"
-  ? ExpandReturnType<P, EP>
-  : E extends "addPaymentMethod"
-  ? ExpandReturnType<P, EP>
-  : E extends "deletePaymentMethod"
-  ? ExpandReturnType<P, EP>
-  : never;
+  EP extends ExtraParameterType | undefined
+> =
+  E extends "create" | "addPaymentMethod" | "deletePaymentMethod"
+    ? ExpandResult<StripeCustomerType<IncludesRelationships<P>>, EP>
+    : never;
 
-// Response structure for Stripe Customer operations.
+/**
+ * Final response type
+ */
 export type StripeCustomerResponse<
   E extends StripeCustomerEndpoints,
   P extends AllStripeCustomerParameter,
-  EP extends ExtraParameterType = undefined
+  EP extends ExtraParameterType | undefined = undefined
 > = {
-  data: DataType<E, P, EP>;
-} & ("include" extends keyof P ? { included: IncludedType<P> } : {});
+  data: ResponseData<E, P, EP>;
+} & (IncludesRelationships<P> extends true ? { included: IncludedResources<P> } : {});

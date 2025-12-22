@@ -1,22 +1,17 @@
 /**
  * @fileoverview Type definitions for Stock Adjustments in the Sharetribe Marketplace API.
- * This file defines the structure of parameters and responses for the Stock Adjustments API endpoints.
  */
 
-import {
-  ApiMeta,
-  ApiParameter,
-  ExtraParameter,
-  UUID,
-  Relationship,
-  RelationshipTypeMap,
-  ExtraParameterType,
-} from "../sharetribe";
+import {ApiMeta, ApiParameter, ExtraParameterType, Relationship, RelationshipTypeMap, UUID,} from "../sharetribe";
 
-// Supported API endpoints for Stock Adjustments operations.
+/**
+ * Available endpoints
+ */
 export type StockAdjustmentsEndpoints = "query" | "create" | "delete";
 
-// Supported relationships for Stock Adjustments.
+/**
+ * Relationship fields that can be included
+ */
 export type StockAdjustmentsRelationshipsFields =
   | "ownListing"
   | "ownListing.marketplace"
@@ -25,98 +20,113 @@ export type StockAdjustmentsRelationshipsFields =
   | "ownListing.currentStock"
   | "stockReservation";
 
-// Structure of a Stock Adjustment object.
+/**
+ * Stock Adjustment resource
+ */
 export interface StockAdjustment {
   id: UUID;
-  type: "stockAdjustments";
+  type: "stockAdjustment";
   attributes: {
-    at: Date; // Timestamp of the stock adjustment.
-    quantity: number; // Quantity adjusted.
+    at: Date;
+    quantity: number;
   };
 }
 
-// Structure of a Stock Adjustment object with relationships.
+/**
+ * With relationships
+ */
 export interface StockAdjustmentWithRelationships extends StockAdjustment {
   relationships: {
-    ownListing: Relationship<false, "ownListing">; // The associated listing.
-    stockReservation: Relationship<false, "stock">; // The associated stock reservation.
+    ownListing: Relationship<false, "ownListing">;
+    stockReservation: Relationship<false, "stockReservation">;
   };
 }
 
-// Conditional type for determining Stock Adjustment type based on relationship inclusion.
-export type StockAdjustmentType<R extends boolean> = R extends true
-  ? StockAdjustmentWithRelationships
-  : StockAdjustment;
+/**
+ * Select type based on include
+ */
+export type StockAdjustmentType<R extends boolean> =
+  R extends true ? StockAdjustmentWithRelationships : StockAdjustment;
 
-// Base parameters for Stock Adjustments operations.
+/**
+ * Base request parameters
+ */
 export interface StockAdjustmentsParameter extends ApiParameter {
-  include?: StockAdjustmentsRelationshipsFields[]; // Related resources to include in the response.
+  include?: StockAdjustmentsRelationshipsFields[];
 }
 
-// Parameters for querying Stock Adjustments.
-export interface StockAdjustmentsQueryParameter
-  extends StockAdjustmentsParameter {
-  listingId: UUID | string; // ID of the associated listing.
-  start: Date | string; // Start date/time for filtering adjustments.
-  end: Date | string; // End date/time for filtering adjustments.
+/**
+ * Query endpoint
+ */
+export interface StockAdjustmentsQueryParameter extends StockAdjustmentsParameter {
+  listingId: UUID | string;
+  start: Date | string;
+  end: Date | string;
 }
 
-// Parameters for creating a Stock Adjustment.
-export interface StockAdjustmentsCreateParameter
-  extends StockAdjustmentsParameter {
-  listingId: UUID | string; // ID of the associated listing.
-  quantity: number; // Quantity to adjust.
+/**
+ * Create endpoint
+ */
+export interface StockAdjustmentsCreateParameter extends StockAdjustmentsParameter {
+  listingId: UUID | string;
+  quantity: number;
 }
 
-// Union type for all Stock Adjustments parameters.
+/**
+ * All parameter types
+ */
 type AllStockAdjustmentsParameter =
   | StockAdjustmentsQueryParameter
   | StockAdjustmentsCreateParameter;
 
-// Conditional type for determining if relationships are included in the response.
-type StockAdjustmentsType<P extends AllStockAdjustmentsParameter> =
-  "include" extends keyof P
-    ? P["include"] extends StockAdjustmentsRelationshipsFields[]
-      ? true
-      : false
-    : false;
+/**
+ * Detect include + fix TS2536
+ */
+type HasInclude<P> = P extends { include: infer I extends readonly StockAdjustmentsRelationshipsFields[] } ? I : never;
+type IncludesRelationships<P> = HasInclude<P> extends never ? false : true;
 
-// Type for included related resources.
-type IncludedType<P extends AllStockAdjustmentsParameter> =
-  "include" extends keyof P
-    ? P["include"] extends (keyof RelationshipTypeMap)[]
-      ? Array<RelationshipTypeMap[P["include"][number]]>
-      : never
+/**
+ * Included resources — bulletproof version (no TS2536)
+ */
+type IncludedResources<P> =
+  P extends { include: infer I extends readonly StockAdjustmentsRelationshipsFields[] }
+    ? RelationshipTypeMap[I[number]][]
     : never;
 
-// Type for expanding or omitting attributes in the response.
-type ExpandReturnType<P extends AllStockAdjustmentsParameter, EP> = EP extends {
-  expand: true;
-}
-  ? StockAdjustmentType<StockAdjustmentsType<P>>
-  : EP extends { expand: false }
-  ? Omit<StockAdjustmentType<StockAdjustmentsType<P>>, "attributes">
-  : Omit<StockAdjustmentType<StockAdjustmentsType<P>>, "attributes">;
+/**
+ * Expand behavior
+ */
+type ExpandResult<T, EP extends ExtraParameterType | undefined> =
+  EP extends { expand: true }
+    ? T
+    : EP extends { expand: false }
+      ? Omit<T, "attributes">
+      : Omit<T, "attributes">;
 
-// Type for determining the data structure of the response based on the endpoint.
-type DataType<
+/**
+ * Response data per endpoint
+ */
+type ResponseData<
   E extends StockAdjustmentsEndpoints,
   P extends AllStockAdjustmentsParameter,
-  EP extends ExtraParameter | undefined
-> = E extends "query"
-  ? StockAdjustmentType<StockAdjustmentsType<P>>[]
-  : E extends "create"
-  ? ExpandReturnType<P, EP>
-  : E extends "delete"
-  ? Pick<StockAdjustment, "id" | "type">
-  : never;
+  EP extends ExtraParameterType | undefined
+> =
+  E extends "query"
+    ? StockAdjustmentType<IncludesRelationships<P>>[]
+    : E extends "create"
+      ? ExpandResult<StockAdjustmentType<IncludesRelationships<P>>, EP>
+      : E extends "delete"
+        ? Pick<StockAdjustment, "id" | "type">
+        : never;
 
-// Response structure for Stock Adjustments operations.
+/**
+ * Final response type
+ */
 export type StockAdjustmentsResponse<
   E extends StockAdjustmentsEndpoints,
   P extends AllStockAdjustmentsParameter,
-  EP extends ExtraParameterType = undefined
+  EP extends ExtraParameterType | undefined = undefined
 > = {
-  data: DataType<E, P, EP>;
-} & ("include" extends keyof P ? { included: IncludedType<P> } : {}) &
+  data: ResponseData<E, P, EP>;
+} & (IncludesRelationships<P> extends true ? { included: IncludedResources<P> } : {}) &
   (E extends "query" ? { meta: ApiMeta } : {});

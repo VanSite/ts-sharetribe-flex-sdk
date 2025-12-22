@@ -11,18 +11,19 @@ import UUID from "./sdkTypes/UUID";
 import LatLng from "./sdkTypes/LatLng";
 import LatLngBounds from "./sdkTypes/LatLngBounds";
 import Money from "./sdkTypes/Money";
-import { replacer, reviver } from "./utils/convert-types";
+import {replacer, reviver} from "./utils/convert-types";
 import MemoryStore from "./utils/stores/MemoryStore";
 import BrowserStore from "./utils/stores/BrowserStore";
 import ExpressStore from "./utils/stores/ExpressStore";
-import { objectQueryString } from "./utils/util";
-import { read, write } from "./utils/transit";
+import {objectQueryString} from "./utils/util";
+import {read, write} from "./utils/transit";
 
 // Export marketplace types
 export * from "./types/assets";
 export * from "./types/authentication";
 export * from "./types/integration/events";
 export * from "./types/marketplace/availabilityExceptions";
+export * from "./types/marketplace/availabilityPlan";
 export * from "./types/marketplace/bookings";
 export * from "./types/marketplace/currentUser";
 export * from "./types/marketplace/images";
@@ -70,6 +71,7 @@ export const sdkTypes = {
   /** Reviver function for JSON deserialization. */
   reviver,
 };
+
 export type SdkTypes = {
   BigDecimal: typeof BigDecimal;
   LatLng: typeof LatLng;
@@ -79,10 +81,17 @@ export type SdkTypes = {
   replacer: typeof replacer;
   reviver: typeof reviver;
 };
+
+export type TokenStores = {
+  MemoryStore: typeof MemoryStore;
+  BrowserStore: typeof BrowserStore;
+  ExpressStore: typeof ExpressStore;
+};
+
 /**
  * Token store implementations for managing authentication tokens.
  */
-export const TokenStore = {
+export const TokenStores: TokenStores = {
   /** In-memory token store for temporary token management. */
   MemoryStore,
   /** Browser token store using cookies. */
@@ -90,23 +99,20 @@ export const TokenStore = {
   /** Express.js-compatible token store using request and response cookies. */
   ExpressStore,
 };
-export type TokenStore = {
-  MemoryStore: typeof MemoryStore;
-  BrowserStore: typeof BrowserStore;
-  ExpressStore: typeof ExpressStore;
+
+export type Transit = {
+  read: typeof read;
+  write: typeof write;
 };
 
 /**
  * Transit utilities for reading and writing transit data.
  */
-export const transit = {
+export const transit: Transit = {
   read,
   write,
 };
-export type Transit = {
-  read: typeof read;
-  write: typeof write;
-};
+
 /**
  * Export the Sharetribe SDK and Integration SDK.
  */
@@ -133,7 +139,7 @@ const defaultExport = {
   /** Export of the Integration SDK. */
   SharetribeIntegrationSdk: IntegrationSdkExport,
   /** Export of available token stores. */
-  TokenStore,
+  TokenStores,
   /** Export of SDK-specific types. */
   sdkTypes,
   /** Export of utility functions. */
@@ -146,7 +152,7 @@ export default defaultExport;
 export type DefaultExport = {
   SharetribeSdk: SharetribeSdkExport;
   SharetribeIntegrationSdk: IntegrationSdkExport;
-  TokenStore: typeof TokenStore;
+  TokenStores: typeof TokenStores;
   sdkTypes: typeof sdkTypes;
   util: typeof util;
   transit: typeof transit;

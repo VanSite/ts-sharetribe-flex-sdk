@@ -1,22 +1,17 @@
 /**
- * @fileoverview Type definitions for managing messages in the Sharetribe Marketplace API.
- * These types define the structure for message parameters, attributes, and responses.
+ * @fileoverview Type definitions for Messages in the Sharetribe Marketplace API.
  */
 
-import {
-  ApiMeta,
-  ApiParameter,
-  ExtraParameter,
-  UUID,
-  Relationship,
-  RelationshipTypeMap,
-  ExtraParameterType,
-} from "../sharetribe";
+import {ApiMeta, ApiParameter, ExtraParameterType, Relationship, RelationshipTypeMap, UUID,} from "../sharetribe";
 
-// Supported API endpoints for messages operations.
+/**
+ * Available endpoints
+ */
 export type MessagesEndpoints = "query" | "send";
 
-// Fields for relationships in the message object.
+/**
+ * Relationship fields that can be included
+ */
 export type MessagesRelationshipsFields =
   | "sender"
   | "sender.profileImage"
@@ -31,7 +26,9 @@ export type MessagesRelationshipsFields =
   | "transaction.reviews"
   | "transaction.messages";
 
-// Base structure for a message.
+/**
+ * Message resource
+ */
 export interface Message {
   id: UUID;
   type: "message";
@@ -41,78 +38,89 @@ export interface Message {
   };
 }
 
-// Extended structure for a message with relationships.
+/**
+ * With relationships
+ */
 export interface MessageWithRelationships extends Message {
   relationships: {
-    sender: Relationship<false, "user">;
+    sender: Relationship<false, "sender">;
     transaction: Relationship<false, "transaction">;
   };
 }
 
-// Type alias for a message type with or without relationships.
-export type MessageType<R extends boolean> = R extends true
-  ? MessageWithRelationships
-  : Message;
+export type MessageResource<R extends boolean> =
+  R extends true ? MessageWithRelationships : Message;
 
-// Base parameters for message operations.
+/**
+ * Base request parameters
+ */
 export interface MessagesParameter extends ApiParameter {
   include?: MessagesRelationshipsFields[];
 }
 
-// Parameters for querying messages.
+/**
+ * Query messages
+ */
 export interface MessagesQueryParameter extends MessagesParameter {
   transactionId: UUID | string;
 }
 
-// Parameters for sending a message.
+/**
+ * Send a message
+ */
 export interface MessagesSendParameter extends MessagesParameter {
   transactionId: UUID | string;
   content: string;
 }
 
-// Union type for all message parameters.
+/**
+ * All parameter types
+ */
 type AllMessagesParameter = MessagesQueryParameter | MessagesSendParameter;
 
-// Determine if the message includes relationships.
-type MessagesType<P extends AllMessagesParameter> = "include" extends keyof P
-  ? P["include"] extends MessagesRelationshipsFields[]
-    ? true
-    : false
-  : false;
+/**
+ * Include detection — fixes TS2536
+ */
+type HasInclude<P> = P extends { include: infer I extends readonly MessagesRelationshipsFields[] } ? I : never;
+type IncludesRelationships<P> = HasInclude<P> extends never ? false : true;
 
-// Extract included types for the message relationships.
-type IncludedType<P extends AllMessagesParameter> = "include" extends keyof P
-  ? P["include"] extends (keyof RelationshipTypeMap)[]
-    ? Array<RelationshipTypeMap[P["include"][number]]>
-    : never
-  : never;
+type IncludedResources<P> =
+  HasInclude<P> extends infer Fields extends MessagesRelationshipsFields[]
+    ? RelationshipTypeMap[Fields[number]][]
+    : never;
 
-// Expand the return type for the message based on extra parameters.
-type ExpandReturnType<P extends AllMessagesParameter, EP> = EP extends {
-  expand: true;
-}
-  ? MessageType<MessagesType<P>>
-  : EP extends { expand: false }
-  ? Omit<MessageType<MessagesType<P>>, "attributes">
-  : Omit<MessageType<MessagesType<P>>, "attributes">;
+/**
+ * Expand behavior
+ */
+type ExpandResult<T, EP extends ExtraParameterType | undefined> =
+  EP extends { expand: true }
+    ? T
+    : EP extends { expand: false }
+      ? Omit<T, "attributes">
+      : Omit<T, "attributes">;
 
-// Map data types to endpoints and parameters.
-type DataType<
+/**
+ * Response data per endpoint
+ */
+type ResponseData<
   E extends MessagesEndpoints,
   P extends AllMessagesParameter,
-  EP extends ExtraParameter | undefined
-> = E extends "query"
-  ? MessageType<MessagesType<P>>[]
-  : E extends "send"
-  ? ExpandReturnType<P, EP>
-  : never;
+  EP extends ExtraParameterType | undefined
+> =
+  E extends "query"
+    ? MessageResource<IncludesRelationships<P>>[]
+    : E extends "send"
+      ? ExpandResult<MessageResource<IncludesRelationships<P>>, EP>
+      : never;
 
-// Response structure for message operations.
+/**
+ * Final response type
+ */
 export type MessagesResponse<
   E extends MessagesEndpoints,
   P extends AllMessagesParameter,
-  EP extends ExtraParameterType = undefined
+  EP extends ExtraParameterType | undefined = undefined
 > = {
-  data: DataType<E, P, EP>;
-} & ("include" extends keyof P ? { included: IncludedType<P> } : {}) &
+  data: ResponseData<E, P, EP>;
+} & (IncludesRelationships<P> extends true ? { included: IncludedResources<P> } : {}) &
   (E extends "query" ? { meta: ApiMeta } : {});

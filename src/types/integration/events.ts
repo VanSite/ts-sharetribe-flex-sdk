@@ -1,24 +1,27 @@
 /**
  * @fileoverview Type definitions for Events in the Sharetribe Marketplace API.
- * These types define the structure of events, event parameters, and responses for querying events.
  */
 
-import { ApiMeta, UUID } from "../sharetribe";
-import { ListingWithRelationships } from "../marketplace/listings";
-import { UserWithRelationships } from "../marketplace/user";
-import { AvailabilityExceptionWithRelationships } from "../marketplace/availabilityExceptions";
-import { MessageWithRelationships } from "../marketplace/messages";
-import { TransactionWithRelationships } from "../marketplace/transactions";
-import { BookingWithRelationShips } from "../marketplace/bookings";
-import { ReviewWithRelationships } from "../marketplace/reviews";
-import { StockAdjustmentWithRelationships } from "../marketplace/stockAdjustment";
-import { StockReservationWithRelationships } from "../marketplace/stockReservations";
+import {ApiMeta, UUID} from "../sharetribe";
+import {ListingWithRelationships} from "../marketplace/listings";
+import {UserWithRelationships} from "../marketplace/user";
+import {AvailabilityExceptionWithRelationships} from "../marketplace/availabilityExceptions";
+import {MessageWithRelationships} from "../marketplace/messages";
+import {TransactionWithRelationships} from "../marketplace/transactions";
+import {BookingWithRelationships} from "../marketplace/bookings";
+import {ReviewWithRelationships} from "../marketplace/reviews";
+import {StockAdjustmentWithRelationships} from "../marketplace/stockAdjustment";
+import {StockReservationWithRelationships} from "../marketplace/stockReservations";
 
-// Supported API endpoints for Events.
+/**
+ * Available endpoints
+ */
 export type EventsEndpoints = "query";
 
-// Event types for specific resources.
-export type EventTypes =
+/**
+ * All possible event types
+ */
+export type EventType =
   | "listing/created"
   | "listing/updated"
   | "listing/deleted"
@@ -48,7 +51,9 @@ export type EventTypes =
   | "stockReservation/updated"
   | "stockReservation/deleted";
 
-// Sources of events in the system.
+/**
+ * Source of the event
+ */
 export type EventSource =
   | "source/marketplace-api"
   | "source/integration-api"
@@ -56,7 +61,9 @@ export type EventSource =
   | "source/console"
   | "source/admin";
 
-// Supported resource types for Events.
+/**
+ * Resource types
+ */
 export type EventResourceType =
   | "listing"
   | "user"
@@ -68,37 +75,34 @@ export type EventResourceType =
   | "stockAdjustment"
   | "stockReservation";
 
-// Resource representation for specific event types.
-export type EventResource<T extends EventResourceType = any> =
-  T extends "listing"
-    ? ListingWithRelationships<true>
-    : T extends "user"
-    ? UserWithRelationships<true>
-    : T extends "availabilityException"
-    ? AvailabilityExceptionWithRelationships
-    : T extends "message"
-    ? MessageWithRelationships
-    : T extends "transaction"
-    ? TransactionWithRelationships
-    : T extends "booking"
-    ? BookingWithRelationShips
-    : T extends "review"
-    ? ReviewWithRelationships
-    : T extends "stockAdjustment"
-    ? StockAdjustmentWithRelationships
-    : T extends "stockReservation"
-    ? StockReservationWithRelationships
-    : never;
+/**
+ * Strongly-typed resource mapping per event type
+ */
+export type EventResource<T extends EventResourceType = EventResourceType> =
+  T extends "listing" ? ListingWithRelationships<true>
+    : T extends "user" ? UserWithRelationships<true>
+      : T extends "availabilityException" ? AvailabilityExceptionWithRelationships
+        : T extends "message" ? MessageWithRelationships
+          : T extends "transaction" ? TransactionWithRelationships
+            : T extends "booking" ? BookingWithRelationships
+              : T extends "review" ? ReviewWithRelationships
+                : T extends "stockAdjustment" ? StockAdjustmentWithRelationships
+                  : T extends "stockReservation" ? StockReservationWithRelationships
+                    : never;
 
-// Audit data associated with an Event.
-export type EventAuditData = {
-  userId: UUID;
-  adminId: UUID;
-  clientId: UUID;
-  requestId: UUID;
-};
+/**
+ * Audit metadata
+ */
+export interface EventAuditData {
+  userId?: UUID | null;
+  adminId?: UUID | null;
+  clientId?: UUID | null;
+  requestId?: UUID | null;
+}
 
-// Event structure for API responses.
+/**
+ * Event resource
+ */
 export interface Event {
   id: UUID;
   type: "event";
@@ -106,29 +110,42 @@ export interface Event {
     createdAt: Date;
     sequenceId: number;
     marketplaceId: UUID;
-    eventType: EventTypes;
+    eventType: EventType;
     source: EventSource;
     resourceId: UUID;
     resourceType: EventResourceType;
     resource: EventResource;
-    previousValues: any;
-    auditData: EventAuditData;
+    previousValues?: Record<string, unknown> | null;
+    auditData?: EventAuditData | null;
   };
 }
 
-// Parameters for querying events.
-export interface EventQueryParameter {
+/**
+ * Query parameters
+ */
+export interface EventsQueryParameter {
   startAfterSequenceId?: number;
   createdAtStart?: Date | string;
   resourceId?: UUID | string;
   relatedResourceId?: UUID | string;
-  eventTypes?: EventTypes[];
+  eventTypes?: EventType[];
 }
 
-// Determine the data type for a given Events endpoint.
-type DataType<E extends EventsEndpoints> = E extends "query" ? Event[] : never;
+/**
+ * Response data
+ */
+type ResponseData<E extends EventsEndpoints> =
+  E extends "query" ? Event[] : never;
 
-// Response structure for Events API.
-export type EventsResponse<E extends EventsEndpoints> = {
-  data: DataType<E>;
-} & (E extends "query" ? { meta: ApiMeta } : {});
+/**
+ * Final response type
+ */
+export type EventsResponse<E extends EventsEndpoints = "query"> = {
+  data: ResponseData<E>;
+  meta: ApiMeta;
+};
+
+/**
+ * Convenience alias
+ */
+export type EventsQueryResponse = EventsResponse<"query">;

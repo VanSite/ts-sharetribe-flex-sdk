@@ -1,167 +1,197 @@
 /**
- * @fileoverview Type definitions for authentication in the Sharetribe Marketplace API.
- * These types define the structure of authentication-related parameters, endpoints, and responses.
+ * @fileoverview Type definitions for Sharetribe Authentication API (OAuth2)
+ *
+ * @see https://www.sharetribe.com/api-reference/authentication.html
  */
 
-// Basic Types
-export type TokenTypes = "access_token" | "refresh_token";
+import type {UUID} from "../sharetribe";
+
+/**
+ * OAuth2 grant types
+ */
 export type GrantType =
   | "client_credentials"
   | "password"
+  | "authorization_code"
   | "refresh_token"
-  | "token_exchange"
-  | "authorization_code";
-export type Scope = "public-read" | "user" | "trusted:user" | "integ";
-export type ScopeType =
+  | "token_exchange";
+
+/**
+ * Available scopes
+ */
+export type Scope =
   | "public-read"
   | "user"
   | "trusted:user"
   | "integ"
   | "details"
   | "refresh-token";
-export type IdentityProviderType = "facebook" | "google" | string;
+
+/**
+ * Identity provider ID (built-in + custom)
+ */
+export type IdentityProviderId = "facebook" | "google" | string;
 
 export type LoginParameterType = "user" | "auth_code";
 
-// Login Parameters
-export type LoginParameter<T extends LoginParameterType> = T extends "user"
-  ? {
-      username?: string;
-      password?: string;
-    }
-  : T extends "auth_code"
-  ? {
-      code?: string;
-      redirect_uri?: string;
-      code_verifier?: string;
-    }
-  : never;
-
-export type LoginWithIdpParameter = {
-  idpId: string;
-  idpClientId: string;
-  idpToken: string;
-};
-
-export type AuthWithIdpParameter = {
+/**
+ * Base token request
+ */
+interface BaseTokenRequest {
   client_id: string;
-  client_secret: string;
-} & LoginWithIdpParameter;
+}
 
-// Identity Provider
-export type IdentityProvider<P extends IdentityProviderType> = {
-  idpId: P;
-  idpToken: string;
-};
-
-// Base Endpoint
-type BaseEndpoint = {
-  client_id: string;
-};
-
-// Public Read Endpoint
-export type AnonymousEndpoint = BaseEndpoint & {
+/**
+ * Public read access (anonymous)
+ */
+export type AnonymousTokenRequest = BaseTokenRequest & {
   grant_type: "client_credentials";
   scope: "public-read";
 };
 
-// User Endpoints
-type UserEndpoint = BaseEndpoint & {
-  scope: "user";
-};
-export type UserPasswordEndpoint = UserEndpoint & {
-  grant_type: "password" | "authorization_code";
-  username?: string;
-  password?: string;
-  code?: string;
-  redirect_uri?: string;
-  code_verifier?: string;
-};
+/**
+ * User authentication (password or authorization code)
+ */
+export type UserTokenRequest = BaseTokenRequest & {
+  scope: "user",
+  grant_type: "password",
+  username: string,
+  password: string
+}
 
-export type UserLoginAsEndpoint = UserEndpoint & {
+export type UserTokenRequestWithAuthCode = BaseTokenRequest & {
+  scope: "user",
+  grant_type: "authorization_code",
+  code: string,
+  redirect_uri: string,
+  code_verifier: string
+}
+
+/**
+ * Admin "login as" flow
+ */
+export type LoginAsTokenRequest = BaseTokenRequest & {
   grant_type: "authorization_code";
+  scope: "user";
   code: string;
   redirect_uri: string;
   code_verifier: string;
 };
 
-// Trusted User Endpoint
-export type TrustedUserEndpoint = BaseEndpoint & {
+/**
+ * Trusted impersonation
+ */
+export type TrustedUserTokenRequest = BaseTokenRequest & {
   client_secret: string;
-  subject_token: string;
   grant_type: "token_exchange";
   scope: "trusted:user";
+  subject_token: string;
 };
 
-// Integration API Endpoints
-type IntegEndpoint = BaseEndpoint & {
+/**
+ * Integration API access
+ */
+export type IntegrationTokenRequest = BaseTokenRequest & {
+  client_secret: string;
+  grant_type: "client_credentials";
   scope: "integ";
 };
-export type IntegClientCredentialsEndpoint = IntegEndpoint & {
-  grant_type: "client_credentials";
-  client_secret: string;
-};
 
-export type RefreshTokenEndpoint = BaseEndpoint & {
+/**
+ * Refresh token
+ */
+export type RefreshTokenRequest = BaseTokenRequest & {
   grant_type: "refresh_token";
   refresh_token: string;
 };
 
-// Details Endpoint
-export type DetailsEndpoint = void;
-
-// Main Endpoint Type
-export type Endpoint<S extends ScopeType> = S extends "public-read"
-  ? AnonymousEndpoint
-  : S extends "user"
-  ? UserPasswordEndpoint | UserLoginAsEndpoint | UserLoginAsEndpoint
-  : S extends "trusted:user"
-  ? TrustedUserEndpoint
-  : S extends "integ"
-  ? IntegClientCredentialsEndpoint
-  : S extends "details"
-  ? DetailsEndpoint
-  : S extends "refresh-token"
-  ? RefreshTokenEndpoint
-  : never;
+/**
+ * Token introspection endpoint (no body)
+ */
+export type DetailsRequest = void;
 
 /**
- * Represents an authentication token used for API requests.
+ * All valid token request types
+ */
+export type TokenRequest =
+  | AnonymousTokenRequest
+  | UserTokenRequest
+  | UserTokenRequestWithAuthCode
+  | LoginAsTokenRequest
+  | TrustedUserTokenRequest
+  | IntegrationTokenRequest
+  | RefreshTokenRequest
+  | DetailsRequest;
+
+/**
+ * Login parameter
+ */
+export type LoginParameter<T extends LoginParameterType> = T extends "user"
+  ? {
+    username: string;
+    password: string;
+  }
+  : T extends "auth_code"
+    ? {
+      code: string;
+      redirect_uri: string;
+      code_verifier: string;
+    }
+    : never;
+
+export type LoginWithIdpParameter = {
+  idpId: IdentityProviderId;
+  idpClientId: string;
+  idpToken: string;
+};
+
+/**
+ * Login with external IdP
+ */
+export type AuthWithIdpParameter = {
+  client_id: string;
+  client_secret: string;
+} & LoginWithIdpParameter;
+
+/**
+ * Successful token response
  */
 export interface AuthToken {
-  access_token: string; // The token used for authorization
-  token_type: "bearer"; // Type of the token, typically "bearer"
-  expires_in: number; // Time (in seconds) until the token expires
-  scope?: Scope; // Optional scope of the token
-  refresh_token?: string; // Optional token for refreshing the access token
+  access_token: string;
+  token_type: "bearer";
+  expires_in: number;
+  scope?: Scope | Scope[];
+  refresh_token?: string;
 }
 
-// Token Details
-export type TokenDetails = {
+/**
+ * Token introspection response
+ */
+export interface TokenDetails {
   "client-id": string;
   exp: number;
-  scope: Scope;
-  isLoggedInAs: boolean;
-};
+  scope: Scope[];
+  isLoggedInAs?: UUID | null;
+}
 
-// Token Response Type
-export type TokenResponse<S extends ScopeType> = S extends
-  | "public-read"
-  | "user"
-  | "trusted:user"
-  | "integ"
-  | "refresh-token"
-  ? AuthToken
-  : S extends "details"
-  ? TokenDetails
-  : never;
+/**
+ * Token response by endpoint
+ */
+export type TokenResponse<T extends TokenRequest> =
+  T extends DetailsRequest
+    ? TokenDetails
+    : AuthToken;
 
-// Revoke Response
-export type RevokeResponse = {
+/**
+ * Revoke response
+ */
+export interface RevokeResponse {
   revoked: boolean;
-};
+}
 
-// Authentication Info Response
+/**
+ * Auth info response
+ */
 export type AuthInfoResponse = {
   scopes?: Scope[];
   isAnonymous?: boolean;

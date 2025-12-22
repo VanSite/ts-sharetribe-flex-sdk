@@ -3,7 +3,7 @@
  * This class encapsulates a latitude and longitude pair, with validation for numeric input.
  */
 
-import { SdkType } from "../types/sdk-types";
+import {SdkType} from "../types";
 
 // Define a static class name
 const LATLNG_SDK_TYPE = "LatLng";

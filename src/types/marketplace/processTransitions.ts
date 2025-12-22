@@ -1,18 +1,23 @@
 /**
- * @fileoverview Type definitions for Process Transitions functionality in the Sharetribe Marketplace API.
- * This file defines the structure of process transition parameters and responses for the API endpoints.
+ * @fileoverview Type definitions for Process Transitions in the Sharetribe Marketplace API.
  */
 
-import { ApiParameter, UUID } from "../sharetribe";
+import {ApiParameter, UUID} from "../sharetribe";
 
-// Supported API endpoint for process transitions operations.
+/**
+ * Available endpoints
+ */
 export type ProcessTransitionsEndpoints = "query";
 
-// Actors involved in process transitions.
-type Actors = "customer" | "provider" | "operator" | "system";
+/**
+ * Actors that can trigger a transition
+ */
+type Actor = "customer" | "provider" | "operator" | "system";
 
-// Supported request types for process transition parameters.
-type RequestTypes =
+/**
+ * Supported parameter types in transition requests
+ */
+type ParamType =
   | "uuid"
   | "string"
   | "integer"
@@ -22,29 +27,32 @@ type RequestTypes =
   | "money"
   | ["lineItem"];
 
-// Structure of a Process Transition object.
+/**
+ * Process Transition resource
+ */
 export interface ProcessTransition {
   id: UUID;
   type: "processTransition";
   attributes: {
     name: string;
-    actor: Actors[];
+    actor: Actor[];
     actions: string[];
     params: {
-      req: {
-        [key: string]: RequestTypes;
-      };
-      opt: {
-        [key: string]: RequestTypes;
-      } | null;
+      req: Record<string, ParamType>;
+      opt: Record<string, ParamType> | null;
     };
   };
 }
 
-// Base parameters for process transitions operations.
-export interface ProcessTransitionsParameter extends ApiParameter {}
+/**
+ * Base request parameters
+ */
+export interface ProcessTransitionsParameter extends ApiParameter {
+}
 
-// Parameters for querying process transitions.
+/**
+ * Query parameters
+ */
 export interface ProcessTransitionsQueryParameter
   extends ProcessTransitionsParameter {
   processAlias?: string;
@@ -52,13 +60,17 @@ export interface ProcessTransitionsQueryParameter
   transactionId?: UUID | string;
 }
 
-// Utility type for handling data return types based on the endpoint.
-type DataType<E extends ProcessTransitionsEndpoints> = E extends "query"
-  ? ProcessTransition
-  : never;
+/**
+ * Response data per endpoint
+ */
+type ResponseData<E extends ProcessTransitionsEndpoints> =
+  E extends "query" ? ProcessTransition[] : never; // query returns an array
 
-// Response type for process transitions operations.
-export type ProcessTransitionsResponse<E extends ProcessTransitionsEndpoints> =
-  {
-    data: DataType<E>;
-  };
+/**
+ * Final response type
+ */
+export type ProcessTransitionsResponse<
+  E extends ProcessTransitionsEndpoints = "query"
+> = {
+  data: ResponseData<E>;
+};

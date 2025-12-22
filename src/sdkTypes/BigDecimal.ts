@@ -5,7 +5,7 @@
  * to avoid precision loss during computations.
  */
 
-import { SdkType } from "../types/sdk-types";
+import {SdkType} from "../types";
 
 // Define a static class name
 const BIGDECIMAL_SDK_TYPE = "BigDecimal";

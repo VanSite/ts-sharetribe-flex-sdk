@@ -1,21 +1,17 @@
 /**
  * @fileoverview Type definitions for Stock Reservations in the Sharetribe Marketplace API.
- * This file defines the structure of parameters and responses for the Stock Reservations API endpoints.
  */
 
-import {
-  ApiParameter,
-  ExtraParameter,
-  ExtraParameterType,
-  Relationship,
-  RelationshipTypeMap,
-  UUID,
-} from "../sharetribe";
+import {ApiParameter, ExtraParameterType, Relationship, RelationshipTypeMap, UUID,} from "../sharetribe";
 
-// Supported API endpoints for Stock Reservations operations.
+/**
+ * Available endpoints
+ */
 export type StockReservationsEndpoints = "show";
 
-// Supported relationships for Stock Reservations.
+/**
+ * Relationship fields that can be included
+ */
 export type StockReservationsRelationshipsFields =
   | "transaction"
   | "transaction.marketplace"
@@ -27,7 +23,9 @@ export type StockReservationsRelationshipsFields =
   | "transaction.reviews"
   | "transaction.messages";
 
-// Possible states for a Stock Reservation.
+/**
+ * Possible reservation states
+ */
 export type StockReservationState =
   | "pending"
   | "proposed"
@@ -35,80 +33,98 @@ export type StockReservationState =
   | "declined"
   | "cancelled";
 
-// Structure of a Stock Reservation object.
+/**
+ * Stock Reservation resource
+ */
 export interface StockReservation {
   id: UUID;
   type: "stockReservation";
   attributes: {
-    quantity: number; // Quantity reserved.
-    state: StockReservationState; // Current state of the reservation.
+    quantity: number;
+    state: StockReservationState;
   };
 }
 
-// Structure of a Stock Reservation object with relationships.
+/**
+ * With relationships
+ */
 export interface StockReservationWithRelationships extends StockReservation {
   relationships: {
-    listing: Relationship<false, "listing">; // Associated listing.
-    transaction: Relationship<false, "transaction">; // Associated transaction.
-    stockAdjustments: Relationship<false, "stockAdjustment">; // Associated stock adjustments.
+    listing: Relationship<false, "listing">;
+    transaction: Relationship<false, "transaction">;
+    stockAdjustments: Relationship<true, "stockAdjustment">;
   };
 }
 
-// Conditional type for determining Stock Reservation type based on relationship inclusion.
-export type StockReservationType<R extends boolean> = R extends true
-  ? StockReservationWithRelationships
-  : StockReservation;
+/**
+ * Select type based on include
+ */
+export type StockReservationType<R extends boolean> =
+  R extends true ? StockReservationWithRelationships : StockReservation;
 
-// Base parameters for Stock Reservations operations.
-export interface StockReservationParameter extends ApiParameter {}
-
-// Parameters for showing a specific Stock Reservation.
-export interface StockReservationShowParameter
-  extends StockReservationParameter {
-  id: UUID; // ID of the stock reservation to fetch.
+/**
+ * Base request parameters
+ */
+export interface StockReservationParameter extends ApiParameter {
+  include?: StockReservationsRelationshipsFields[];
 }
 
-// Union type for all Stock Reservations parameters.
+/**
+ * Show endpoint parameters
+ */
+export interface StockReservationShowParameter extends StockReservationParameter {
+  id: UUID | string;
+}
+
+/**
+ * All parameter types
+ */
 type AllStockReservationsParameter = StockReservationShowParameter;
 
-// Conditional type for determining if relationships are included in the response.
-type StockReservationsType<P extends AllStockReservationsParameter> =
-  "include" extends keyof P
-    ? P["include"] extends StockReservationsRelationshipsFields[]
-      ? true
-      : false
-    : false;
+/**
+ * Detect include usage
+ */
+type HasInclude<P> = P extends { include: infer I extends StockReservationsRelationshipsFields[] }
+  ? I
+  : never;
+type IncludesRelationships<P> = HasInclude<P> extends never ? false : true;
 
-// Type for included related resources.
-type IncludedType<P extends AllStockReservationsParameter> =
-  "include" extends keyof P
-    ? P["include"] extends (keyof RelationshipTypeMap)[]
-      ? Array<RelationshipTypeMap[P["include"][number]]>
-      : never
+/**
+ * Included resources — fixed version (no TS2536)
+ */
+type IncludedResources<P> =
+  HasInclude<P> extends infer Fields extends StockReservationsRelationshipsFields[]
+    ? RelationshipTypeMap[Fields[number]][]
     : never;
 
-// Type for expanding or omitting attributes in the response.
-type ExpandReturnType<
-  P extends AllStockReservationsParameter,
-  EP
-> = EP extends { expand: true }
-  ? StockReservationType<StockReservationsType<P>>
-  : EP extends { expand: false }
-  ? Omit<StockReservationType<StockReservationsType<P>>, "attributes">
-  : Omit<StockReservationType<StockReservationsType<P>>, "attributes">;
+/**
+ * Expand behavior
+ */
+type ExpandResult<T, EP extends ExtraParameterType | undefined> =
+  EP extends { expand: true }
+    ? T
+    : EP extends { expand: false }
+      ? Omit<T, "attributes">
+      : Omit<T, "attributes">;
 
-// Type for determining the data structure of the response based on the endpoint.
-type DataType<
+/**
+ * Response data
+ */
+type ResponseData<
   E extends StockReservationsEndpoints,
   P extends AllStockReservationsParameter,
-  EP extends ExtraParameter | undefined
-> = E extends "show" ? ExpandReturnType<P, EP> : never;
+  EP extends ExtraParameterType | undefined
+> = E extends "show"
+  ? ExpandResult<StockReservationType<IncludesRelationships<P>>, EP>
+  : never;
 
-// Response structure for Stock Reservations operations.
+/**
+ * Final response type
+ */
 export type StockReservationsResponse<
-  E extends StockReservationsEndpoints,
-  P extends AllStockReservationsParameter,
-  EP extends ExtraParameterType = undefined
+  E extends StockReservationsEndpoints = "show",
+  P extends AllStockReservationsParameter = StockReservationShowParameter,
+  EP extends ExtraParameterType | undefined = undefined
 > = {
-  data: DataType<E, P, EP>;
-} & ("include" extends keyof P ? { included: IncludedType<P> } : {});
+  data: ResponseData<E, P, EP>;
+} & (IncludesRelationships<P> extends true ? { included: IncludedResources<P> } : {});

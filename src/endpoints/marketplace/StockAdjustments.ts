@@ -1,96 +1,96 @@
 /**
- * @fileoverview Provides the StockAdjustments class for managing stock adjustments in the Sharetribe Marketplace API.
- * This class includes methods for querying and creating stock adjustments.
+ * @fileoverview Client for managing manual stock adjustments in the Sharetribe Marketplace API.
  *
- * For more details, refer to the Marketplace API documentation:
- * https://www.sharetribe.com/api-reference/marketplace.html#stock-adjustments
+ * Stock adjustments are used for restocking, write-offs, corrections, or any manual change
+ * that doesn’t come from a booking or reservation.
+ *
+ * @see https://www.sharetribe.com/api-reference/marketplace.html#stock-adjustments
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import MarketplaceApi from "./index";
 import {
+  ExtraParameter,
   StockAdjustmentsCreateParameter,
   StockAdjustmentsQueryParameter,
   StockAdjustmentsResponse,
-} from "../../types/marketplace/stockAdjustment";
-import { ExtraParameter } from "../../types/sharetribe";
+} from "../../types";
 
 /**
- * Class representing the Stock Adjustments API.
- *
- * The Stock Adjustments API provides methods for querying and creating adjustments to stock levels.
+ * Stock Adjustments API client (own listings only)
  */
 class StockAdjustments {
-  private readonly endpoint: string;
-  private readonly axios: AxiosInstance;
-  private readonly headers: Record<string, string>;
   public readonly authRequired = true;
+  private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
+  private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the StockAdjustments class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + "/stock_adjustments";
+    this.endpoint = `${api.endpoint}/stock_adjustments`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Queries stock adjustments based on specified filters.
+   * Query stock adjustment history
    *
    * @template P
-   * @param {P & StockAdjustmentsQueryParameter} params - Query parameters to filter stock adjustments.
-   * @returns {Promise<AxiosResponse<StockAdjustmentsResponse<'query', P>>>} - A promise resolving to the query results.
+   * @param {P & StockAdjustmentsQueryParameter} params
+   * @returns {Promise<AxiosResponse<StockAdjustmentsResponse<"query", P>>>}
    *
    * @example
-   * const response = await sdk.stockAdjustments.query({
-   *   listingId: 'listing-id',
-   *   start: new Date('2022-01-01'),
-   *   end: new Date('2022-01-31'),
+   * const { data } = await sdk.stockAdjustments.query({
+   *   listingId: "listing-abc123",
+   *   start: "2025-01-01",
+   *   end: "2025-01-31"
    * });
-   * const stockAdjustments = response.data;
    */
   async query<P extends StockAdjustmentsQueryParameter>(
     params: P
   ): Promise<AxiosResponse<StockAdjustmentsResponse<"query", P>>> {
-    return this.axios.get<StockAdjustmentsResponse<"query", P>>(
-      `${this.endpoint}/query`,
-      {
-        headers: this.headers,
-        params,
-      }
-    );
+    return this.axios.get(`${this.endpoint}/query`, {
+      headers: this.headers,
+      params,
+    });
   }
 
   /**
-   * Creates a stock adjustment for a specific resource.
+   * Create a manual stock adjustment
+   *
+   * Positive quantity → add stock
+   * Negative quantity → remove stock
    *
    * @template P
    * @template EP
-   * @param {P & StockAdjustmentsCreateParameter} params - Parameters for the stock adjustment.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<StockAdjustmentsResponse<'create', P, EP>>>} - A promise resolving to the created stock adjustment details.
+   * @param {P & StockAdjustmentsCreateParameter} params
+   * @param {EP} [extraParams] - Optional extra parameters (e.g. `expand: true`)
+   * @returns {Promise<AxiosResponse<StockAdjustmentsResponse<"create", P, EP>>>}
    *
    * @example
-   * const response = await sdk.stockAdjustments.create({
-   *   listingId: 'listing-id',
-   *   quantity: 5,
+   * // Restock 50 units
+   * await sdk.stockAdjustments.create({
+   *   listingId: "listing-abc123",
+   *   quantity: 50
    * });
-   * const createdAdjustment = response.data;
+   *
+   * @example
+   * // Write off 3 damaged units
+   * await sdk.stockAdjustments.create({
+   *   listingId: "listing-abc123",
+   *   quantity: -3
+   * });
    */
   async create<
     P extends StockAdjustmentsCreateParameter,
-    EP extends ExtraParameter | undefined
+    EP extends ExtraParameter | undefined = undefined
   >(
     params: P,
     extraParams?: EP
   ): Promise<AxiosResponse<StockAdjustmentsResponse<"create", P, EP>>> {
-    return this.axios.post<StockAdjustmentsResponse<"create", P, EP>>(
+    return this.axios.post(
       `${this.endpoint}/create`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 }

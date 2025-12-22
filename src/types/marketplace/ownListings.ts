@@ -1,28 +1,31 @@
 /**
  * @fileoverview Type definitions for Own Listings in the Sharetribe Marketplace API.
- * These types define the structure for own listing parameters, attributes, and responses.
  */
 
 import {
   ApiMeta,
   ApiParameter,
-  ExtraParameter,
-  UUID,
+  ExtraParameterType,
   LatLng,
   Money,
   Relationship,
   RelationshipTypeMap,
-  ExtraParameterType,
+  UUID,
 } from "../sharetribe";
+import {AvailabilityPlan} from "./availabilityPlan";
 
-// Possible states for an Own Listing.
+/**
+ * Listing states
+ */
 export type OwnListingState =
   | "draft"
   | "pendingApproval"
   | "published"
   | "closed";
 
-// Supported API endpoints for own listings operations.
+/**
+ * Available endpoints
+ */
 export type OwnListingsEndpoints =
   | "show"
   | "query"
@@ -35,7 +38,9 @@ export type OwnListingsEndpoints =
   | "open"
   | "addImage";
 
-// Fields for relationships in the own listing object.
+/**
+ * Relationship fields
+ */
 export type OwnListingsRelationshipsFields =
   | "marketplace"
   | "author.profileImage"
@@ -45,128 +50,118 @@ export type OwnListingsRelationshipsFields =
   | "images"
   | "currentStock";
 
-// Availability plan types and entries.
-type OwnListingsAvailabilityPlanTypes =
-  | "availability-plan/day"
-  | "availability-plan/time";
-type OwnListingsAvailabilityPlanEntry<
-  T extends OwnListingsAvailabilityPlanTypes
-> = {
-  dayOfWeek: "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
-  seats: number;
-} & T extends "availability-plan/time"
-  ? { startTime: string; endTime: string }
-  : {};
-
-// Availability plan for own listings.
-export type OwnListingsAvailabilityPlan<
-  T extends OwnListingsAvailabilityPlanTypes = "availability-plan/day"
-> = {
-  type: T;
-  timezone?: string;
-  entries: Array<OwnListingsAvailabilityPlanEntry<T>>;
-};
-
-// Base structure for an own listing.
+/**
+ * Own Listing resource
+ */
 export interface OwnListing {
   id: UUID;
   type: "ownListing";
   attributes: {
-    description: string;
-    deleted: boolean;
-    geolocation: LatLng;
-    createdAt: Date;
-    state: OwnListingState;
     title: string;
-    availabilityPlan: OwnListingsAvailabilityPlan;
-    privateData: OwnListingPrivateData & OwnListingCustomPrivateData;
-    publicData: OwnListingOwnListingPublicData & OwnListingCustomPublicData;
-    metadata: OwnListingMetadata & OwnListingCustomMetadata;
+    description: string;
     price: Money;
+    geolocation: LatLng;
+    state: OwnListingState;
+    deleted: boolean;
+    createdAt: Date;
+    availabilityPlan: AvailabilityPlan | null;
+    publicData: OwnListingPublicData & OwnListingCustomPublicData;
+    privateData: OwnListingPrivateData & OwnListingCustomPrivateData;
+    metadata: OwnListingMetadata & OwnListingCustomMetadata;
   };
 }
 
-// Extended structure for an own listing with relationships.
+/**
+ * With relationships
+ */
 export interface OwnListingWithRelationships extends OwnListing {
   relationships: {
     marketplace: Relationship<false, "marketplace">;
-    author: Relationship<false, "user">;
-    images: Relationship<true, "image">;
-    currentStock: Relationship<false, "currentStock">;
+    author: Relationship<false, "author">;
+    images: Relationship<true, "images">;
+    currentStock?: Relationship<false, "currentStock">;
   };
 }
 
-// Type alias for an own listing type with or without relationships.
-export type OwnListingType<R extends boolean> = R extends true
-  ? OwnListingWithRelationships
-  : OwnListing;
+export type OwnListingResource<R extends boolean> =
+  R extends true ? OwnListingWithRelationships : OwnListing;
 
-// Base parameters for own listings operations.
+/**
+ * Base request parameters
+ */
 export interface OwnListingsParameter extends ApiParameter {
   include?: OwnListingsRelationshipsFields[];
 }
 
-// Parameter interfaces for each API operation.
-export interface OwnListingsShowParameter extends OwnListingsParameter {
-  id: UUID | string;
-}
-export interface OwnListingsQueryParameter extends OwnListingsParameter {}
+/**
+ * Endpoint-specific parameters
+ */
+export type OwnListingsShowParameter = OwnListingsParameter & { id: UUID | string };
+export type OwnListingsQueryParameter = OwnListingsParameter;
+
 export interface OwnListingsCreateParameter extends OwnListingsParameter {
   title: string;
   description?: string;
-  geolocation?: LatLng;
   price?: Money;
-  availabilityPlan?: OwnListingsAvailabilityPlan;
+  geolocation?: LatLng;
+  availabilityPlan?: AvailabilityPlan | null;
+  publicData?: OwnListingPublicData & OwnListingCustomPublicData;
   privateData?: OwnListingPrivateData & OwnListingCustomPrivateData;
-  publicData?: OwnListingOwnListingPublicData & OwnListingCustomPublicData;
-  metaData?: OwnListingMetadata & OwnListingCustomMetadata;
+  metadata?: OwnListingMetadata & OwnListingCustomMetadata;
   images?: string[];
 }
-export interface OwnListingsCreateDraftParameter
-  extends OwnListingsCreateParameter {}
+
+export type OwnListingsCreateDraftParameter = OwnListingsCreateParameter;
+
 export interface OwnListingsUpdateParameter extends OwnListingsParameter {
   id: UUID | string;
   title?: string;
   description?: string;
-  geolocation?: LatLng;
   price?: Money;
-  availabilityPlan?: OwnListingsAvailabilityPlan;
+  geolocation?: LatLng;
+  availabilityPlan?: AvailabilityPlan | null;
+  publicData?: OwnListingPublicData & OwnListingCustomPublicData;
   privateData?: OwnListingPrivateData & OwnListingCustomPrivateData;
-  publicData?: OwnListingOwnListingPublicData & OwnListingCustomPublicData;
-  metaData?: OwnListingMetadata & OwnListingCustomMetadata;
+  metadata?: OwnListingMetadata & OwnListingCustomMetadata;
   images?: string[];
 }
-export interface OwnListingsPublishDraftParameter extends OwnListingsParameter {
-  id: UUID | string;
-}
-export interface OwnListingsDiscardDraftParameter extends OwnListingsParameter {
-  id: UUID | string;
-}
-export interface OwnListingsCloseParameter extends OwnListingsParameter {
-  id: UUID | string;
-}
-export interface OwnListingsOpenParameter extends OwnListingsParameter {
-  id: UUID | string;
-}
-export interface OwnListingsAddImageParameter extends OwnListingsParameter {
+
+export type OwnListingsPublishDraftParameter = OwnListingsParameter & { id: UUID | string };
+export type OwnListingsDiscardDraftParameter = OwnListingsParameter & { id: UUID | string };
+export type OwnListingsCloseParameter = OwnListingsParameter & { id: UUID | string };
+export type OwnListingsOpenParameter = OwnListingsParameter & { id: UUID | string };
+export type OwnListingsAddImageParameter = OwnListingsParameter & {
   id: UUID | string;
   imageId: UUID | string;
+};
+
+/**
+ * Custom data
+ */
+export interface OwnListingPublicData {
+  [key: string]: any
 }
 
-// Custom data types for own listings.
-export interface OwnListingOwnListingPublicData {
-  [key: string]: any;
+export interface OwnListingCustomPublicData extends Record<string, unknown> {
 }
-export interface OwnListingCustomPublicData {}
+
 export interface OwnListingPrivateData {
-  [key: string]: any;
+  [key: string]: any
 }
-export interface OwnListingCustomPrivateData {}
-export interface OwnListingMetadata {
-  [key: string]: any;
-}
-export interface OwnListingCustomMetadata {}
 
+export interface OwnListingCustomPrivateData extends Record<string, unknown> {
+}
+
+export interface OwnListingMetadata {
+  [key: string]: any
+}
+
+export interface OwnListingCustomMetadata extends Record<string, unknown> {
+}
+
+/**
+ * All parameter types
+ */
 type AllOwnListingsParameter =
   | OwnListingsShowParameter
   | OwnListingsQueryParameter
@@ -179,60 +174,52 @@ type AllOwnListingsParameter =
   | OwnListingsOpenParameter
   | OwnListingsAddImageParameter;
 
-// Define the response structure for own listings operations.
+/**
+ * Include detection — fixes TS2536
+ */
+type HasInclude<P> = P extends { include: infer I extends readonly OwnListingsRelationshipsFields[] } ? I : never;
+type IncludesRelationships<P> = HasInclude<P> extends never ? false : true;
+
+type IncludedResources<P> =
+  HasInclude<P> extends infer Fields extends OwnListingsRelationshipsFields[]
+    ? RelationshipTypeMap[Fields[number]][]
+    : never;
+
+
+/**
+ * Expand behavior
+ */
+type ExpandResult<T, EP extends ExtraParameterType | undefined> =
+  EP extends { expand: true }
+    ? T
+    : EP extends { expand: false }
+      ? Omit<T, "attributes">
+      : Omit<T, "attributes">;
+
+/**
+ * Response data per endpoint
+ */
+type ResponseData<
+  E extends OwnListingsEndpoints,
+  P extends AllOwnListingsParameter,
+  EP extends ExtraParameterType | undefined
+> =
+  E extends "show" | "create" | "createDraft" | "update" | "publishDraft" | "close" | "open" | "addImage"
+    ? ExpandResult<OwnListingResource<IncludesRelationships<P>>, EP>
+    : E extends "query"
+      ? OwnListingResource<IncludesRelationships<P>>[]
+      : E extends "discardDraft"
+        ? Pick<OwnListing, "id" | "type">
+        : never;
+
+/**
+ * Final response
+ */
 export type OwnListingsResponse<
   E extends OwnListingsEndpoints,
   P extends AllOwnListingsParameter,
-  EP extends ExtraParameterType = undefined
+  EP extends ExtraParameterType | undefined = undefined
 > = {
-  data: DataType<E, P, EP>;
-} & ("include" extends keyof P ? { included: IncludedType<P> } : {}) &
+  data: ResponseData<E, P, EP>;
+} & (IncludesRelationships<P> extends true ? { included: IncludedResources<P> } : {}) &
   (E extends "query" ? { meta: ApiMeta } : {});
-
-// Additional utility types for processing responses.
-type DataType<
-  E extends OwnListingsEndpoints,
-  P extends AllOwnListingsParameter,
-  EP extends ExtraParameter | undefined
-> = E extends "show"
-  ? OwnListingType<OwnListingsType<P>>
-  : E extends "query"
-  ? OwnListingType<OwnListingsType<P>>[]
-  : E extends "create"
-  ? ExpandReturnType<P, EP>
-  : E extends "createDraft"
-  ? ExpandReturnType<P, EP>
-  : E extends "update"
-  ? ExpandReturnType<P, EP>
-  : E extends "publishDraft"
-  ? ExpandReturnType<P, EP>
-  : E extends "discardDraft"
-  ? Pick<OwnListing, "id" | "type">
-  : E extends "close"
-  ? ExpandReturnType<P, EP>
-  : E extends "open"
-  ? ExpandReturnType<P, EP>
-  : E extends "addImage"
-  ? ExpandReturnType<P, EP>
-  : never;
-
-type ExpandReturnType<P extends AllOwnListingsParameter, EP> = EP extends {
-  expand: true;
-}
-  ? OwnListingType<OwnListingsType<P>>
-  : EP extends { expand: false }
-  ? Omit<OwnListingType<OwnListingsType<P>>, "attributes">
-  : Omit<OwnListingType<OwnListingsType<P>>, "attributes">;
-
-type OwnListingsType<P extends AllOwnListingsParameter> =
-  "include" extends keyof P
-    ? P["include"] extends OwnListingsRelationshipsFields[]
-      ? true
-      : false
-    : false;
-
-type IncludedType<P extends AllOwnListingsParameter> = "include" extends keyof P
-  ? P["include"] extends (keyof RelationshipTypeMap)[]
-    ? Array<RelationshipTypeMap[P["include"][number]]>
-    : never
-  : never;

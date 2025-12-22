@@ -1,56 +1,46 @@
 /**
- * @fileoverview Provides the Users class for managing user data in the Sharetribe Marketplace API.
- * This class includes methods for retrieving details about a specific user.
+ * @fileoverview Client for fetching public user profiles in the Sharetribe Marketplace API.
  *
- * For more details, refer to the Marketplace API documentation:
- * https://www.sharetribe.com/api-reference/marketplace.html#show-user
+ * Use this to retrieve publicly visible information about any user (e.g. name, bio, profile image).
+ * Only returns data the current user is allowed to see.
+ *
+ * @see https://www.sharetribe.com/api-reference/marketplace.html#show-user
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import MarketplaceApi from "./index";
-import {
-  UsersResponse,
-  UsersShowParameter,
-} from "../../types/marketplace/user";
+import {UsersResponse, UsersShowParameter,} from "../../types";
 
 /**
- * Class representing the Users API.
- *
- * The Users API provides methods for managing user data in the marketplace.
+ * Public Users API client
  */
 class Users {
-  private readonly endpoint: string;
   private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the Users class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + "/users";
+    this.endpoint = `${api.endpoint}/users`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Retrieves details of a specific user.
+   * Fetch a public user profile by ID
    *
    * @template P
-   * @param {P & UsersShowParameter} params - Parameters to identify the user.
-   * @returns {Promise<AxiosResponse<UsersResponse<'show', P>>>} - A promise resolving to the user details.
+   * @param {P & UsersShowParameter} params
+   * @returns {Promise<AxiosResponse<UsersResponse<"show", P>>>}
    *
    * @example
-   * const response = await sdk.users.show({
-   *   id: 'user-id',
-   * });
-   * const userDetails = response.data;
+   * const { data } = await sdk.users.show({ id: "user-abc123" });
+   * console.log(data.attributes.profile.displayName);
+   * console.log(data.attributes.profile.bio);
    */
   async show<P extends UsersShowParameter>(
     params: P
   ): Promise<AxiosResponse<UsersResponse<"show", P>>> {
-    return this.axios.get<UsersResponse<"show", P>>(`${this.endpoint}/show`, {
+    return this.axios.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,
     });

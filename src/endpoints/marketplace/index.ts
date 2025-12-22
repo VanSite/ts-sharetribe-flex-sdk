@@ -1,18 +1,33 @@
 /**
- * @fileoverview Provides the MarketplaceApi class for accessing all available endpoints in the Sharetribe Marketplace API.
- * This class serves as the entry point for interacting with various resources such as listings, bookings, users, and payments.
+ * @fileoverview Client for the Sharetribe Marketplace API.
  *
- * For more details, refer to the Marketplace API documentation:
- * https://www.sharetribe.com/api-reference/marketplace.html
+ * This is the main entry point for client-side applications.
+ * Provides access to all public and authenticated endpoints:
+ * - Listings, bookings, messages, reviews
+ * - Current user management (signup, profile, password)
+ * - Image uploads, Stripe payments
+ * - Availability & stock queries
+ *
+ * Use `sdk.marketplace` for all frontend or authenticated user flows.
+ *
+ * @example
+ * const sdk = new SharetribeSdk({ clientId: "abc123" });
+ *
+ * // Fetch current user
+ * const { data: user } = await sdk.marketplace.currentUser.show();
+ *
+ * // Query public listings
+ * const { data: listings } = await sdk.marketplace.listings.query({ perPage: 20 });
  */
 
+import type {AxiosInstance} from "axios";
 import SharetribeSdk from "../../sdk";
-import { AxiosInstance } from "axios";
+
 import AvailabilityExceptions from "./AvailabilityExceptions";
-import Listings from "./Listings";
 import Bookings from "./Bookings";
 import CurrentUser from "./CurrentUser";
 import Images from "./Images";
+import Listings from "./Listings";
 import Marketplace from "./Marketplace";
 import Messages from "./Messages";
 import OwnListings from "./OwnListings";
@@ -31,53 +46,52 @@ import Transactions from "./Transactions";
 import Users from "./Users";
 
 /**
- * Class representing the Sharetribe Marketplace API.
- *
- * This class provides access to all available endpoints in the Sharetribe Marketplace API, enabling operations such as managing listings,
- * handling transactions, updating user profiles, and integrating with Stripe.
+ * Marketplace API client
  */
 class MarketplaceApi {
-  axios: AxiosInstance;
-  endpoint: string;
-  headers: Record<string, string>;
-  authRequired: boolean;
+  /** Axios instance with auth & base config */
+  readonly axios: AxiosInstance;
 
-  // API Endpoints
-  availabilityExceptions: AvailabilityExceptions;
-  bookings: Bookings;
-  currentUser: CurrentUser;
-  images: Images;
-  listings: Listings;
-  marketplace: Marketplace;
-  messages: Messages;
-  ownListings: OwnListings;
-  passwordReset: PasswordReset;
-  processTransitions: ProcessTransitions;
-  reviews: Reviews;
-  stock: Stock;
-  stockAdjustments: StockAdjustments;
-  stripeAccount: StripeAccount;
-  stripeAccountLinks: StripeAccountLinks;
-  stripeCustomer: StripeCustomer;
-  stripePersons: StripePersons;
-  stripeSetupIntents: StripeSetupIntents;
-  timeslots: TimeSlots;
-  transactions: Transactions;
-  users: Users;
+  /** Base URL for all Marketplace API endpoints */
+  readonly endpoint: string;
 
-  /**
-   * Creates an instance of the MarketplaceApi class.
-   *
-   * @param {SharetribeSdk} sdk - The Sharetribe SDK instance providing configuration and request handling.
-   */
+  /** Default headers (includes Authorization when logged in) */
+  readonly headers: Record<string, string>;
+
+  /** Most endpoints require authentication */
+  readonly authRequired = true;
+
+  // Public & authenticated sub-clients
+  readonly availabilityExceptions: AvailabilityExceptions;
+  readonly bookings: Bookings;
+  readonly currentUser: CurrentUser;
+  readonly images: Images;
+  readonly listings: Listings;
+  readonly marketplace: Marketplace;
+  readonly messages: Messages;
+  readonly ownListings: OwnListings;
+  readonly passwordReset: PasswordReset;
+  readonly processTransitions: ProcessTransitions;
+  readonly reviews: Reviews;
+  readonly stock: Stock;
+  readonly stockAdjustments: StockAdjustments;
+  readonly stripeAccount: StripeAccount;
+  readonly stripeAccountLinks: StripeAccountLinks;
+  readonly stripeCustomer: StripeCustomer;
+  readonly stripePersons: StripePersons;
+  readonly stripeSetupIntents: StripeSetupIntents;
+  readonly timeslots: TimeSlots;
+  readonly transactions: Transactions;
+  readonly users: Users;
+
   constructor(sdk: SharetribeSdk) {
     const config = sdk.apisConfigs.api(sdk.sdkConfig);
+
+    this.axios = sdk.axios;
     this.endpoint = config.baseUrl;
     this.headers = config.headers;
-    this.axios = sdk.axios;
-    this.authRequired = false;
 
-    // Initialize all API endpoints
+    // Initialize all sub-APIs
     this.availabilityExceptions = new AvailabilityExceptions(this);
     this.bookings = new Bookings(this);
     this.currentUser = new CurrentUser(this);

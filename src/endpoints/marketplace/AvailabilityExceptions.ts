@@ -1,131 +1,115 @@
 /**
- * @fileoverview Provides the AvailabilityExceptions class for managing availability exceptions in the Sharetribe Marketplace API.
- * This class allows querying, creating, and deleting availability exceptions for listings.
+ * @fileoverview Client for managing availability exceptions in the Sharetribe Marketplace API.
  *
- * For more details, refer to the Marketplace API documentation:
- * https://www.sharetribe.com/api-reference/marketplace.html#availability-exceptions
+ * Availability exceptions allow users to block or open specific time ranges on their listings,
+ * overriding the default availability plan (e.g. closing for holidays, maintenance, or personal use).
+ *
+ * @see https://www.sharetribe.com/api-reference/marketplace.html#availability-exceptions
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import MarketplaceApi from "./index";
 import {
   AvailabilityExceptionsCreateParameter,
   AvailabilityExceptionsDeleteParameter,
   AvailabilityExceptionsQueryParameter,
   AvailabilityExceptionsResponse,
-} from "../../types/marketplace/availabilityExceptions";
-import { ExtraParameter } from "../../types/sharetribe";
+  ExtraParameter,
+} from "../../types";
 
 /**
- * Class representing the AvailabilityExceptions API.
- *
- * The AvailabilityExceptions API provides methods to manage availability exceptions for listings, such as querying existing exceptions, creating new ones, and deleting them.
+ * Availability Exceptions API client (own listings only)
  */
 class AvailabilityExceptions {
-  private readonly endpoint: string;
-  private readonly axios: AxiosInstance;
-  private readonly headers: Record<string, string>;
   public readonly authRequired = true;
+  private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
+  private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the AvailabilityExceptions class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + "/availability_exceptions";
+    this.endpoint = `${api.endpoint}/availability_exceptions`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Queries availability exceptions based on specified filters.
+   * Query your own availability exceptions
    *
    * @template P
-   * @param {P & AvailabilityExceptionsQueryParameter} params - Query parameters to filter availability exceptions.
-   * @returns {Promise<AxiosResponse<AvailabilityExceptionsResponse<'query', P>>>} - A promise resolving to the query results.
+   * @param {P & AvailabilityExceptionsQueryParameter} params
+   * @returns {Promise<AxiosResponse<AvailabilityExceptionsResponse<"query", P>>>}
    *
    * @example
-   * const response = await sdk.availabilityExceptions.query({
-   *   listingId: 'listing-id',
-   *   start: '2024-12-01T00:00:00Z',
-   *   end: '2024-12-31T23:59:59Z',
+   * const { data } = await sdk.availabilityExceptions.query({
+   *   listingId: "listing-abc123",
+   *   start: "2025-12-01",
+   *   end: "2025-12-31"
    * });
-   *
-   * const exceptions = response.data;
    */
   async query<P extends AvailabilityExceptionsQueryParameter>(
     params: P
   ): Promise<AxiosResponse<AvailabilityExceptionsResponse<"query", P>>> {
-    return this.axios.get<AvailabilityExceptionsResponse<"query", P>>(
-      `${this.endpoint}/query`,
-      {
-        headers: this.headers,
-        params,
-      }
-    );
+    return this.axios.get(`${this.endpoint}/query`, {
+      headers: this.headers,
+      params,
+    });
   }
 
   /**
-   * Creates a new availability exception for a listing.
+   * Create a new availability exception (e.g. block dates)
    *
    * @template P
    * @template EP
-   * @param {P & AvailabilityExceptionsCreateParameter} params - Parameters for the new availability exception.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<AvailabilityExceptionsResponse<'create', P, EP>>>} - A promise resolving to the created availability exception.
+   * @param {P & AvailabilityExceptionsCreateParameter} params
+   * @param {EP} [extraParams] - Optional extra parameters (e.g. `expand: true`)
+   * @returns {Promise<AxiosResponse<AvailabilityExceptionsResponse<"create", P, EP>>>}
    *
    * @example
-   * const response = await sdk.availabilityExceptions.create({
-   *   listingId: 'listing-id',
-   *   start: '2024-12-25T00:00:00Z',
-   *   end: '2024-12-25T23:59:59Z',
-   *   seats: 0,
+   * // Block Christmas day
+   * await sdk.availabilityExceptions.create({
+   *   listingId: "listing-abc123",
+   *   start: "2025-12-25T00:00:00Z",
+   *   end: "2025-12-26T00:00:00Z",
+   *   seats: 0
    * });
-   *
-   * const newException = response.data;
    */
   async create<
     P extends AvailabilityExceptionsCreateParameter,
-    EP extends ExtraParameter
+    EP extends ExtraParameter | undefined = undefined
   >(
     params: P,
     extraParams?: EP
   ): Promise<AxiosResponse<AvailabilityExceptionsResponse<"create", P, EP>>> {
-    return this.axios.post<AvailabilityExceptionsResponse<"create", P, EP>>(
+    return this.axios.post(
       `${this.endpoint}/create`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 
   /**
-   * Deletes an existing availability exception.
+   * Delete an availability exception
    *
    * @template P
    * @template EP
-   * @param {P & AvailabilityExceptionsDeleteParameter} params - Parameters to identify the availability exception to delete.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<AvailabilityExceptionsResponse<'delete', P>>>} - A promise resolving to the deletion result.
+   * @param {P & AvailabilityExceptionsDeleteParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<AvailabilityExceptionsResponse<"delete", P, EP>>>}
    *
    * @example
-   * const response = await sdk.availabilityExceptions.delete({
-   *   id: 'exception-id',
-   * });
-   *
-   * const deletionResult = response.data;
+   * await sdk.availabilityExceptions.delete({ id: "exc-456def" });
    */
   async delete<
     P extends AvailabilityExceptionsDeleteParameter,
-    EP extends ExtraParameter
+    EP extends ExtraParameter | undefined = undefined
   >(
     params: P,
     extraParams?: EP
   ): Promise<AxiosResponse<AvailabilityExceptionsResponse<"delete", P, EP>>> {
-    return this.axios.post<AvailabilityExceptionsResponse<"delete", P, EP>>(
+    return this.axios.post(
       `${this.endpoint}/delete`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 }

@@ -1,4 +1,4 @@
-import { ApiConfigs } from "../types/apiConfigs";
+import {ApiConfigs} from "../types";
 
 /**
  * Creates API configurations for the SDK.
@@ -11,21 +11,21 @@ export const createApisConfigs = <I extends boolean = false>(
 ): ApiConfigs<I> => {
   if (isIntegrationSdk === false) {
     return {
-      api: ({ baseUrl, version, transitVerbose }) => ({
+      api: ({baseUrl, version, transitVerbose}) => ({
         headers: {
-          ...(transitVerbose ? { "X-Transit-Verbose": "true" } : {}),
+          ...(transitVerbose ? {"X-Transit-Verbose": "true"} : {}),
           Accept: "application/transit+json",
         },
         baseUrl: `${baseUrl}/${version}/api`,
       }),
-      auth: ({ baseUrl, version }) => ({
+      auth: ({baseUrl, version}) => ({
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           Accept: "application/json",
         },
         baseUrl: `${baseUrl}/${version}/auth`,
       }),
-      assets: ({ assetCdnBaseUrl, version }) => ({
+      assets: ({assetCdnBaseUrl, version}) => ({
         headers: {
           Accept: "application/json",
         },
@@ -34,16 +34,16 @@ export const createApisConfigs = <I extends boolean = false>(
     } as ApiConfigs<I>;
   } else {
     return {
-      auth: ({ baseUrl, version }) => ({
+      auth: ({baseUrl, version}) => ({
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           Accept: "application/json",
         },
         baseUrl: `${baseUrl}/${version}/auth`,
       }),
-      integrationApi: ({ baseUrl, version, transitVerbose }) => ({
+      integrationApi: ({baseUrl, version, transitVerbose}) => ({
         headers: {
-          ...(transitVerbose ? { "X-Transit-Verbose": "true" } : {}),
+          ...(transitVerbose ? {"X-Transit-Verbose": "true"} : {}),
           Accept: "application/transit+json",
         },
         baseUrl: `${baseUrl}/${version}/integration_api`,

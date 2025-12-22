@@ -79,7 +79,7 @@ describe("urlEncodeFormData", () => {
 
   // Test case 10: Undefined input
   it("should return empty string for undefined input", () => {
-    const result = urlEncodeFormData(undefined);
+    const result = urlEncodeFormData(undefined!);
     expect(result).toBe("");
   });
 });

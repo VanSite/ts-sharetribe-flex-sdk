@@ -1,5 +1,4 @@
-import { TokenStore } from "../../types/store";
-import { AuthToken } from "../../types/authentication";
+import {AuthToken, TokenStore} from "../../types";
 
 /**
  * `MemoryStore` is an in-memory implementation of the `TokenStore` interface.

@@ -1,55 +1,70 @@
 /**
- * @fileoverview Type definitions for Stripe Account Links operations in the Sharetribe Marketplace API.
- * This file defines the structure of parameters and responses for the Stripe Account Links API endpoints.
+ * @fileoverview Type definitions for Stripe Account Links in the Sharetribe Marketplace API.
  */
 
-import { ApiParameter, ExtraParameterType, UUID } from "../sharetribe";
+import {ApiParameter, ExtraParameterType, UUID} from "../sharetribe";
 
-// Supported API endpoints for Stripe Account Links operations.
+/**
+ * Available endpoints
+ */
 export type StripeAccountLinksEndpoints = "create";
 
-// Structure of a Stripe Account Link object.
+/**
+ * Stripe Account Link resource
+ */
 export interface StripeAccountLink {
   id: UUID;
   type: "stripeAccountLink";
   attributes: {
-    url: string; // The URL to the Stripe Account Link.
-    expiresAt: Date; // Expiration time of the account link.
+    url: string;
+    expiresAt: Date;
   };
 }
 
-// Base parameters for Stripe Account Links operations.
-export interface StripeAccountLinksParameter extends ApiParameter {}
+/**
+ * Base request parameters
+ */
+export interface StripeAccountLinksParameter extends ApiParameter {
+}
 
-// Parameters for creating a Stripe Account Link.
+/**
+ * Parameters for creating an account link
+ */
 export interface StripeAccountLinksCreateParameter
   extends StripeAccountLinksParameter {
-  failureURL: string; // URL to redirect to upon failure.
-  successURL: string; // URL to redirect to upon success.
-  type: string; // Type of the account link.
+  failureURL: string;
+  successURL: string;
+  type: string;
   collectionOptions: {
-    fields: Array<"currently_due" | "eventually_due">; // Fields to collect.
-    future_requirements: Array<"include" | "omit">; // Handling future requirements.
+    fields: Array<"currently_due" | "eventually_due">;
+    future_requirements: Array<"include" | "omit">;
   };
 }
 
-// Conditional type for expanding or omitting attributes in the response.
-type ExpandReturnType<EP> = EP extends { expand: true }
-  ? StripeAccountLink
-  : EP extends { expand: false }
-  ? Omit<StripeAccountLink, "attributes">
-  : Omit<StripeAccountLink, "attributes">;
+/**
+ * Expand behavior
+ */
+type ExpandResult<EP extends ExtraParameterType | undefined> =
+  EP extends { expand: true }
+    ? StripeAccountLink
+    : EP extends { expand: false }
+      ? Omit<StripeAccountLink, "attributes">
+      : Omit<StripeAccountLink, "attributes">;
 
-// Type for determining the data structure of the response based on the endpoint.
-type DataType<
+/**
+ * Response data per endpoint
+ */
+type ResponseData<
   E extends StripeAccountLinksEndpoints,
-  EP extends ExtraParameterType
-> = E extends "create" ? ExpandReturnType<EP> : never;
+  EP extends ExtraParameterType | undefined
+> = E extends "create" ? ExpandResult<EP> : never;
 
-// Response structure for Stripe Account Links operations.
+/**
+ * Final response type
+ */
 export type StripeAccountLinksResponse<
-  E extends StripeAccountLinksEndpoints,
-  EP extends ExtraParameterType = undefined
+  E extends StripeAccountLinksEndpoints = "create",
+  EP extends ExtraParameterType | undefined = undefined
 > = {
-  data: DataType<E, EP>;
+  data: ResponseData<E, EP>;
 };

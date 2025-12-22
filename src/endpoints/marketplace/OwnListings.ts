@@ -1,14 +1,16 @@
 /**
- * @fileoverview Provides the OwnListings class for managing the authenticated user's listings in the Sharetribe Marketplace API.
- * This class includes methods for creating, updating, publishing, and managing the lifecycle of listings.
+ * @fileoverview Client for managing your own listings in the Sharetribe Marketplace API.
  *
- * For more details, refer to the Marketplace API documentation:
- * https://www.sharetribe.com/api-reference/marketplace.html#own-listings
+ * Use this to create, edit, publish, close, and manage images for listings you own.
+ * All operations require authentication.
+ *
+ * @see https://www.sharetribe.com/api-reference/marketplace.html#own-listings
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import MarketplaceApi from "./index";
 import {
+  ExtraParameter,
   OwnListingsAddImageParameter,
   OwnListingsCloseParameter,
   OwnListingsCreateDraftParameter,
@@ -20,289 +22,230 @@ import {
   OwnListingsResponse,
   OwnListingsShowParameter,
   OwnListingsUpdateParameter,
-} from "../../types/marketplace/ownListings";
-import { ExtraParameter } from "../../types/sharetribe";
+} from "../../types";
 
 /**
- * Class representing the Own Listings API.
- *
- * This class provides methods for the authenticated user to manage their listings, including creating, updating, publishing drafts, and adding images.
+ * Own Listings API client (authenticated user)
  */
 class OwnListings {
-  private readonly endpoint: string;
-  private readonly axios: AxiosInstance;
-  private readonly headers: Record<string, string>;
   public readonly authRequired = true;
+  private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
+  private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the OwnListings class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + "/own_listings";
+    this.endpoint = `${api.endpoint}/own_listings`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Retrieves details of a specific listing.
+   * Fetch one of your listings by ID
    *
    * @template P
-   * @param {OwnListingsShowParameter} params - Parameters identifying the listing.
-   * @returns {Promise<AxiosResponse<OwnListingsResponse<'show', P>>>} - A promise resolving to the listing details.
-   *
-   * @example
-   * const response = await sdk.ownListings.show({ id: 'listing-id' });
-   * const listing = response.data;
+   * @param {P & OwnListingsShowParameter} params
+   * @returns {Promise<AxiosResponse<OwnListingsResponse<"show", P>>>}
    */
   async show<P extends OwnListingsShowParameter>(
     params: P
   ): Promise<AxiosResponse<OwnListingsResponse<"show", P>>> {
-    return this.axios.get<OwnListingsResponse<"show", P>>(
-      `${this.endpoint}/show`,
-      {
-        headers: this.headers,
-        params,
-      }
-    );
+    return this.axios.get(`${this.endpoint}/show`, {
+      headers: this.headers,
+      params,
+    });
   }
 
   /**
-   * Queries the user's listings based on specified filters.
+   * List all your listings (drafts, published, closed)
    *
    * @template P
-   * @param {OwnListingsQueryParameter} params - Query parameters to filter listings.
-   * @returns {Promise<AxiosResponse<OwnListingsResponse<'query', P>>>} - A promise resolving to the query results.
-   *
-   * @example
-   * const response = await sdk.ownListings.query({});
-   * const listings = response.data;
+   * @param {P & OwnListingsQueryParameter} params
+   * @returns {Promise<AxiosResponse<OwnListingsResponse<"query", P>>>}
    */
   async query<P extends OwnListingsQueryParameter>(
-    params: P
+    params?: P
   ): Promise<AxiosResponse<OwnListingsResponse<"query", P>>> {
-    return this.axios.get<OwnListingsResponse<"query", P>>(
-      `${this.endpoint}/query`,
-      {
-        headers: this.headers,
-        params,
-      }
-    );
+    return this.axios.get(`${this.endpoint}/query`, {
+      headers: this.headers,
+      params,
+    });
   }
 
   /**
-   * Creates a new listing.
+   * Create a published listing
    *
    * @template P
    * @template EP
-   * @param {P & OwnListingsCreateParameter} params - Parameters for the new listing.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<OwnListingsResponse<'create', P, EP>>>} - A promise resolving to the created listing details.
-   *
-   * @example
-   * const response = await sdk.ownListings.create({
-   *    title: 'New Listing',
-   *    description: 'Description',
-   *    price: {
-   *      amount: 1000,
-   *      currency: 'USD'
-   *    }
-   *  });
-   * const newListing = response.data;
+   * @param {P & OwnListingsCreateParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<OwnListingsResponse<"create", P, EP>>>}
    */
-  async create<P extends OwnListingsCreateParameter, EP extends ExtraParameter>(
+  async create<
+    P extends OwnListingsCreateParameter,
+    EP extends ExtraParameter | undefined = undefined
+  >(
     params: P,
     extraParams?: EP
   ): Promise<AxiosResponse<OwnListingsResponse<"create", P, EP>>> {
-    return this.axios.post<OwnListingsResponse<"create", P, EP>>(
+    return this.axios.post(
       `${this.endpoint}/create`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 
   /**
-   * Creates a draft listing.
+   * Create a draft listing (for step-by-step creation)
    *
    * @template P
    * @template EP
-   * @param {P & OwnListingsCreateDraftParameter} params - Parameters for the draft listing.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<OwnListingsResponse<'createDraft', P, EP>>>} - A promise resolving to the created draft details.
-   *
-   * @example
-   * const response = await sdk.ownListings.createDraft({
-   *   title: 'Draft Listing',
-   *   description: 'This is a draft',
-   * });
-   * const draft = response.data;
+   * @param {P & OwnListingsCreateDraftParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<OwnListingsResponse<"createDraft", P, EP>>>}
    */
   async createDraft<
     P extends OwnListingsCreateDraftParameter,
-    EP extends ExtraParameter
+    EP extends ExtraParameter | undefined = undefined
   >(
     params: P,
     extraParams?: EP
   ): Promise<AxiosResponse<OwnListingsResponse<"createDraft", P, EP>>> {
-    return this.axios.post<OwnListingsResponse<"createDraft", P, EP>>(
+    return this.axios.post(
       `${this.endpoint}/create_draft`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 
   /**
-   * Updates an existing listing.
+   * Update a listing (draft or published)
    *
    * @template P
    * @template EP
-   * @param {P & OwnListingsUpdateParameter} params - Parameters for updating the listing.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<OwnListingsResponse<'update', P, EP>>>} - A promise resolving to the updated listing details.
-   *
-   * @example
-   * const response = await sdk.ownListings.update({
-   *   id: 'listing-id',
-   *   title: 'Updated Listing Title',
-   * });
-   * const updatedListing = response.data;
+   * @param {P & OwnListingsUpdateParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<OwnListingsResponse<"update", P, EP>>>}
    */
-  async update<P extends OwnListingsUpdateParameter, EP extends ExtraParameter>(
+  async update<
+    P extends OwnListingsUpdateParameter,
+    EP extends ExtraParameter | undefined = undefined
+  >(
     params: P,
     extraParams?: EP
   ): Promise<AxiosResponse<OwnListingsResponse<"update", P, EP>>> {
-    return this.axios.post<OwnListingsResponse<"update", P, EP>>(
+    return this.axios.post(
       `${this.endpoint}/update`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 
   /**
-   * Publishes a draft listing.
+   * Publish a draft listing
    *
    * @template P
    * @template EP
-   * @param {P & OwnListingsPublishDraftParameter} params - Parameters for publishing the draft listing.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<OwnListingsResponse<'publishDraft', P, EP>>>} - A promise resolving to the published listing details.
-   *
-   * @example
-   * const response = await sdk.ownListings.publishDraft({
-   *   id: 'draft-id',
-   * });
-   * const publishedListing = response.data;
+   * @param {P & OwnListingsPublishDraftParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<OwnListingsResponse<"publishDraft", P, EP>>>}
    */
   async publishDraft<
     P extends OwnListingsPublishDraftParameter,
-    EP extends ExtraParameter
+    EP extends ExtraParameter | undefined = undefined
   >(
     params: P,
     extraParams?: EP
   ): Promise<AxiosResponse<OwnListingsResponse<"publishDraft", P, EP>>> {
-    return this.axios.post<OwnListingsResponse<"publishDraft", P, EP>>(
+    return this.axios.post(
       `${this.endpoint}/publish_draft`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 
   /**
-   * Discards a draft listing.
+   * Discard a draft listing
    *
    * @template P
-   * @param {P & OwnListingsDiscardDraftParameter} params - Parameters for discarding the draft.
-   * @returns {Promise<AxiosResponse<OwnListingsResponse<'discardDraft', P>>>} - A promise resolving to the discard confirmation.
-   *
-   * @example
-   * const response = await sdk.ownListings.discardDraft({ id: 'draft-id' });
-   * const result = response.data;
+   * @param {P & OwnListingsDiscardDraftParameter} params
+   * @returns {Promise<AxiosResponse<OwnListingsResponse<"discardDraft", P>>>}
    */
   async discardDraft<P extends OwnListingsDiscardDraftParameter>(
     params: P
   ): Promise<AxiosResponse<OwnListingsResponse<"discardDraft", P>>> {
-    return this.axios.post<OwnListingsResponse<"discardDraft", P>>(
+    return this.axios.post(
       `${this.endpoint}/discard_draft`,
       params,
-      { headers: this.headers }
+      {headers: this.headers}
     );
   }
 
   /**
-   * Closes a listing.
+   * Close a published listing
    *
    * @template P
    * @template EP
-   * @param {P & OwnListingsCloseParameter} params - Parameters for closing the listing.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<OwnListingsResponse<'close', P>>>} - A promise resolving to the closed listing details.
-   *
-   * @example
-   * const response = await sdk.ownListings.close({ id: 'listing-id' });
-   * const closedListing = response.data;
+   * @param {P & OwnListingsCloseParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<OwnListingsResponse<"close", P, EP>>>}
    */
-  async close<P extends OwnListingsCloseParameter, EP extends ExtraParameter>(
-    params: P,
-    extraParams?: EP
-  ): Promise<AxiosResponse<OwnListingsResponse<"close", P>>> {
-    return this.axios.post<OwnListingsResponse<"close", P>>(
-      `${this.endpoint}/close`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
-    );
-  }
-
-  /**
-   * Opens a listing.
-   *
-   * @template P
-   * @template EP
-   * @param {P & OwnListingsOpenParameter} params - Parameters for opening the listing.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<OwnListingsResponse<'open', P>>>} - A promise resolving to the opened listing details.
-   *
-   * @example
-   * const response = await sdk.ownListings.open({ id: 'listing-id' });
-   * const openedListing = response.data;
-   */
-  async open<P extends OwnListingsOpenParameter, EP extends ExtraParameter>(
-    params: P,
-    extraParams?: EP
-  ): Promise<AxiosResponse<OwnListingsResponse<"open", P>>> {
-    return this.axios.post<OwnListingsResponse<"open", P>>(
-      `${this.endpoint}/open`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
-    );
-  }
-
-  /**
-   * Adds an image to a listing.
-   *
-   * @template P
-   * @template EP
-   * @param {P & OwnListingsAddImageParameter} params - Parameters specifying the image to add.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<OwnListingsResponse<'addImage', P>>>} - A promise resolving to the updated listing details.
-   *
-   * @example
-   * const response = await sdk.ownListings.addImage({
-   *    id: 'listing-id', imageId: 'image-id'
-   * });
-   * const updatedListing = response.data;
-   */
-  async addImage<
-    P extends OwnListingsAddImageParameter,
-    EP extends ExtraParameter
+  async close<
+    P extends OwnListingsCloseParameter,
+    EP extends ExtraParameter | undefined = undefined
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<OwnListingsResponse<"addImage", P>>> {
-    return this.axios.post<OwnListingsResponse<"addImage", P>>(
+  ): Promise<AxiosResponse<OwnListingsResponse<"close", P, EP>>> {
+    return this.axios.post(
+      `${this.endpoint}/close`,
+      {...params, ...extraParams},
+      {headers: this.headers}
+    );
+  }
+
+  /**
+   * Re-open a closed listing
+   *
+   * @template P
+   * @template EP
+   * @param {P & OwnListingsOpenParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<OwnListingsResponse<"open", P, EP>>>}
+   */
+  async open<
+    P extends OwnListingsOpenParameter,
+    EP extends ExtraParameter | undefined = undefined
+  >(
+    params: P,
+    extraParams?: EP
+  ): Promise<AxiosResponse<OwnListingsResponse<"open", P, EP>>> {
+    return this.axios.post(
+      `${this.endpoint}/open`,
+      {...params, ...extraParams},
+      {headers: this.headers}
+    );
+  }
+
+  /**
+   * Attach an uploaded image to a listing
+   *
+   * @template P
+   * @template EP
+   * @param {P & OwnListingsAddImageParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<OwnListingsResponse<"addImage", P, EP>>>}
+   */
+  async addImage<
+    P extends OwnListingsAddImageParameter,
+    EP extends ExtraParameter | undefined = undefined
+  >(
+    params: P,
+    extraParams?: EP
+  ): Promise<AxiosResponse<OwnListingsResponse<"addImage", P, EP>>> {
+    return this.axios.post(
       `${this.endpoint}/add_image`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 }

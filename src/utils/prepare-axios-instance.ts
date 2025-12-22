@@ -1,16 +1,17 @@
+import {AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig,} from "axios";
 import {
-  AxiosError,
-  AxiosRequestConfig,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
-} from "axios";
-import {ExtendedInternalAxiosRequestConfig} from "../types";
+  AnonymousTokenRequest,
+  ExtendedInternalAxiosRequestConfig,
+  IntegrationTokenRequest,
+  RefreshTokenRequest
+} from "../types";
 import SharetribeSdk from "../sdk";
 import parameterSerializer from "./parameter-serializer";
 import IntegrationSdk from "../integrationSdk";
-import { createTransitConverters } from "./transit";
-import axiosRetry, { IAxiosRetryConfig } from "axios-retry";
+import {createTransitConverters} from "./transit";
+import axiosRetry, {IAxiosRetryConfig} from "axios-retry";
 import {createSharetribeApiError} from "./util";
+
 export const QUERY_PARAMETERS = [
   "include",
   "page",
@@ -70,7 +71,7 @@ export function handleResponseSuccess(sdk: SharetribeSdk | IntegrationSdk) {
     }
 
     if (isTransit(response)) {
-      const { reader } = createTransitConverters(sdk.sdkConfig.typeHandlers, {
+      const {reader} = createTransitConverters(sdk.sdkConfig.typeHandlers, {
         verbose: sdk.sdkConfig.transitVerbose,
       });
       response.data = reader.read(response.data);
@@ -103,7 +104,7 @@ export async function handleResponseFailure(
 
     // Parse response data if needed
     if (error.response && isTransit(error.response)) {
-      const { reader } = createTransitConverters(sdk.sdkConfig.typeHandlers, {
+      const {reader} = createTransitConverters(sdk.sdkConfig.typeHandlers, {
         verbose: sdk.sdkConfig.transitVerbose,
       });
       error.response.data = reader.read(error.response.data as string);
@@ -121,7 +122,7 @@ export async function handleResponseFailure(
       const token = sdk.sdkConfig.tokenStore.getToken();
       if (token && token.refresh_token) {
         // Get a new token
-        const response = await sdk.auth.token<"refresh-token">({
+        const response = await sdk.auth.token<RefreshTokenRequest>({
           client_id: sdk.sdkConfig.clientId,
           grant_type: "refresh_token",
           refresh_token: token.refresh_token,
@@ -147,7 +148,7 @@ export async function handleResponseFailure(
       // We need to get a new public-read token
       if (token && !token.refresh_token || !token) {
         // Get a new public-read token
-        const response = await sdk.auth.token<"public-read">({
+        const response = await sdk.auth.token<AnonymousTokenRequest>({
           client_id: sdk.sdkConfig.clientId,
           grant_type: "client_credentials",
           scope: "public-read",
@@ -223,7 +224,7 @@ export async function handleRequestSuccess(
     } else {
       let response: AxiosResponse<any>;
       if (sdk instanceof SharetribeSdk) {
-        response = await sdk.auth.token<"public-read">({
+        response = await sdk.auth.token<AnonymousTokenRequest>({
           client_id: sdk.sdkConfig.clientId,
           grant_type: "client_credentials",
           scope: "public-read",
@@ -233,7 +234,7 @@ export async function handleRequestSuccess(
           throw new Error("clientSecret is required for integration SDK");
         }
 
-        response = await sdk.auth.token<"integ">({
+        response = await sdk.auth.token<IntegrationTokenRequest>({
           client_id: sdk.sdkConfig.clientId,
           client_secret: sdk.sdkConfig.clientSecret,
           grant_type: "client_credentials",
@@ -292,7 +293,7 @@ export async function handleRequestSuccess(
     if (requestConfig.url?.endsWith("/upload")) {
       delete requestConfig.headers["Content-Type"]
     } else {
-      const { writer } = createTransitConverters(sdk.sdkConfig.typeHandlers, {
+      const {writer} = createTransitConverters(sdk.sdkConfig.typeHandlers, {
         verbose: sdk.sdkConfig.transitVerbose,
       });
       requestConfig.data = writer.write(requestConfig.data);

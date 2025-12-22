@@ -1,18 +1,18 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_sdkType"] }] */
 
 import {
-  makeWriteHandler,
-  reader as transitReader,
   keyword,
+  makeWriteHandler,
   map as transitMap,
+  reader as transitReader,
   writer as transitWriter,
 } from "transit-js";
 import LatLng from "../sdkTypes/LatLng";
 import UUID from "../sdkTypes/UUID";
 import Money from "../sdkTypes/Money";
 import BigDecimal from "../sdkTypes/BigDecimal";
-import { TypeHandler } from "../types/config";
-import { toSdkTypes } from "./convert-types";
+import {TypeHandler} from "../types";
+import {toSdkTypes} from "./convert-types";
 
 // Type definitions for SDK types
 type SdkTypeClass = any; // Using any to avoid complex type issues
@@ -211,7 +211,7 @@ export const writer = (
   appTypeWriters: TransitWriter[] = [],
   opts: TransitOptions = {}
 ) => {
-  const { verbose } = opts;
+  const {verbose} = opts;
   const transitType = verbose ? "json-verbose" : "json";
 
   return transitWriter(transitType, {
@@ -259,7 +259,7 @@ export const createTransitConverters = (
   typeHandlers: TypeHandler[] = [],
   opts: TransitOptions = {}
 ) => {
-  const { readers, writers } = typeHandlers.reduce<{
+  const {readers, writers} = typeHandlers.reduce<{
     readers: TransitReader[];
     writers: TransitWriter[];
   }>(
@@ -280,7 +280,7 @@ export const createTransitConverters = (
 
       return memo;
     },
-    { readers: [], writers: [] }
+    {readers: [], writers: []}
   );
 
   return {
@@ -290,13 +290,13 @@ export const createTransitConverters = (
 };
 
 export const read = (str: string, opts: TransitOptions = {}) => {
-  const { typeHandlers = [], verbose = false } = opts;
-  const { reader: r } = createTransitConverters(typeHandlers, opts);
+  const {typeHandlers = [], verbose = false} = opts;
+  const {reader: r} = createTransitConverters(typeHandlers, opts);
   return r.read(str);
 };
 
 export const write = (data: any, opts: TransitOptions = {}) => {
-  const { typeHandlers = [], verbose = false } = opts;
-  const { writer: w } = createTransitConverters(typeHandlers, opts);
+  const {typeHandlers = [], verbose = false} = opts;
+  const {writer: w} = createTransitConverters(typeHandlers, opts);
   return w.write(data);
 };

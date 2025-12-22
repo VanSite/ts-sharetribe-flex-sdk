@@ -3,8 +3,9 @@ import LatLng from "../sdkTypes/LatLng";
 import Money from "../sdkTypes/Money";
 import LatLngBounds from "../sdkTypes/LatLngBounds";
 import BigDecimal from "../sdkTypes/BigDecimal";
-import { Agent as HttpAgent } from "http";
-import { Agent as HttpsAgent } from "https";
+import {Agent as HttpAgent} from "http";
+import {Agent as HttpsAgent} from "https";
+import {TokenStore} from "./store";
 
 /**
  * Supported SDK type classes.
@@ -50,49 +51,6 @@ export interface TypeHandler<
    * Function to determine if a handler can process a specific key-value pair.
    */
   canHandle?: (args: { key: string; value: any }) => boolean;
-}
-
-/**
- * Interface for storing and managing authentication tokens.
- */
-export interface TokenStore {
-  token?: {
-    access_token: string;
-    token_type: "bearer";
-    expires_in: number;
-    scope?: "public-read" | "trusted:user" | "user" | "integ";
-    refresh_token?: string;
-  } | null;
-  expiration?: number;
-
-  /**
-   * Retrieves the current token.
-   * @returns A promise resolving to the token or null if no token is available.
-   */
-  getToken: () => {
-    access_token: string;
-    token_type: "bearer";
-    expires_in: number;
-    scope?: "public-read" | "trusted:user" | "user" | "integ";
-    refresh_token?: string;
-  } | null;
-
-  /**
-   * Sets a new token.
-   * @param args - The token details.
-   */
-  setToken: (args: {
-    access_token: string;
-    token_type: "bearer";
-    expires_in: number;
-    scope?: "public-read" | "trusted:user" | "user" | "integ";
-    refresh_token?: string;
-  }) => void;
-
-  /**
-   * Removes the current token.
-   */
-  removeToken: () => void;
 }
 
 /**

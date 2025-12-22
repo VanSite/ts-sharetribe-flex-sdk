@@ -1,51 +1,42 @@
 /**
- * @fileoverview Provides the Marketplace class for interacting with the Sharetribe Integration API.
- * This class allows fetching details about the marketplace configuration.
+ * @fileoverview Client for fetching marketplace configuration in the Sharetribe Integration API.
  *
- * For more details, refer to the Integration API documentation:
- * https://www.sharetribe.com/api-reference/integration.html#marketplace
+ * Use this to retrieve metadata about the marketplace (name, description, currency, etc.).
+ *
+ * @see https://www.sharetribe.com/api-reference/integration.html#marketplace
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import IntegrationApi from "./index";
-import { MarketplaceResponse } from "../../types/marketplace/marketplace";
+import {MarketplaceResponse} from "../../types";
 
 /**
- * Class representing the Marketplace API.
- *
- * The Marketplace API provides methods to retrieve marketplace configuration details.
+ * Marketplace API client
  */
 class Marketplace {
-  private readonly endpoint: string;
   private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the Marketplace class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: IntegrationApi) {
-    this.endpoint = api.endpoint + "/marketplace";
+    this.endpoint = `${api.endpoint}/marketplace`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Retrieves details about the marketplace configuration.
+   * Fetch current marketplace configuration
    *
-   * @returns {Promise<AxiosResponse<MarketplaceResponse<'show'>>>} - A promise resolving to the marketplace details.
+   * @returns {Promise<AxiosResponse<MarketplaceResponse<"show">>>}
    *
    * @example
-   * const response = await integrationSdk.marketplace.show();
-   *
-   * const marketplaceDetails = response.data;
+   * const { data } = await sdk.marketplace.show();
+   * console.log(data.attributes.name); // → "My Awesome Marketplace"
    */
   async show(): Promise<AxiosResponse<MarketplaceResponse<"show">>> {
-    return this.axios.get<MarketplaceResponse<"show">>(
-      `${this.endpoint}/show`,
-      { headers: this.headers }
-    );
+    return this.axios.get(`${this.endpoint}/show`, {
+      headers: this.headers,
+    });
   }
 }
 

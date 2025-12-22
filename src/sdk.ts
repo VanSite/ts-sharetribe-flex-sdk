@@ -1,13 +1,9 @@
-import { SdkConfig } from "./types/config";
-import { createApisConfigs } from "./utils/apis";
-import { ApiConfigs } from "./types/apiConfigs";
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import {ApiConfigs, SdkConfig} from "./types";
+import {createApisConfigs} from "./utils/apis";
+import axios, {AxiosInstance, AxiosResponse} from "axios";
 import AuthenticationApi from "./endpoints/auth";
 import MarketplaceApi from "./endpoints/marketplace";
-import {
-  prepareAxiosInstance,
-  createAxiosConfig,
-} from "./utils/prepare-axios-instance";
+import {createAxiosConfig, prepareAxiosInstance,} from "./utils/prepare-axios-instance";
 import Listings from "./endpoints/marketplace/Listings";
 import AvailabilityExceptions from "./endpoints/marketplace/AvailabilityExceptions";
 import Bookings from "./endpoints/marketplace/Bookings";
@@ -30,16 +26,20 @@ import TimeSlots from "./endpoints/marketplace/TimeSlots";
 import Transactions from "./endpoints/marketplace/Transactions";
 import Users from "./endpoints/marketplace/Users";
 import {
+  AnonymousTokenRequest,
   AuthInfoResponse,
+  AuthToken,
   LoginParameter,
-  LoginParameterType,
   LoginWithIdpParameter,
   RevokeResponse,
   Scope,
   TokenResponse,
-} from "./types/authentication";
+  TrustedUserTokenRequest,
+  UserTokenRequest,
+  UserTokenRequestWithAuthCode,
+} from "./types";
 import AssetsApi from "./endpoints/assets";
-import { DefaultSdkConfig } from "./utils/config";
+import {DefaultSdkConfig} from "./utils/config";
 
 class SharetribeSdk {
   /**
@@ -266,16 +266,16 @@ class SharetribeSdk {
    * Logs in a user using their credentials.
    *
    * @async
-   * @param {LoginParameter} params - The login parameters. 
+   * @param {LoginParameter} params - The login parameters.
    * @returns {Promise<AuthToken>} - The authentication token.
    */
-  async login<T extends LoginParameterType>(
-    params: LoginParameter<T>
-  ): Promise<AxiosResponse<TokenResponse<"user">>> {
-    return this.auth.token<"user">({
+  async login(
+    params: LoginParameter<'user'>
+  ): Promise<AxiosResponse<TokenResponse<UserTokenRequest>>> {
+    return this.auth.token<UserTokenRequest>({
       client_id: this.sdkConfig.clientId,
       scope: "user",
-      grant_type: "code" in params ? "authorization_code" : "password",
+      grant_type: "password",
       ...params,
     });
   }
@@ -288,9 +288,9 @@ class SharetribeSdk {
    * @returns {Promise<AuthToken>} - The authentication token.
    */
   async loginAs(
-    params: LoginParameter<"auth_code">
-  ): Promise<AxiosResponse<TokenResponse<"user">>> {
-    return this.auth.token<"user">({
+    params: LoginParameter<'auth_code'>
+  ): Promise<AxiosResponse<TokenResponse<UserTokenRequestWithAuthCode>>> {
+    return this.auth.token<UserTokenRequestWithAuthCode>({
       client_id: this.sdkConfig.clientId,
       grant_type: "authorization_code",
       scope: "user",
@@ -307,7 +307,7 @@ class SharetribeSdk {
    */
   async loginWithIdp(
     params: LoginWithIdpParameter
-  ): Promise<AxiosResponse<TokenResponse<"user">>> {
+  ): Promise<AxiosResponse<TokenResponse<UserTokenRequest>>> {
     if (this.sdkConfig.clientSecret === undefined) {
       throw new Error("clientSecret is required to login with idp");
     }
@@ -325,7 +325,7 @@ class SharetribeSdk {
    * @returns {Promise<void>} - Resolves when the user is logged out.
    */
   async logout(): Promise<AxiosResponse<RevokeResponse>> {
-    const { access_token } = (this.sdkConfig.tokenStore!.getToken())!;
+    const {access_token} = (this.sdkConfig.tokenStore!.getToken()) as AuthToken;
     return this.auth.revoke(access_token);
   }
 
@@ -335,12 +335,12 @@ class SharetribeSdk {
    * @async
    * @returns {Promise<AuthToken>} - The exchanged token.
    */
-  async exchangeToken(): Promise<AxiosResponse<TokenResponse<"trusted:user">>> {
-    const { access_token } = (this.sdkConfig.tokenStore!.getToken())!;
+  async exchangeToken(): Promise<AxiosResponse<TokenResponse<TrustedUserTokenRequest>>> {
+    const {access_token} = (this.sdkConfig.tokenStore!.getToken())!;
     if (this.sdkConfig.clientSecret === undefined) {
       throw new Error("clientSecret is required to exchange token");
     }
-    return this.auth.token<"trusted:user">({
+    return this.auth.token<TrustedUserTokenRequest>({
       client_id: this.sdkConfig.clientId,
       client_secret: this.sdkConfig.clientSecret!,
       grant_type: "token_exchange",
@@ -356,10 +356,10 @@ class SharetribeSdk {
    * @returns {Promise<AuthInfoResponse>} - The authentication info.
    */
   async authInfo(): Promise<AuthInfoResponse> {
-    const storedToken = this.sdkConfig.tokenStore!.getToken();
+    const storedToken = this.sdkConfig.tokenStore!.getToken()!;
 
     if (storedToken) {
-      const tokenScope = storedToken.scope;
+      const tokenScope = storedToken.scope as Scope;
 
       if (tokenScope) {
         const scopes = tokenScope.split(' ') as Scope[];
@@ -369,24 +369,24 @@ class SharetribeSdk {
         // that rely on this attribute
         const grantType = isAnonymous ? 'client_credentials' : 'refresh_token';
 
-        return { scopes, isAnonymous, grantType }
+        return {scopes, isAnonymous, grantType}
       }
 
       // Support old tokens that are stored in the client's token store
       // and possibly do not have the scope attribute
       const isAnonymous = !storedToken.refresh_token;
       const grantType = isAnonymous ? 'client_credentials' : 'refresh_token';
-      return { isAnonymous, grantType }
+      return {isAnonymous, grantType}
     }
 
-    const response = await this.auth.token<"public-read">({
+    const response = await this.auth.token<AnonymousTokenRequest>({
       client_id: this.sdkConfig.clientId,
       grant_type: "client_credentials",
       scope: "public-read",
     })
 
     if (response.data.access_token) {
-      return { isAnonymous: true, grantType: 'client_credentials', scopes: ["public-read"] };
+      return {isAnonymous: true, grantType: 'client_credentials', scopes: ["public-read"]};
     }
 
     return {};

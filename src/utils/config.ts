@@ -1,7 +1,7 @@
 import MemoryStore from "./stores/MemoryStore";
-import { TypeHandler } from "../types";
-import { Agent as HttpAgent } from "http";
-import { Agent as HttpsAgent } from "https";
+import {TypeHandler} from "../types";
+import {Agent as HttpAgent} from "http";
+import {Agent as HttpsAgent} from "https";
 
 type DefaultSdkConfigType = {
   baseUrl: string;
@@ -60,8 +60,8 @@ export const DefaultSdkConfig: DefaultSdkConfigType = {
 export const DefaultIntegrationSdkConfig: DefaultIntegrationSdkConfigType = {
   baseUrl: "https://flex-integ-api.sharetribe.com",
   ...(isNode && {
-    httpAgent: httpAgentCreator({ keepAlive: true, maxSockets: 10 }), // Default HTTP agent
-    httpsAgent: httpsAgentCreator({ keepAlive: true, maxSockets: 10 }), // Default HTTPS agent
+    httpAgent: httpAgentCreator({keepAlive: true, maxSockets: 10}), // Default HTTP agent
+    httpsAgent: httpsAgentCreator({keepAlive: true, maxSockets: 10}), // Default HTTPS agent
   }),
   tokenStore: new MemoryStore(), // Default token store (in-memory)
   transitVerbose: false, // Toggle for verbose transit serialization

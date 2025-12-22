@@ -1,12 +1,8 @@
-import { SdkConfig } from "./types/config";
-import axios, { AxiosInstance } from "axios";
-import { ApiConfigs } from "./types/apiConfigs";
+import {ApiConfigs, SdkConfig} from "./types";
+import axios, {AxiosInstance} from "axios";
 import IntegrationApi from "./endpoints/integrationApi";
-import { createApisConfigs } from "./utils/apis";
-import {
-  prepareAxiosInstance,
-  createAxiosConfig,
-} from "./utils/prepare-axios-instance";
+import {createApisConfigs} from "./utils/apis";
+import {createAxiosConfig, prepareAxiosInstance,} from "./utils/prepare-axios-instance";
 import AuthenticationApi from "./endpoints/auth";
 import AvailabilityExceptions from "./endpoints/integrationApi/AvailabilityExceptions";
 import Events from "./endpoints/integrationApi/Events";
@@ -15,10 +11,10 @@ import Listings from "./endpoints/integrationApi/Listings";
 import Marketplace from "./endpoints/integrationApi/Marketplace";
 import Stock from "./endpoints/integrationApi/Stock";
 import StockAdjustments from "./endpoints/integrationApi/StockAdjustments";
-import StockReservation from "./endpoints/integrationApi/StockReservation";
+import StockReservations from "./endpoints/integrationApi/StockReservations";
 import Transactions from "./endpoints/integrationApi/Transactions";
 import Users from "./endpoints/integrationApi/Users";
-import { DefaultIntegrationSdkConfig } from "./utils/config";
+import {DefaultIntegrationSdkConfig} from "./utils/config";
 
 /**
  * The main Sharetribe Integration SDK for interacting with the Sharetribe Integration API.
@@ -115,9 +111,9 @@ class IntegrationSdk {
   /**
    * Endpoint for managing stock reservations.
    *
-   * @type {StockReservation}
+   * @type {StockReservations}
    */
-  stockReservations: StockReservation;
+  stockReservations: StockReservations;
 
   /**
    * Endpoint for managing transactions.

@@ -1,14 +1,16 @@
 /**
- * @fileoverview Provides the Listings class for managing listings in the Sharetribe Integration API.
- * This class allows creating, updating, querying, and performing other operations on marketplace listings.
+ * @fileoverview Client for managing listings in the Sharetribe Integration API.
  *
- * For more details, refer to the Integration API documentation:
- * https://www.sharetribe.com/api-reference/integration.html#listings
+ * This privileged API allows creating, updating, querying, approving, opening, and closing listings
+ * on behalf of users — typically used by admin tools, onboarding flows, or backend services.
+ *
+ * @see https://www.sharetribe.com/api-reference/integration.html#listings
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import IntegrationApi from "./index";
 import {
+  ExtraParameter,
   ListingsApproveParameter,
   ListingsCloseParameter,
   ListingsCreateParameter,
@@ -17,220 +19,166 @@ import {
   ListingsResponse,
   ListingsShowParameter,
   ListingsUpdateParameter,
-} from "../../types/marketplace/listings";
-import { ExtraParameter } from "../../types/sharetribe";
+} from "../../types";
 
 /**
- * Class representing the Listings API.
- *
- * The Listings API provides methods to manage marketplace listings, such as creating, updating, querying, and approving listings.
+ * Listings API client (privileged)
  */
 class Listings {
-  private readonly endpoint: string;
   private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the Listings class.
-   *
-   * @param {IntegrationApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: IntegrationApi) {
-    this.endpoint = api.endpoint + "/listings";
+    this.endpoint = `${api.endpoint}/listings`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Retrieves details of a specific listing.
+   * Fetch a single listing by ID
    *
    * @template P
-   * @param {P & ListingsShowParameter} params - The parameters to identify the listing.
-   * @returns {Promise<ListingsResponse<'show', P>>} - A promise resolving to the listing details.
-   *
-   * @example
-   * const response = await integrationSdk.listings.show({
-   *   id: 'listing-id'
-   * });
-   *
-   * const listing = response.data;
+   * @param {P & ListingsShowParameter} params
+   * @returns {Promise<AxiosResponse<ListingsResponse<"show", P>>>}
    */
   async show<P extends ListingsShowParameter>(
     params: P
-  ): Promise<AxiosResponse<ListingsResponse<"show", P, undefined, true>>> {
-    return this.axios.get<ListingsResponse<"show", P, undefined, true>>(
-      `${this.endpoint}/show`,
-      {
-        headers: this.headers,
-        params,
-      }
-    );
+  ): Promise<AxiosResponse<ListingsResponse<"show", P>>> {
+    return this.axios.get(`${this.endpoint}/show`, {
+      headers: this.headers,
+      params,
+    });
   }
 
   /**
-   * Queries listings based on specified filters.
+   * Query listings with filters
    *
    * @template P
-   * @param {P & ListingsQueryParameter} params - Query parameters to filter listings.
-   * @returns {Promise<ListingsResponse<'query', P>>} - A promise resolving to the query results.
-   *
-   * @example
-   * const response = await integrationSdk.listings.query({
-   *   ids: ['listing-id-1', 'listing-id-2'],
-   *   per_page: 10,
-   *   page: 1
-   * });
-   *
-   * const listings = response.data;
+   * @param {P & ListingsQueryParameter} params
+   * @returns {Promise<AxiosResponse<ListingsResponse<"query", P>>>}
    */
   async query<P extends ListingsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<ListingsResponse<"query", P, undefined, true>>> {
-    return this.axios.get<ListingsResponse<"query", P, undefined, true>>(
-      `${this.endpoint}/query`,
-      {
-        headers: this.headers,
-        params,
-      }
-    );
+  ): Promise<AxiosResponse<ListingsResponse<"query", P>>> {
+    return this.axios.get(`${this.endpoint}/query`, {
+      headers: this.headers,
+      params,
+    });
   }
 
   /**
-   * Creates a new listing.
+   * Create a new listing
    *
    * @template P
    * @template EP
-   * @param {P & ListingsCreateParameter} params - Parameters for the new listing.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<ListingsResponse<'create', P, EP, true>>} - A promise resolving to the created listing.
-   *
-   * @example
-   * const response = await integrationSdk.listings.create({
-   *   title: 'New Listing',
-   *   description: 'Description of the listing',
-   *   authorId: 'user-id',
-   *   state: 'published'
-   * });
-   *
-   * const newListing = response.data;
+   * @param {P & ListingsCreateParameter} params
+   * @param {EP} [extraParams] - Optional extra parameters (e.g. `expand: true`)
+   * @returns {Promise<AxiosResponse<ListingsResponse<"create", P, EP>>>}
    */
-  async create<P extends ListingsCreateParameter, EP extends ExtraParameter>(
+  async create<
+    P extends ListingsCreateParameter,
+    EP extends ExtraParameter | undefined = undefined
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<ListingsResponse<"create", P, EP, true>>> {
-    return this.axios.post<ListingsResponse<"create", P, EP, true>>(
+  ): Promise<AxiosResponse<ListingsResponse<"create", P, EP>>> {
+    return this.axios.post(
       `${this.endpoint}/create`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 
   /**
-   * Updates an existing listing.
+   * Update an existing listing
    *
    * @template P
    * @template EP
-   * @param {P & ListingsUpdateParameter} params - Parameters for the listing update.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<ListingsResponse<'update', P, EP>>} - A promise resolving to the updated listing.
-   *
-   * @example
-   * const response = await integrationSdk.listings.update({
-   *   id: 'listing-id',
-   *   title: 'Updated Title'
-   * });
-   *
-   * const updatedListing = response.data;
+   * @param {P & ListingsUpdateParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<ListingsResponse<"update", P, EP>>>}
    */
-  async update<P extends ListingsUpdateParameter, EP extends ExtraParameter>(
+  async update<
+    P extends ListingsUpdateParameter,
+    EP extends ExtraParameter | undefined = undefined
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<ListingsResponse<"update", P, EP, true>>> {
-    return this.axios.post<ListingsResponse<"update", P, EP, true>>(
+  ): Promise<AxiosResponse<ListingsResponse<"update", P, EP>>> {
+    return this.axios.post(
       `${this.endpoint}/update`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 
   /**
-   * Closes a listing.
+   * Close a listing
    *
    * @template P
    * @template EP
-   * @param {P & ListingsCloseParameter} params - Parameters to identify the listing to close.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<ListingsResponse<'close', P, EP>>} - A promise resolving to the closed listing.
-   *
-   * @example
-   * const response = await integrationSdk.listings.close({
-   *   id: 'listing-id'
-   * });
-   *
-   * const closedListing = response.data;
+   * @param {P & ListingsCloseParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<ListingsResponse<"close", P, EP>>>}
    */
-  async close<P extends ListingsCloseParameter, EP extends ExtraParameter>(
+  async close<
+    P extends ListingsCloseParameter,
+    EP extends ExtraParameter | undefined = undefined
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<ListingsResponse<"close", P, EP, true>>> {
-    return this.axios.post<ListingsResponse<"close", P, EP, true>>(
+  ): Promise<AxiosResponse<ListingsResponse<"close", P, EP>>> {
+    return this.axios.post(
       `${this.endpoint}/close`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 
   /**
-   * Opens a listing.
+   * Open a previously closed listing
    *
    * @template P
    * @template EP
-   * @param {P & ListingsOpenParameter} params - Parameters to identify the listing to open.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<ListingsResponse<'open', P, EP>>} - A promise resolving to the opened listing.
-   *
-   * @example
-   * const response = await integrationSdk.listings.open({
-   *   id: 'listing-id'
-   * });
-   *
-   * const openedListing = response.data;
+   * @param {P & ListingsOpenParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<ListingsResponse<"open", P, EP>>>}
    */
-  async open<P extends ListingsOpenParameter, EP extends ExtraParameter>(
+  async open<
+    P extends ListingsOpenParameter,
+    EP extends ExtraParameter | undefined = undefined
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<ListingsResponse<"open", P, EP, true>>> {
-    return this.axios.post<ListingsResponse<"open", P, EP, true>>(
+  ): Promise<AxiosResponse<ListingsResponse<"open", P, EP>>> {
+    return this.axios.post(
       `${this.endpoint}/open`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 
   /**
-   * Approves a listing.
+   * Approve a pending listing (admin only)
    *
    * @template P
    * @template EP
-   * @param {P & ListingsApproveParameter} params - Parameters to identify the listing to approve.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<ListingsResponse<'approve', P, EP>>} - A promise resolving to the approved listing.
-   *
-   * @example
-   * const response = await integrationSdk.listings.approve({
-   *   id: 'listing-id'
-   * });
-   *
-   * const approvedListing = response.data;
+   * @param {P & ListingsApproveParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<ListingsResponse<"approve", P, EP>>>}
    */
-  async approve<P extends ListingsApproveParameter, EP extends ExtraParameter>(
+  async approve<
+    P extends ListingsApproveParameter,
+    EP extends ExtraParameter | undefined = undefined
+  >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<ListingsResponse<"approve", P, EP, true>>> {
-    return this.axios.post<ListingsResponse<"approve", P, EP, true>>(
+  ): Promise<AxiosResponse<ListingsResponse<"approve", P, EP>>> {
+    return this.axios.post(
       `${this.endpoint}/approve`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 }

@@ -1,64 +1,55 @@
 /**
- * @fileoverview Provides the TimeSlots class for managing time slots in the Sharetribe Marketplace API.
- * This class includes methods for querying available time slots for marketplace resources.
+ * @fileoverview Client for querying time slots in the Sharetribe Marketplace API.
  *
- * For more details, refer to the Marketplace API documentation:
- * https://www.sharetribe.com/api-reference/marketplace.html#time-slots
+ * Use this to fetch availability for listings that use time-based booking
+ * (e.g. hourly rentals, appointments, classes).
+ *
+ * Returns day or time-range slots with seat availability.
+ *
+ * @see https://www.sharetribe.com/api-reference/marketplace.html#time-slots
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import MarketplaceApi from "./index";
-import {
-  TimeSlotsQueryParameter,
-  TimeSlotsResponse,
-} from "../../types/marketplace/timeSlots";
+import {TimeSlotsQueryParameter, TimeSlotsResponse,} from "../../types";
 
 /**
- * Class representing the Time Slots API.
- *
- * The Time Slots API provides methods for querying available time slots for bookings.
+ * Time Slots API client
  */
 class TimeSlots {
-  private readonly endpoint: string;
   private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the TimeSlots class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + "/timeslots";
+    this.endpoint = `${api.endpoint}/timeslots`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Queries available time slots based on specified filters.
+   * Query available time slots for a listing
    *
    * @template P
-   * @param {P & TimeSlotsQueryParameter} params - Query parameters for filtering time slots.
-   * @returns {Promise<AxiosResponse<TimeSlotsResponse<'query'>>>} - A promise resolving to the query results.
+   * @param {P & TimeSlotsQueryParameter} params
+   * @returns {Promise<AxiosResponse<TimeSlotsResponse<"query">>>}
    *
    * @example
-   * const response = await sdk.timeSlots.query({
-   *   listingId: 'listing-id',
-   *   start: '2024-01-01T00:00:00Z',
-   *   end: '2024-01-07T23:59:59Z',
+   * const { data } = await sdk.timeSlots.query({
+   *   listingId: "listing-abc123",
+   *   start: "2025-06-01T00:00:00Z",
+   *   end: "2025-06-07T23:59:59Z"
    * });
-   * const timeSlots = response.data;
+   *
+   * // `data` contains TimeSlot[] with `seats` and `start`/`end`
    */
   async query<P extends TimeSlotsQueryParameter>(
     params: P
   ): Promise<AxiosResponse<TimeSlotsResponse<"query">>> {
-    return this.axios.get<TimeSlotsResponse<"query">>(
-      `${this.endpoint}/query`,
-      {
-        headers: this.headers,
-        params,
-      }
-    );
+    return this.axios.get(`${this.endpoint}/query`, {
+      headers: this.headers,
+      params,
+    });
   }
 }
 

@@ -1,62 +1,61 @@
 /**
- * @fileoverview Provides the StripeSetupIntents class for managing Stripe Setup Intents in the Sharetribe Marketplace API.
- * This class includes methods for creating Stripe Setup Intents to set up payment methods for future use.
+ * @fileoverview Client for creating Stripe Setup Intents in the Sharetribe Marketplace API.
  *
- * For more details, refer to the Marketplace API documentation:
- * https://www.sharetribe.com/api-reference/marketplace.html#create-stripe-person
+ * A Setup Intent is used to save a payment method (e.g. card) for future use
+ * without charging immediately — ideal for marketplaces that charge later.
+ *
+ * Returns `client_secret` for use with Stripe.js / Elements.
+ *
+ * @see https://www.sharetribe.com/api-reference/marketplace.html#stripe-setup-intents
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import MarketplaceApi from "./index";
-import {
-  StripeSetupIntentsCreateParameter,
-  StripeSetupIntentsResponse,
-} from "../../types/marketplace/stripeSetupIntents";
-import { ExtraParameter } from "../../types/sharetribe";
+import {ExtraParameter, StripeSetupIntentsCreateParameter, StripeSetupIntentsResponse,} from "../../types";
 
 /**
- * Class representing the Stripe Setup Intents API.
- *
- * The Stripe Setup Intents API provides methods to securely create Setup Intents for Stripe payments.
+ * Stripe Setup Intents API client (current user)
  */
 class StripeSetupIntents {
-  private readonly endpoint: string;
-  private readonly axios: AxiosInstance;
   public readonly authRequired = true;
+  private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
+  private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the StripeSetupIntents class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + "/stripe_setup_intents";
+    this.endpoint = `${api.endpoint}/stripe_setup_intents`;
     this.axios = api.axios;
+    this.headers = api.headers;
   }
 
   /**
-   * Creates a new Stripe Setup Intent.
+   * Create a new Setup Intent for saving a payment method
    *
    * @template P
    * @template EP
-   * @param {P & StripeSetupIntentsCreateParameter} params - Parameters required to create the Stripe Setup Intent.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<StripeSetupIntentsResponse<'create'>>>} - A promise resolving to the created Setup Intent details.
+   * @param {P & StripeSetupIntentsCreateParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<StripeSetupIntentsResponse<"create">>>}
    *
    * @example
-   * const response = await sdk.stripeSetupIntents.create({});
-   * const setupIntentDetails = response.data;
+   * const { data } = await sdk.stripeSetupIntents.create({});
+   *
+   * // Use with Stripe.js
+   * stripe.confirmCardSetup(data.attributes.clientSecret, {
+   *   payment_method: { card: cardElement }
+   * });
    */
   async create<
     P extends StripeSetupIntentsCreateParameter,
-    EP extends ExtraParameter
+    EP extends ExtraParameter | undefined = undefined
   >(
-    params: P,
+    params: P = {} as P,
     extraParams?: EP
   ): Promise<AxiosResponse<StripeSetupIntentsResponse<"create">>> {
-    return this.axios.post<StripeSetupIntentsResponse<"create">>(
+    return this.axios.post(
       `${this.endpoint}/create`,
-      { ...params, ...extraParams }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 }

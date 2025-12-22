@@ -1,84 +1,75 @@
 /**
- * @fileoverview Provides the Listings class for managing listings in the Sharetribe Marketplace API.
- * This class allows querying and retrieving details of listings.
+ * @fileoverview Client for querying public listings in the Sharetribe Marketplace API.
  *
- * For more details, refer to the Marketplace API documentation:
- * https://www.sharetribe.com/api-reference/marketplace.html#listings
+ * Use this to search and fetch listing details in your frontend.
+ * Only returns publicly visible data — no privileged operations.
+ *
+ * @see https://www.sharetribe.com/api-reference/marketplace.html#listings
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import MarketplaceApi from "./index";
-import {
-  ListingsShowParameter,
-  ListingsResponse,
-  ListingsQueryParameter,
-} from "../../types/marketplace/listings";
+import {ListingsQueryParameter, ListingsResponse, ListingsShowParameter,} from "../../types";
 
 /**
- * Class representing the Listings API.
- *
- * The Listings API provides methods to query and retrieve details of marketplace listings.
+ * Public Listings API client
  */
 class Listings {
-  private readonly endpoint: string;
   private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the Listings class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + "/listings";
+    this.endpoint = `${api.endpoint}/listings`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Retrieves details of a specific listing.
+   * Fetch a single listing by ID
    *
    * @template P
-   * @param {P & ListingsShowParameter} params - The parameters to identify the listing.
-   * @returns {Promise<AxiosResponse<ListingsResponse<'show', P>>>} - A promise resolving to the listing details.
+   * @param {P & ListingsShowParameter} params
+   * @returns {Promise<AxiosResponse<ListingsResponse<"show", P>>>}
    *
    * @example
-   * const response = await sdk.listings.show({ id: 'listing-id' });
-   * const listing = response.data;
+   * const { data } = await sdk.listings.show({ id: "listing-abc123" });
    */
   async show<P extends ListingsShowParameter>(
     params: P
   ): Promise<AxiosResponse<ListingsResponse<"show", P>>> {
-    return this.axios.get<ListingsResponse<"show", P>>(
-      `${this.endpoint}/show`,
-      {
-        headers: this.headers,
-        params,
-      }
-    );
+    return this.axios.get(`${this.endpoint}/show`, {
+      headers: this.headers,
+      params,
+    });
   }
 
   /**
-   * Queries listings based on specified filters.
+   * Search and filter public listings
    *
    * @template P
-   * @param {P & ListingsQueryParameter} params - Query parameters to filter listings.
-   * @returns {Promise<AxiosResponse<ListingsResponse<'query', P>>>} - A promise resolving to the query results.
+   * @param {P & ListingsQueryParameter} params
+   * @returns {Promise<AxiosResponse<ListingsResponse<"query", P>>>}
    *
    * @example
-   * const response = await sdk.listings.query({ ids: ['listing-id-1', 'listing-id-2'] });
-   * const listings = response.data;
+   * // Basic keyword search
+   * await sdk.listings.query({ keywords: "yoga class" });
+   *
+   * @example
+   * // Geo + price filter
+   * await sdk.listings.query({
+   *   origin: "60.1699,24.9384",
+   *   bounds: "60.2,25.0,60.1,24.8",
+   *   price: [0, 100]
+   * });
    */
   async query<P extends ListingsQueryParameter>(
     params: P
   ): Promise<AxiosResponse<ListingsResponse<"query", P>>> {
-    return this.axios.get<ListingsResponse<"query", P>>(
-      `${this.endpoint}/query`,
-      {
-        headers: this.headers,
-        params,
-      }
-    );
+    return this.axios.get(`${this.endpoint}/query`, {
+      headers: this.headers,
+      params,
+    });
   }
 }
 

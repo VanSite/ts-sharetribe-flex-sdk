@@ -1,63 +1,57 @@
 /**
- * @fileoverview Provides the ProcessTransitions class for managing process transitions in the Sharetribe Marketplace API.
- * This class includes a method for querying process transitions.
+ * @fileoverview Client for querying process transitions in the Sharetribe Marketplace API.
  *
- * For more details, refer to the Marketplace API documentation:
- * https://www.sharetribe.com/api-reference/marketplace.html#process-transitions
+ * Process transitions define the state machine of a transaction process (e.g. booking, sale).
+ * Use this endpoint to inspect available transitions and their parameters.
+ *
+ * @see https://www.sharetribe.com/api-reference/marketplace.html#process-transitions
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import MarketplaceApi from "./index";
-import {
-  ProcessTransitionsQueryParameter,
-  ProcessTransitionsResponse,
-} from "../../types/marketplace/processTransitions";
+import {ProcessTransitionsQueryParameter, ProcessTransitionsResponse,} from "../../types";
 
 /**
- * Class representing the Process Transitions API.
- *
- * The Process Transitions API provides methods for querying transitions within processes.
+ * Process Transitions API client
  */
 class ProcessTransitions {
-  private readonly endpoint: string;
-  private readonly axios: AxiosInstance;
-  private readonly headers: Record<string, string>;
   public readonly authRequired = true;
+  private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
+  private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the ProcessTransitions class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + "/process_transitions";
+    this.endpoint = `${api.endpoint}/process_transitions`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Queries process transitions based on specified filters.
+   * Query available process transitions
    *
    * @template P
-   * @param {P & ProcessTransitionsQueryParameter} params - Query parameters for filtering transitions.
-   * @returns {Promise<AxiosResponse<ProcessTransitionsResponse<'query'>>>} - A promise resolving to the query results.
+   * @param {P & ProcessTransitionsQueryParameter} params
+   * @returns {Promise<AxiosResponse<ProcessTransitionsResponse<"query">>>}
    *
    * @example
-   * const response = await sdk.processTransitions.query({
-   *   processAlias: 'booking-process',
+   * // Fetch all transitions for the default booking process
+   * const { data } = await sdk.processTransitions.query({
+   *   processAlias: "default-booking"
    * });
-   * const transitions = response.data;
+   *
+   * @example
+   * // Inspect a specific transition
+   * await sdk.processTransitions.query({
+   *   lastTransition: "transition/confirm-payment"
+   * });
    */
   async query<P extends ProcessTransitionsQueryParameter>(
     params: P
   ): Promise<AxiosResponse<ProcessTransitionsResponse<"query">>> {
-    return this.axios.get<ProcessTransitionsResponse<"query">>(
-      `${this.endpoint}/query`,
-      {
-        headers: this.headers,
-        params,
-      }
-    );
+    return this.axios.get(`${this.endpoint}/query`, {
+      headers: this.headers,
+      params,
+    });
   }
 }
 

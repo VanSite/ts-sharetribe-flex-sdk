@@ -1,4 +1,4 @@
-import { AuthToken } from "./authentication";
+import {AuthToken} from "./authentication";
 
 /**
  * Represents the possible scopes for authentication tokens.
@@ -22,13 +22,7 @@ export interface TokenStore {
    * Sets a new authentication token.
    * @param args - Object containing the token's details.
    */
-  setToken: (args: {
-    access_token: string;
-    token_type: "bearer";
-    expires_in: number;
-    scope?: Scope;
-    refresh_token?: string;
-  }) => void;
+  setToken: (args: AuthToken) => void;
 
   /**
    * Removes the current authentication token.

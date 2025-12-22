@@ -1,121 +1,98 @@
 /**
- * @fileoverview Provides the StripeAccount class for managing Stripe accounts in the Sharetribe Marketplace API.
- * This class includes methods for fetching, creating, and updating Stripe accounts.
+ * @fileoverview Client for managing the current user's Stripe account in the Sharetribe Marketplace API.
  *
- * For more details, refer to the Marketplace API documentation:
- * https://www.sharetribe.com/api-reference/marketplace.html#stripe-account
+ * Use this to:
+ * - Fetch existing Stripe account status
+ * - Create a new Stripe Connect account
+ * - Update account details or capabilities
+ *
+ * Requires authentication.
+ *
+ * @see https://www.sharetribe.com/api-reference/marketplace.html#stripe-account
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import MarketplaceApi from "./index";
 import {
+  ExtraParameter,
   StripeAccountCreateParameter,
   StripeAccountResponse,
   StripeAccountUpdateParameter,
-} from "../../types/marketplace/stripeAccount";
-import { ExtraParameter } from "../../types/sharetribe";
+} from "../../types";
 
 /**
- * Class representing the Stripe Account API.
- *
- * The Stripe Account API provides methods for managing Stripe accounts associated with the marketplace.
+ * Stripe Account API client (current user)
  */
 class StripeAccount {
-  private readonly endpoint: string;
-  private readonly axios: AxiosInstance;
-  private readonly headers: Record<string, string>;
   public readonly authRequired = true;
+  private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
+  private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the StripeAccount class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + "/stripe_account";
+    this.endpoint = `${api.endpoint}/stripe_account`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Fetches the current Stripe account details.
+   * Fetch current user's Stripe account
    *
-   * @returns {Promise<AxiosResponse<StripeAccountResponse<'fetch'>>>} - A promise resolving to the Stripe account details.
+   * @returns {Promise<AxiosResponse<StripeAccountResponse<"fetch">>>}
    *
    * @example
-   * const response = await sdk.stripeAccount.fetch();
-   * const stripeAccountDetails = response.data;
+   * const { data } = await sdk.stripeAccount.fetch();
+   * console.log(data.attributes.stripeAccountData.capabilities);
    */
   async fetch(): Promise<AxiosResponse<StripeAccountResponse<"fetch">>> {
-    return this.axios.get<StripeAccountResponse<"fetch">>(
-      `${this.endpoint}/fetch`,
-      {
-        headers: this.headers,
-      }
-    );
+    return this.axios.get(`${this.endpoint}/fetch`, {
+      headers: this.headers,
+    });
   }
 
   /**
-   * Creates a new Stripe account.
+   * Create a new Stripe Connect account
    *
    * @template P
    * @template EP
-   * @param {P & StripeAccountCreateParameter} params - Parameters for creating the Stripe account.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<StripeAccountResponse<'create', EP>>>} - A promise resolving to the created Stripe account details.
-   *
-   * @example
-   * const response = await sdk.stripeAccount.create({
-   *   country: 'US',
-   *   accountToken: 'account-token',
-   *   bankAccountToken: 'bank-account-token',
-   *   businessProfileMCC: '1234',
-   *   businessProfileURL: 'https://example.com',
-   *   businessProfileProductDescription: 'Product description',
-   *   requestedCapabilities: ['card_payments', 'transfers'],
-   * });
-   * const createdStripeAccount = response.data;
+   * @param {P & StripeAccountCreateParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<StripeAccountResponse<"create", EP>>>}
    */
   async create<
     P extends StripeAccountCreateParameter,
-    EP extends ExtraParameter
+    EP extends ExtraParameter | undefined = undefined
   >(
     params: P,
     extraParams?: EP
   ): Promise<AxiosResponse<StripeAccountResponse<"create", EP>>> {
-    return this.axios.post<StripeAccountResponse<"create", EP>>(
+    return this.axios.post(
       `${this.endpoint}/create`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 
   /**
-   * Updates an existing Stripe account.
+   * Update existing Stripe Connect account
    *
    * @template P
    * @template EP
-   * @param {P & StripeAccountUpdateParameter} params - Parameters for updating the Stripe account.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<StripeAccountResponse<'update', EP>>>} - A promise resolving to the updated Stripe account details.
-   *
-   * @example
-   * const response = await sdk.stripeAccount.update({
-   *   accountToken: 'new-account-token',
-   * });
-   * const updatedStripeAccount = response.data;
+   * @param {P & StripeAccountUpdateParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<StripeAccountResponse<"update", EP>>>}
    */
   async update<
     P extends StripeAccountUpdateParameter,
-    EP extends ExtraParameter
+    EP extends ExtraParameter | undefined = undefined
   >(
     params: P,
     extraParams?: EP
   ): Promise<AxiosResponse<StripeAccountResponse<"update", EP>>> {
-    return this.axios.post<StripeAccountResponse<"update", EP>>(
+    return this.axios.post(
       `${this.endpoint}/update`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 }

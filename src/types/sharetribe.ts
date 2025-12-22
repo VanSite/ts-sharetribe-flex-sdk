@@ -14,240 +14,239 @@ import {StripeAccount} from "./marketplace/stripeAccount";
 import {StripeCustomer} from "./marketplace/stripeCustomer";
 import {Transaction} from "./marketplace/transactions";
 import {CurrentUserPermissionSet} from "./marketplace/currentUser";
+import {StockAdjustment} from "./marketplace/stockAdjustment";
+import {ImageAsset} from "./assets";
 
 /**
  * A mapping of relationship types to their corresponding entities.
+ * The `I` flag controls whether private/protected user data is included.
  */
 export type RelationshipTypeMap<I extends boolean = false> = {
-  author: User<I>;
+  "author.effectivePermissionSet": CurrentUserPermissionSet;
   "author.marketplace": Marketplace;
   "author.profileImage": Image;
   "author.stripeAccount": StripeAccount;
-  "author.effectivePermissionSet": CurrentUserPermissionSet;
-  booking: Booking;
   "booking.transaction": Transaction;
-  currentStock: Stock;
-  customer: User<I>;
+  "customer.effectivePermissionSet": CurrentUserPermissionSet;
   "customer.marketplace": Marketplace;
   "customer.profileImage": Image;
   "customer.stripeAccount": StripeAccount;
-  "customer.effectivePermissionSet": CurrentUserPermissionSet;
-  defaultPaymentMethod: StripePaymentMethod;
-  images: Image;
-  listing: Listing<I>;
-  "listing.marketplace": Marketplace;
+  "effectivePermissionSet": CurrentUserPermissionSet;
   "listing.author": User<I>;
-  "listing.images": Image;
   "listing.currentStock": Stock;
-  marketplace: Marketplace;
-  messages: Message;
+  "listing.images": Image;
+  "listing.marketplace": Marketplace;
   "messages.sender": User<I>;
   "messages.transaction": Transaction;
-  ownListing: OwnListing;
-  "ownListing.marketplace": Marketplace;
   "ownListing.author": User<I>;
-  "ownListing.images": Image;
   "ownListing.currentStock": Stock;
-  profileImage: Image;
-  provider: User<I>;
+  "ownListing.images": Image;
+  "ownListing.marketplace": Marketplace;
+  "provider.effectivePermissionSet": CurrentUserPermissionSet;
   "provider.marketplace": Marketplace;
   "provider.profileImage": Image;
   "provider.stripeAccount": StripeAccount;
-  "provider.effectivePermissionSet": CurrentUserPermissionSet;
-  reviews: Review;
   "reviews.author": User<I>;
+  "reviews.author.profileImage": Image;
   "reviews.listing": Listing<I>;
   "reviews.subject": User<I>;
-  "reviews.author.profileImage": Image;
-  sender: User<I>;
+  "sender.effectivePermissionSet": CurrentUserPermissionSet;
   "sender.marketplace": Marketplace;
   "sender.profileImage": Image;
   "sender.stripeAccount": StripeAccount;
-  "sender.effectivePermissionSet": CurrentUserPermissionSet;
-  stockReservation: StockReservation;
   "stockReservation.transaction": Transaction;
-  stripeAccount: StripeAccount;
-  stripeCustomer: StripeCustomer;
   "stripeCustomer.defaultPaymentMethod": StripePaymentMethod;
-  subject: User<I>;
+  "subject.effectivePermissionSet": CurrentUserPermissionSet;
   "subject.marketplace": Marketplace;
   "subject.profileImage": Image;
   "subject.stripeAccount": StripeAccount;
-  "subject.effectivePermissionSet": CurrentUserPermissionSet;
-  transaction: Transaction;
-  "transaction.marketplace": Marketplace;
-  "transaction.listing": Listing<I>;
-  "transaction.provider": User<I>;
-  "transaction.customer": User<I>;
   "transaction.booking": Booking;
+  "transaction.customer": User<I>;
+  "transaction.listing": Listing<I>;
+  "transaction.marketplace": Marketplace;
+  "transaction.messages": Message;
+  "transaction.provider": User<I>;
+  "transaction.reviews": Review;
   "transaction.stockReservation": StockReservation;
+  author: User<I>;
+  booking: Booking;
+  currentStock: Stock;
+  customer: User<I>;
+  defaultPaymentMethod: StripePaymentMethod;
+  imageAsset: ImageAsset;
+  images: Image;
+  listing: Listing<I>;
+  marketplace: Marketplace;
+  messages: Message;
+  ownListing: OwnListing;
+  profileImage: Image;
+  provider: User<I>;
+  reviews: Review;
+  sender: User<I>;
+  stockAdjustment: StockAdjustment;
+  stockReservation: StockReservation;
+  stripeAccount: StripeAccount;
+  stripeCustomer: StripeCustomer;
+  subject: User<I>;
+  transaction: Transaction;
 };
 
-export type ApiErrorStatuses =
-  | 400
-  | 401
-  | 402
-  | 403
-  | 404
-  | 409
-  | 413
-  | 429
-  | 500;
+/**
+ * HTTP status codes that can return API errors
+ */
+export const ApiErrorStatuses = {
+  BadRequest: 400,
+  Unauthorized: 401,
+  PaymentRequired: 402,
+  Forbidden: 403,
+  NotFound: 404,
+  Conflict: 409,
+  PayloadTooLarge: 413,
+  TooManyRequests: 429,
+  ServerError: 500,
+} as const;
 
-export type ApiErrorCodes<S extends ApiErrorStatuses> = S extends 400
-  ?
+export type ApiErrorStatus = typeof ApiErrorStatuses[keyof typeof ApiErrorStatuses];
+
+/**
+ * Strongly typed error codes per status
+ */
+export type ApiErrorCode =
+// 400
   | "unsupported-content-type"
   | "bad-request"
   | "validation-disallowed-key"
   | "validation-invalid-value"
   | "validation-invalid-params"
   | "validation-missing-key"
-  : S extends 401
-    ? "auth-invalid-access-token" | "auth-missing-access-token"
-    : S extends 402
-      ? "transaction-payment-failed"
-      : S extends 403
-        ? "forbidden"
-        : S extends 404
-          ? "not-found"
-          : S extends 409
-            ?
-            | "conflict"
-            | "image-invalid"
-            | "image-invalid-content"
-            | "email-taken"
-            | "email-already-verified"
-            | "email-unverified"
-            | "email-not-found"
-            | "listing-not-found"
-            | "listing-invalid-state"
-            | "stripe-account-not-found"
-            | "stripe-missing-api-key"
-            | "stripe-invalid-payment-intent-status"
-            | "stripe-customer-not-found"
-            | "stripe-multiple-payment-methods-not-supported"
-            | "stripe-payment-method-type-not-supported"
-            | "user-missing-stripe-account"
-            | "user-is-banned"
-            | "user-not-found"
-            | "transaction-locked	"
-            | "transaction-not-found"
-            | "transaction-listing-not-found"
-            | "transaction-booking-state-not-pending"
-            | "transaction-booking-state-not-accepted"
-            | "transaction-invalid-transition"
-            | "transaction-invalid-action-sequence"
-            | "transaction-missing-listing-price"
-            | "transaction-missing-stripe-account"
-            | "transaction-same-author-and-customer"
-            | "transaction-stripe-account-disabled-charges"
-            | "transaction-stripe-account-disabled-payouts"
-            | "transaction-charge-zero-payin"
-            | "transaction-charge-zero-payout"
-            | "transaction-zero-payin"
-            | "transaction-unknown-alias"
-            | "transaction-provider-banned-or-deleted"
-            | "transaction-customer-banned-or-deleted"
-            : S extends 413
-              ? "request-larger-than-content-length" | "request-upload-over-limit"
-              : S extends 429
-                ? "too-many-requests"
-                : never;
+
+  // 401
+  | "auth-invalid-access-token"
+  | "auth-missing-access-token"
+
+  // 402
+  | "transaction-payment-failed"
+
+  // 403
+  | "forbidden"
+
+  // 404
+  | "not-found"
+
+  // 409 - grouped for readability
+  | "conflict"
+  | "image-invalid"
+  | "image-invalid-content"
+  | "email-taken"
+  | "email-already-verified"
+  | "email-unverified"
+  | "email-not-found"
+  | "listing-not-found"
+  | "listing-invalid-state"
+  | "stripe-account-not-found"
+  | "stripe-missing-api-key"
+  | "stripe-invalid-payment-intent-status"
+  | "stripe-customer-not-found"
+  | "stripe-multiple-payment-methods-not-supported"
+  | "stripe-payment-method-type-not-supported"
+  | "user-missing-stripe-account"
+  | "user-is-banned"
+  | "user-not-found"
+  | "transaction-locked"
+  | "transaction-not-found"
+  | "transaction-listing-not-found"
+  | "transaction-booking-state-not-pending"
+  | "transaction-booking-state-not-accepted"
+  | "transaction-invalid-transition"
+  | "transaction-invalid-action-sequence"
+  | "transaction-missing-listing-price"
+  | "transaction-missing-stripe-account"
+  | "transaction-same-author-and-customer"
+  | "transaction-stripe-account-disabled-charges"
+  | "transaction-stripe-account-disabled-payouts"
+  | "transaction-charge-zero-payin"
+  | "transaction-charge-zero-payout"
+  | "transaction-zero-payin"
+  | "transaction-unknown-alias"
+  | "transaction-provider-banned-or-deleted"
+  | "transaction-customer-banned-or-deleted"
+
+  // 413
+  | "request-larger-than-content-length"
+  | "request-upload-over-limit"
+
+  // 429
+  | "too-many-requests";
 
 /**
- * Represents an API error returned by the backend.
+ * Single API error object
  */
-export type ApiError<S extends ApiErrorStatuses = ApiErrorStatuses> = {
-  id: string; // Unique ID for each instance of an error
-  status: S; // HTTP status code
-  code: ApiErrorCodes<S>; // Specific error code
-  title: string; // Human-readable error title
-  details?: string; // Optional explanation for debugging
+export interface ApiError {
+  id: string;
+  status: ApiErrorStatus;
+  code: ApiErrorCode;
+  title: string;
+  detail?: string;
   source?: {
-    path: string[]; // Path to the parameter causing the error
-    type: "body" | "query"; // Indicates body or query parameter
+    pointer?: string; // JSON pointer like "/data/attributes/bio"
+    parameter?: string; // query param name
   };
-};
+  meta?: Record<string, unknown>;
+}
 
 /**
- * Represents an API error response.
+ * Full error response from Sharetribe API
  */
-export type ApiErrorResponse = {
+export interface ApiErrorResponse {
+  errors: ApiError[];
+}
+
+/**
+ *
+ */
+export interface SharetribeApiError {
   name: string;
   message: string;
-  status: number | undefined;
-  statusText: string | undefined;
-  data: {
-    errors: ApiError[];
-  }
-};
+  status?: number;
+  statusText?: string,
+  data: any
+}
 
 /**
- * Represents a universally unique identifier (UUID).
+ * UUID wrapper instance
  */
 export type UUID = InstanceType<typeof UUIDClass>;
 
 /**
- * Metadata for paginated API responses.
+ * Pagination metadata
  */
-export type ApiMeta = {
+export interface ApiMeta {
   totalItems: number;
   totalPages: number;
   page: number;
-  paginationLimit: number;
   perPage: number;
-};
+  paginationLimit?: number;
+}
 
 /**
- * Represents a relationship to another entity in the API.
+ * Relationship object in API responses
  */
-export type Relationship<A extends boolean, T extends string> = {
-  data: A extends true ? { id: UUID; type: T }[] : { id: UUID; type: T };
-};
+export type Relationship<
+  IsArray extends boolean = false,
+  Type extends keyof RelationshipTypeMap = keyof RelationshipTypeMap
+> = IsArray extends true
+  ? { data: { id: UUID; type: Type }[] }
+  : { data: { id: UUID; type: Type } | null };
 
 /**
- * Types for query fields, limits, and image variants.
+ * Query parameter prefixes
  */
 export type QueryFields = `fields.${string}`;
 export type QueryLimit = `limit.${string}`;
-export type ImageVariant = `imageVariant.${string}`;
+export type QueryImageVariant = `imageVariant.${string}`;
 
 /**
- * Extra parameter to expand or contract API responses.
- */
-export interface ExtraParameter {
-  expand?: boolean;
-}
-
-/**
- * Generic parameters used in API requests.
- */
-export interface ApiParameter {
-  [keyof: QueryFields]: string[] | never;
-
-  [keyof: QueryLimit]: number | never;
-
-  [keyof: ImageVariant]: string | never;
-}
-
-/**
- * Represents a latitude/longitude coordinate.
- */
-export type LatLng = {
-  lat: number;
-  lng: number;
-};
-
-/**
- * Represents a latitude/longitude bounding box.
- */
-export type LatLngBounds = {
-  ne: LatLng;
-  sw: LatLng;
-};
-
-/**
- * Query types for public, metadata, private, and protected data.
+ * Public, metadata, private, protected data query keys
  */
 export type QueryPub = `pub_${string}`;
 export type QueryMeta = `meta_${string}`;
@@ -255,14 +254,58 @@ export type QueryPriv = `priv_${string}`;
 export type QueryProt = `prot_${string}`;
 
 /**
- * Additional parameters for API requests.
+ * Optional expand control
  */
-export type ExtraParameterType = ExtraParameter | undefined;
+export interface ExpandParam {
+  expand?: boolean;
+}
+
+export type ExtraParameter = ExpandParam | undefined;
+export type ExtraParameterType = ExtraParameter;
 
 /**
- * Represents a monetary value.
+ * Base API parameter interface (index signatures are now safe)
  */
-export type Money = {
-  amount: number;
-  currency: string;
-};
+export interface ApiParameter {
+  /** Select fields: fields.listings=title,description */
+  [K: QueryFields]: string | undefined;
+
+  /** Pagination limits per resource type */
+  [K: QueryLimit]: number | undefined;
+
+  /** Image variants */
+  [K: QueryImageVariant]: string | undefined;
+
+  /** Public custom fields */
+  [K: QueryPub]: string | undefined;
+
+  /** Metadata fields */
+  [K: QueryMeta]: string | undefined;
+
+  /** Private fields (admin only) */
+  [K: QueryPriv]: string | undefined;
+
+  /** Protected fields (trusted user) */
+  [K: QueryProt]: string | undefined;
+}
+
+/**
+ * Geographic types
+ */
+export interface LatLng {
+  lat: number;
+  lng: number;
+}
+
+export interface LatLngBounds {
+  ne: LatLng;
+  sw: LatLng;
+}
+
+/**
+ * Money amount with currency
+ */
+export interface Money {
+  amount: number; // in minor units (e.g. cents)
+  currency: string; // ISO 4217 code
+}

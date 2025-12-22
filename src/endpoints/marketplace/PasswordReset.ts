@@ -1,95 +1,87 @@
 /**
- * @fileoverview Provides the PasswordReset class for managing password reset requests and operations in the Sharetribe Marketplace API.
- * This class includes methods for requesting a password reset and resetting the password using a token.
+ * @fileoverview Client for password reset operations in the Sharetribe Marketplace API.
  *
- * For more details, refer to the Marketplace API documentation:
- * https://www.sharetribe.com/api-reference/marketplace.html#password-reset
+ * Use this to request a password-reset email and to complete the password reset flow.
+ *
+ * @see https://www.sharetribe.com/api-reference/marketplace.html#password-reset
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import MarketplaceApi from "./index";
 import {
-  PasswordResetRequestParams,
-  PasswordResetResetParams,
+  ExtraParameter,
+  PasswordResetRequestParameter,
+  PasswordResetResetParameter,
   PasswordResetResponse,
-} from "../../types/marketplace/passwordReset";
-import { ExtraParameter } from "../../types/sharetribe";
+} from "../../types";
 
 /**
- * Class representing the Password Reset API.
- *
- * The Password Reset API provides methods for requesting a password reset email and resetting the password.
+ * Password Reset API client
  */
 class PasswordReset {
-  private readonly endpoint: string;
   private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the PasswordReset class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + "/password_reset";
+    this.endpoint = `${api.endpoint}/password_reset`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Requests a password reset email.
+   * Request a password-reset email
    *
    * @template P
    * @template EP
-   * @param {P & PasswordResetRequestParams} params - Parameters for the password reset request.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<PasswordResetResponse<'request', EP>>>} - A promise resolving to the password reset request response.
+   * @param {P & PasswordResetRequestParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<PasswordResetResponse<"request", EP>>>}
    *
    * @example
-   * const response = await sdk.passwordReset.request({
-   *   email: 'user@example.com',
-   * });
-   * const result = response.data;
+   * await sdk.passwordReset.request({ email: "user@example.com" });
    */
   async request<
-    P extends PasswordResetRequestParams,
-    EP extends ExtraParameter
+    P extends PasswordResetRequestParameter,
+    EP extends ExtraParameter | undefined = undefined
   >(
     params: P,
     extraParams?: EP
   ): Promise<AxiosResponse<PasswordResetResponse<"request", EP>>> {
-    return this.axios.post<PasswordResetResponse<"request", EP>>(
+    return this.axios.post(
       `${this.endpoint}/request`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 
   /**
-   * Resets the user's password using a token.
+   * Complete password reset using the token received by email
    *
    * @template P
    * @template EP
-   * @param {P & PasswordResetResetParams} params - Parameters for resetting the password.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<PasswordResetResponse<'reset', EP>>>} - A promise resolving to the password reset confirmation response.
+   * @param {P & PasswordResetResetParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<PasswordResetResponse<"reset", EP>>>}
    *
    * @example
-   * const response = await sdk.passwordReset.reset({
-   *   email: 'user@example.com',
-   *   passwordResetToken: 'password-reset-token',
-   *   newPassword: 'new-password',
+   * await sdk.passwordReset.reset({
+   *   email: "user@example.com",
+   *   passwordResetToken: "abc123...",
+   *   newPassword: "newSecurePassword123"
    * });
-   * const result = response.data;
    */
-  async reset<P extends PasswordResetResetParams, EP extends ExtraParameter>(
+  async reset<
+    P extends PasswordResetResetParameter,
+    EP extends ExtraParameter | undefined = undefined
+  >(
     params: P,
     extraParams?: EP
   ): Promise<AxiosResponse<PasswordResetResponse<"reset", EP>>> {
-    return this.axios.post<PasswordResetResponse<"reset", EP>>(
+    return this.axios.post(
       `${this.endpoint}/reset`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 }

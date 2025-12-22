@@ -1,7 +1,6 @@
-import { Request, Response } from "express";
-import { generateKey } from "./store";
-import { TokenStore } from "../../types/store";
-import { AuthToken } from "../../types/authentication";
+import {Request, Response} from "express";
+import {generateKey} from "./store";
+import {AuthToken, TokenStore} from "../../types";
 
 /**
  * Configuration options for the `ExpressStore`.
@@ -29,7 +28,7 @@ class ExpressStore implements TokenStore {
    * Initializes the `ExpressStore` with client-specific options.
    * @param options - Configuration options for the store.
    */
-  constructor({ clientId, req, res, secure }: ExpressStoreOptions) {
+  constructor({clientId, req, res, secure}: ExpressStoreOptions) {
     this.key = generateKey(clientId, this.namespace);
     this.secure = secure;
 
@@ -39,15 +38,6 @@ class ExpressStore implements TokenStore {
 
     this.req = req;
     this.res = res;
-  }
-
-  /**
-   * Reads the authentication token from the request cookies.
-   * @returns The `AuthToken` if present in cookies, otherwise null.
-   */
-  private readCookie(): AuthToken | null {
-    const cookie = this.req.cookies[this.key];
-    return cookie ? (JSON.parse(cookie) as AuthToken) : null;
   }
 
   /**
@@ -65,7 +55,7 @@ class ExpressStore implements TokenStore {
    */
   setToken(token: AuthToken): void {
     this.currentToken = token;
-    const secureFlag = this.secure ? { secure: true } : {};
+    const secureFlag = this.secure ? {secure: true} : {};
     this.res.cookie(this.key, JSON.stringify(token), {
       maxAge: 1000 * 60 * 60 * 24 * this.expiration, // Convert expiration to milliseconds
       ...secureFlag,
@@ -78,6 +68,15 @@ class ExpressStore implements TokenStore {
   removeToken(): void {
     this.currentToken = null;
     this.res.clearCookie(this.key);
+  }
+
+  /**
+   * Reads the authentication token from the request cookies.
+   * @returns The `AuthToken` if present in cookies, otherwise null.
+   */
+  private readCookie(): AuthToken | null {
+    const cookie = this.req.cookies[this.key];
+    return cookie ? (JSON.parse(cookie) as AuthToken) : null;
   }
 }
 

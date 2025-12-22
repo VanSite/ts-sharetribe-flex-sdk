@@ -4,7 +4,7 @@
  */
 
 import LatLng from "./LatLng";
-import { SdkType } from "../types/sdk-types";
+import {SdkType} from "../types";
 // Define a static class name
 const LATLNGBOUNDS_SDK_TYPE = "LatLngBounds";
 

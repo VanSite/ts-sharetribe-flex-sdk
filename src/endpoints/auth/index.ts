@@ -1,147 +1,106 @@
 /**
- * @fileoverview Provides the AuthenticationApi class for interacting with the Sharetribe Authentication API.
- * This class includes methods to obtain and manage access tokens for authenticating requests to the Marketplace API and Integration API.
- *
- * For more information, refer to the Authentication API reference:
- * https://www.sharetribe.com/api-reference/authentication.html
- */
-
-import {
-  AuthWithIdpParameter,
-  Endpoint,
-  RevokeResponse,
-  ScopeType,
-  TokenResponse,
-} from "../../types/authentication";
-import { AxiosInstance, AxiosResponse } from "axios";
-import SharetribeSdk from "../../sdk";
-import IntegrationSdk from "../../integrationSdk";
-
-/**
- * Converts an object to URL-encoded form data string.
- * Properly handles nested objects, arrays, and special types.
- *
- * @param {Record<string, any> | void} obj - The object to convert
- * @returns {string} URL-encoded form data string
- */
-export function urlEncodeFormData(
-  obj: Record<string, any> | null | undefined | void
-): string {
-  if (!obj) {
-    return "";
-  }
-
-  return Object.keys(obj)
-    .map((key) => {
-      const value = obj[key];
-      if (value === undefined || value === null) {
-        return "";
-      }
-
-      const encodedKey = encodeURIComponent(key);
-      let encodedValue: string;
-
-      // Handle different value types
-      if (typeof value === "object") {
-        if (Array.isArray(value)) {
-          // Handle arrays by joining with commas
-          encodedValue = encodeURIComponent(value.join(","));
-        } else {
-          // Handle objects by JSON stringifying
-          encodedValue = encodeURIComponent(JSON.stringify(value));
-        }
-      } else {
-        // Handle primitive values (string, number, boolean)
-        encodedValue = encodeURIComponent(String(value));
-      }
-
-      return `${encodedKey}=${encodedValue}`;
-    })
-    .filter(Boolean) // Remove empty strings
-    .join("&");
-}
-
-/**
- * Class representing the Authentication API for obtaining and managing access tokens.
- *
- * The Authentication API follows the OAuth2 framework and supports various grant types to issue tokens for authenticating requests.
+ * @fileoverview Client for Sharetribe Authentication API (OAuth2)
  *
  * @see https://www.sharetribe.com/api-reference/authentication.html
  */
+
+import type {AxiosInstance, AxiosResponse} from "axios";
+import SharetribeSdk from "../../sdk";
+import IntegrationSdk from "../../integrationSdk";
+import {
+  AuthWithIdpParameter,
+  RevokeResponse,
+  TokenDetails,
+  TokenRequest,
+  TokenResponse,
+  UserTokenRequest,
+} from "../../types";
+
+/**
+ * Encodes object as application/x-www-form-urlencoded
+ */
+export const urlEncodeFormData = (obj: Record<string, any> | null): string => {
+  if (!obj) return "";
+
+  return Object.entries(obj)
+    .filter(([, v]) => v !== null && v !== undefined)
+    .map(([k, v]) => {
+      const key = encodeURIComponent(k);
+      const value = Array.isArray(v)
+        ? encodeURIComponent(v.join(","))
+        : typeof v === "object"
+          ? encodeURIComponent(JSON.stringify(v))
+          : encodeURIComponent(String(v));
+      return `${key}=${value}`;
+    })
+    .join("&");
+};
+
 class AuthenticationApi {
+  private readonly axios: AxiosInstance;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
-  private axios: AxiosInstance;
 
-  /**
-   * Creates an instance of AuthenticationApi.
-   *
-   * @param {SharetribeSdk | IntegrationSdk} sdk - The Sharetribe SDK or Integration SDK instance for configuration and request handling.
-   */
   constructor(sdk: SharetribeSdk | IntegrationSdk) {
     const config = sdk.apisConfigs.auth(sdk.sdkConfig);
     this.endpoint = config.baseUrl;
-    this.headers = config.headers;
+    this.headers = {...config.headers, "Content-Type": "application/x-www-form-urlencoded"};
     this.axios = sdk.axios;
   }
 
   /**
-   * Obtains an access token using the specified grant type and parameters.
+   * Request a token using any supported OAuth2 grant
    *
-   * @template S
-   * @param {Endpoint<S>} params - Parameters including grant type and necessary credentials.
-   * @returns {Promise<TokenResponse<S>>} - A promise resolving to the token response.
+   * @template T - Token request type
+   * @param {T} params - OAuth2 token request parameters
+   * @returns {Promise<AxiosResponse<TokenResponse<T>>>}
    */
-  async token<S extends ScopeType>(
-    params: Endpoint<S>
-  ): Promise<AxiosResponse<TokenResponse<S>>> {
-    return this.axios.post<TokenResponse<S>>(
+  async token<T extends TokenRequest>(
+    params: T
+  ): Promise<AxiosResponse<TokenResponse<T>>> {
+    return this.axios.post(
       `${this.endpoint}/token`,
-      urlEncodeFormData(params),
-      { headers: this.headers }
+      urlEncodeFormData(params as Record<string, any>),
+      {headers: this.headers}
     );
   }
 
   /**
-   * Authenticates a user using an external identity provider (IdP) and obtains an access token.
+   * Authenticate via external Identity Provider
    *
-   * @param {AuthWithIdpParameter} params - Parameters including IdP token and provider details.
-   * @returns {Promise<TokenResponse<'user'>>} - A promise resolving to the token response.
+   * @param {AuthWithIdpParameter} params
+   * @returns {Promise<AxiosResponse<TokenResponse<UserTokenRequest>>>}
    */
-  async authWithIdp<P extends AuthWithIdpParameter>(
-    params: P
-  ): Promise<AxiosResponse<TokenResponse<"user">>> {
-    return this.axios.post<TokenResponse<"user">>(
+  async authWithIdp(
+    params: AuthWithIdpParameter
+  ): Promise<AxiosResponse<TokenResponse<UserTokenRequest>>> {
+    return this.axios.post(
       `${this.endpoint}/auth_with_idp`,
       urlEncodeFormData(params),
-      { headers: this.headers }
+      {headers: this.headers}
     );
   }
 
   /**
-   * Revokes a refresh token, effectively invalidating any associated access tokens.
+   * Revoke a refresh token
    *
-   * @param {string} token - The refresh token to be revoked.
-   * @returns {Promise<RevokeResponse>} - A promise resolving to the revoke response.
+   * @param {string} token - Refresh token to revoke
    */
   async revoke(token: string): Promise<AxiosResponse<RevokeResponse>> {
-    return this.axios.post<RevokeResponse>(
+    return this.axios.post(
       `${this.endpoint}/revoke`,
-      urlEncodeFormData({ token }),
-      { headers: this.headers }
+      urlEncodeFormData({token}),
+      {headers: this.headers}
     );
   }
 
   /**
-   * Retrieves details about the current access token.
-   *
-   * @returns {Promise<TokenResponse<'details'>>} - A promise resolving to the token details response.
+   * Introspect current access token
    */
-  async details(): Promise<AxiosResponse<TokenResponse<"details">>> {
-    return this.axios.get<TokenResponse<"details">>(
-      `${this.endpoint}/details`,
-      { headers: this.headers }
-    );
+  async details(): Promise<AxiosResponse<TokenDetails>> {
+    return this.axios.get(`${this.endpoint}/details`, {
+      headers: this.headers,
+    });
   }
 }
 

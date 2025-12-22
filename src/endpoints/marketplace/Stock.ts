@@ -1,66 +1,69 @@
 /**
- * @fileoverview Provides the Stock class for managing stock levels in the Sharetribe Marketplace API.
- * This class includes methods for comparing and setting stock levels.
+ * @fileoverview Client for managing listing stock in the Sharetribe Marketplace API.
  *
- * For more details, refer to the Marketplace API documentation:
- * https://www.sharetribe.com/api-reference/marketplace.html#stock
+ * Use this to safely update stock levels using atomic compare-and-set operations.
+ * Prevents race conditions when multiple users try to book simultaneously.
+ *
+ * @see https://www.sharetribe.com/api-reference/marketplace.html#stock
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import MarketplaceApi from "./index";
-import {
-  StockCompareAndSetParameter,
-  StockResponse,
-} from "../../types/marketplace/stock";
-import { ExtraParameter } from "../../types/sharetribe";
+import {ExtraParameter, StockCompareAndSetParameter, StockResponse,} from "../../types";
 
 /**
- * Class representing the Stock API.
- *
- * The Stock API provides methods for comparing and setting stock levels for marketplace resources.
+ * Stock API client (own listings only)
  */
 class Stock {
-  private readonly endpoint: string;
-  private readonly axios: AxiosInstance;
   public readonly authRequired = true;
+  private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
+  private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the Stock class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + "/stock";
+    this.endpoint = `${api.endpoint}/stock`;
     this.axios = api.axios;
+    this.headers = api.headers;
   }
 
   /**
-   * Compares and sets stock levels for a specific resource.
+   * Atomically update stock using compare-and-set
+   *
+   * Fails if current stock doesn't match `oldTotal` — prevents overselling.
    *
    * @template P
    * @template EP
-   * @param {P & StockCompareAndSetParameter} params - Parameters for comparing and setting stock levels.
-   * @param {EP} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<StockResponse<'compareAndSet', EP>>>} - A promise resolving to the result of the stock comparison and update.
+   * @param {P & StockCompareAndSetParameter} params
+   * @param {EP} [extraParams] - Optional extra parameters (e.g. `expand: true`)
+   * @returns {Promise<AxiosResponse<StockResponse<"compareAndSet", EP>>>}
    *
    * @example
-   * const response = await sdk.stock.compareAndSet({
-   *   listingId: 'listing-1',
+   * // Reserve 2 units if current stock is 10
+   * await sdk.stock.compareAndSet({
+   *   listingId: "listing-abc123",
    *   oldTotal: 10,
-   *   newTotal: 100
+   *   newTotal: 8
    * });
-   * const stockUpdateResult = response.data;
+   *
+   * @example
+   * // Restock from 5 to 50
+   * await sdk.stock.compareAndSet({
+   *   listingId: "listing-abc123",
+   *   oldTotal: 5,
+   *   newTotal: 50
+   * });
    */
   async compareAndSet<
     P extends StockCompareAndSetParameter,
-    EP extends ExtraParameter
+    EP extends ExtraParameter | undefined = undefined
   >(
     params: P,
-    extraParams: EP | void = {} as EP
+    extraParams?: EP
   ): Promise<AxiosResponse<StockResponse<"compareAndSet", EP>>> {
-    return this.axios.post<StockResponse<"compareAndSet", EP>>(
+    return this.axios.post(
       `${this.endpoint}/compare_and_set`,
-      { ...params, ...extraParams }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 }

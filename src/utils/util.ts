@@ -1,5 +1,4 @@
-import { toSdkTypes } from "./convert-types";
-import {ApiError, ApiErrorResponse} from "../types";
+import {SharetribeApiError} from "../types";
 import {AxiosError} from "axios";
 
 type ObjectQueryStringParam = Record<string, any>;
@@ -47,12 +46,10 @@ export const objectQueryString = (obj: ObjectQueryStringParam): string => {
     .join(";"); // Join the serialized pairs with semicolons
 };
 
-export const createSharetribeApiError = (error: AxiosError): ApiErrorResponse => {
-  return {
-    name: error.name,
-    message: error.message,
-    status: error.status,
-    statusText: error.code,
-    data: error.response?.data
-  } as ApiErrorResponse;
-}
+export const createSharetribeApiError = (error: AxiosError): SharetribeApiError => ({
+  name: error.name,
+  message: error.message,
+  status: error.status,
+  statusText: error.code,
+  data: error.response?.data
+})

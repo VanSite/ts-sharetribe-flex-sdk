@@ -1,81 +1,72 @@
 /**
- * @fileoverview Provides the Reviews class for managing reviews in the Sharetribe Marketplace API.
- * This class includes methods for querying and retrieving details of reviews.
+ * @fileoverview Client for querying reviews in the Sharetribe Marketplace API.
  *
- * For more details, refer to the Marketplace API documentation:
- * https://www.sharetribe.com/api-reference/marketplace.html#reviews
+ * Use this to fetch your own reviews or reviews for listings you own.
+ * Only returns reviews the current user is authorized to see.
+ *
+ * @see https://www.sharetribe.com/api-reference/marketplace.html#reviews
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import MarketplaceApi from "./index";
-import {
-  ReviewsQueryParameter,
-  ReviewsResponse,
-  ReviewsShowParameter,
-} from "../../types/marketplace/reviews";
+import {ReviewsQueryParameter, ReviewsResponse, ReviewsShowParameter,} from "../../types";
 
 /**
- * Class representing the Reviews API.
- *
- * The Reviews API provides methods for querying and retrieving details of reviews within the marketplace.
+ * Reviews API client (own reviews only)
  */
 class Reviews {
-  private readonly endpoint: string;
+  public readonly authRequired = true;
   private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the Reviews class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + "/reviews";
+    this.endpoint = `${api.endpoint}/reviews`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Retrieves details of a specific review.
+   * Fetch a single review by ID
    *
    * @template P
-   * @param {P & ReviewsShowParameter} params - Parameters identifying the review.
-   * @returns {Promise<AxiosResponse<ReviewsResponse<'show', P>>>} - A promise resolving to the review details.
+   * @param {P & ReviewsShowParameter} params
+   * @returns {Promise<AxiosResponse<ReviewsResponse<"show", P>>>}
    *
    * @example
-   * const response = await sdk.reviews.show({ id: 'review-id' });
-   * const review = response.data;
+   * const { data } = await sdk.reviews.show({ id: "rev-abc123" });
    */
   async show<P extends ReviewsShowParameter>(
     params: P
   ): Promise<AxiosResponse<ReviewsResponse<"show", P>>> {
-    return this.axios.get<ReviewsResponse<"show", P>>(`${this.endpoint}/show`, {
+    return this.axios.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,
     });
   }
 
   /**
-   * Queries reviews based on specified filters.
+   * Query your own reviews or reviews for your listings
    *
    * @template P
-   * @param {P & ReviewsQueryParameter} params - Query parameters to filter reviews.
-   * @returns {Promise<AxiosResponse<ReviewsResponse<'query', P>>>} - A promise resolving to the query results.
+   * @param {P & ReviewsQueryParameter} params
+   * @returns {Promise<AxiosResponse<ReviewsResponse<"query", P>>>}
    *
    * @example
-   * const response = await sdk.reviews.query({ listingId: 'listing-id', perPage: 10 });
-   * const reviews = response.data;
+   * // All reviews you've received
+   * const { data } = await sdk.reviews.query({ subjectId: "current" });
+   *
+   * @example
+   * // Reviews for one of your listings
+   * await sdk.reviews.query({ listingId: "listing-abc123" });
    */
   async query<P extends ReviewsQueryParameter>(
     params: P
   ): Promise<AxiosResponse<ReviewsResponse<"query", P>>> {
-    return this.axios.get<ReviewsResponse<"query", P>>(
-      `${this.endpoint}/query`,
-      {
-        headers: this.headers,
-        params,
-      }
-    );
+    return this.axios.get(`${this.endpoint}/query`, {
+      headers: this.headers,
+      params,
+    });
   }
 }
 

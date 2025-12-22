@@ -1,58 +1,62 @@
 /**
  * @fileoverview Type definitions for Stripe Persons in the Sharetribe Marketplace API.
- * This file includes the structure of Stripe Persons, their attributes, parameters, and response types.
  */
 
-export type StripePersonsEndpoints = "create";
-
-import { ApiParameter, ExtraParameterType, UUID } from "../sharetribe";
+import {ApiParameter, ExtraParameterType, UUID} from "../sharetribe";
 
 /**
- * Represents a Stripe Person object.
+ * Available endpoints
  */
-export interface StripePersons {
-  id: UUID; // Unique identifier for the Stripe Person.
-  type: "stripePerson"; // Type of the object, always 'stripePerson'.
+export type StripePersonsEndpoints = "create";
+
+/**
+ * Stripe Person resource
+ */
+export interface StripePerson {
+  id: UUID;
+  type: "stripePerson";
   attributes: {
-    stripePersonId: string; // The ID of the person in Stripe.
+    stripePersonId: string;
   };
 }
 
 /**
- * Parameters for making API requests involving Stripe Persons.
+ * Base request parameters
  */
-export interface StripePersonsParameter extends ApiParameter {}
-
-/**
- * Parameters for creating a Stripe Person.
- */
-export interface StripePersonsCreateParameter extends StripePersonsParameter {
-  personToken: string; // Token representing the person to be created in Stripe.
+export interface StripePersonsParameter extends ApiParameter {
 }
 
 /**
- * Determines the response type based on the `expand` parameter.
+ * Parameters for creating a Stripe Person
  */
-type ExpandReturnType<EP> = EP extends { expand: true }
-  ? StripePersons
-  : EP extends { expand: false }
-  ? Omit<StripePersons, "attributes">
-  : Omit<StripePersons, "attributes">;
+export interface StripePersonsCreateParameter extends StripePersonsParameter {
+  personToken: string;
+}
 
 /**
- * Determines the data type based on the endpoint.
+ * Expand behavior (controls inclusion of `attributes`)
  */
-type DataType<
+type ExpandResult<EP extends ExtraParameterType | undefined> =
+  EP extends { expand: true }
+    ? StripePerson
+    : EP extends { expand: false }
+      ? Omit<StripePerson, "attributes">
+      : Omit<StripePerson, "attributes">;
+
+/**
+ * Response data per endpoint
+ */
+type ResponseData<
   E extends StripePersonsEndpoints,
-  EP extends ExtraParameterType
-> = E extends "create" ? ExpandReturnType<EP> : never;
+  EP extends ExtraParameterType | undefined
+> = E extends "create" ? ExpandResult<EP> : never;
 
 /**
- * The response type for Stripe Persons API calls.
+ * Final response type
  */
 export type StripePersonsResponse<
-  E extends StripePersonsEndpoints,
-  EP extends ExtraParameterType = undefined
+  E extends StripePersonsEndpoints = "create",
+  EP extends ExtraParameterType | undefined = undefined
 > = {
-  data: DataType<E, EP>;
+  data: ResponseData<E, EP>;
 };

@@ -1,14 +1,13 @@
 /**
- * @fileoverview Type definitions for managing listings in the Sharetribe Marketplace API.
- * These types define the structure for listing parameters, attributes, relationships, and responses.
+ * @fileoverview Type definitions for Listings in the Sharetribe Marketplace API.
  */
 
 import {
   ApiMeta,
   ApiParameter,
-  ExtraParameter,
   ExtraParameterType,
   LatLng,
+  LatLngBounds,
   Money,
   QueryMeta,
   QueryPub,
@@ -16,19 +15,65 @@ import {
   RelationshipTypeMap,
   UUID,
 } from "../sharetribe";
-import LatLngBounds from "../../sdkTypes/LatLngBounds";
+import {AvailabilityPlan} from "./availabilityPlan";
 
-// Supported API endpoints for listings operations.
-export type ListingsEndpoints =
-  | "show"
-  | "query"
-  | "create"
-  | "update"
-  | "close"
-  | "open"
-  | "approve";
+/**
+ * Public listing states
+ */
+export type ListingState =
+  | "published"
+  | "closed"
+  | "draft"
+  | "pendingApproval";
 
-// Fields for listing relationships.
+/**
+ * Availability mode returned in query results
+ */
+export type ListingAvailability =
+  | "day-full"
+  | "day-partial"
+  | "time-full"
+  | "time-partial";
+
+/**
+ * Listing resource
+ */
+export interface Listing<I extends boolean = false> {
+  id: UUID;
+  type: "listing";
+  attributes: {
+    title: string;
+    description: string;
+    price: Money;
+    geolocation: LatLng;
+    state: ListingState;
+    deleted: boolean;
+    createdAt: Date;
+    availabilityPlan: AvailabilityPlan | null;
+    publicData: ListingPublicData & ListingCustomPublicData;
+    metadata: ListingMetadata & ListingCustomMetadata;
+  } & (I extends true ? { privateData: ListingPrivateData & ListingCustomPrivateData } : {});
+}
+
+/**
+ * With relationships
+ */
+export interface ListingWithRelationships<I extends boolean = false>
+  extends Listing<I> {
+  relationships: {
+    marketplace: Relationship<false, "marketplace">;
+    author: Relationship<false, "author">;
+    images: Relationship<true, "images">;
+    currentStock?: Relationship<false, "currentStock">;
+  };
+}
+
+export type ListingResource<R extends boolean, I extends boolean = false> =
+  R extends true ? ListingWithRelationships<I> : Listing<I>;
+
+/**
+ * Relationship fields
+ */
 export type ListingsRelationshipsFields =
   | "marketplace"
   | "author"
@@ -39,87 +84,29 @@ export type ListingsRelationshipsFields =
   | "images"
   | "currentStock";
 
-// State and availability types for listings.
-export type ListingState = "published" | "closed" | "draft" | "pendingApproval";
-export type ListingAvailability =
-  | "day-full"
-  | "day-partial"
-  | "time-full"
-  | "time-partial";
+/**
+ * Available endpoints
+ */
+export type ListingsEndpoints =
+  | "show"
+  | "query"
+  | "create"
+  | "update"
+  | "close"
+  | "open"
+  | "approve";
 
-// Base structure for a listing.
-export interface Listing<I extends boolean = false> {
-  id: UUID;
-  type: "listing";
-  attributes: ListingAttributes<I>;
-}
-
-// Attributes for a listing, with optional private data.
-type ListingAttributes<I extends boolean = false> = {
-  availabilityPlan: ListingAvailabilityPlan;
-  createdAt: Date;
-  deleted: boolean;
-  description: string;
-  geolocation: LatLng;
-  metadata: ListingMetadata & ListingCustomMetadata;
-  price: Money;
-  publicData: ListingPublicData & ListingCustomPublicData;
-  state: ListingState;
-  title: string;
-} & (I extends true
-  ? {
-      privateData: ListingPrivateData & ListingCustomPrivateData;
-    }
-  : {});
-
-// Availability plan types and structure.
-type ListingAvailabilityPlanTypes =
-  | "availability-plan/day"
-  | "availability-plan/time";
-
-type ListingAvailabilityPlanEntry<T extends ListingAvailabilityPlanTypes> = {
-  dayOfWeek: "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
-  seats: number;
-} & (T extends "availability-plan/time"
-  ? {
-      startTime: string;
-      endTime: string;
-    }
-  : {});
-
-type ListingAvailabilityPlan<
-  T extends ListingAvailabilityPlanTypes = "availability-plan/day"
-> = {
-  type: string;
-  timezone: string;
-  entries: Array<ListingAvailabilityPlanEntry<T>>;
-};
-
-// Listing structure with relationships.
-export interface ListingWithRelationships<I extends boolean = false>
-  extends Listing<I> {
-  relationships: {
-    marketplace: Relationship<false, "marketplace">;
-    author: Relationship<false, "user">;
-    images: Relationship<true, "image">;
-    currentStock: Relationship<false, "stock">;
-  };
-}
-
-export type ListingType<
-  R extends boolean,
-  I extends boolean = false
-> = R extends true ? ListingWithRelationships<I> : Listing<I>;
-
-// Parameters for listing-related operations.
+/**
+ * Base request parameters
+ */
 export interface ListingsParameter extends ApiParameter {
   include?: ListingsRelationshipsFields[];
 }
 
-// Specific parameters for different listing operations.
-export interface ListingsShowParameter extends ListingsParameter {
-  id: UUID | string;
-}
+/**
+ * Endpoint parameters
+ */
+export type ListingsShowParameter = ListingsParameter & { id: UUID | string };
 
 export interface ListingsQueryParameter extends ListingsParameter {
   authorId?: UUID | string;
@@ -134,9 +121,11 @@ export interface ListingsQueryParameter extends ListingsParameter {
   availability?: ListingAvailability;
   minDuration?: number;
   minStock?: number;
-  [keyof: QueryPub]: string;
-  [keyof: QueryMeta]: string;
   sort?: string;
+
+  [keyof: QueryPub]: string | undefined;
+
+  [keyof: QueryMeta]: string | undefined;
 }
 
 export interface ListingsCreateParameter extends ListingsParameter {
@@ -146,117 +135,110 @@ export interface ListingsCreateParameter extends ListingsParameter {
   description?: string;
   geolocation?: LatLng | string;
   price?: Money | string;
-  availabilityPlan?: ListingAvailabilityPlan;
+  availabilityPlan?: AvailabilityPlan | null;
   publicData?: ListingPublicData & ListingCustomPublicData;
   privateData?: ListingPrivateData & ListingCustomPrivateData;
   metadata?: ListingMetadata & ListingCustomMetadata;
   images?: UUID[] | string[];
 }
 
-export interface ListingsUpdateParameter extends ListingsParameter {
+export type ListingsUpdateParameter = ListingsParameter & {
   id: UUID | string;
   title?: string;
   description?: string;
   price?: Money | string;
-  availabilityPlan?: ListingAvailabilityPlan;
+  availabilityPlan?: AvailabilityPlan | null;
   publicData?: ListingPublicData & ListingCustomPublicData;
   privateData?: ListingPrivateData & ListingCustomPrivateData;
   metadata?: ListingMetadata & ListingCustomMetadata;
   images?: UUID[] | string[];
-}
+};
 
-export interface ListingsCloseParameter extends ListingsParameter {
-  id: UUID | string;
-}
+export type ListingsCloseParameter = ListingsParameter & { id: UUID | string };
+export type ListingsOpenParameter = ListingsParameter & { id: UUID | string };
+export type ListingsApproveParameter = ListingsParameter & { id: UUID | string };
 
-export interface ListingsOpenParameter extends ListingsParameter {
-  id: UUID | string;
-}
-
-export interface ListingsApproveParameter extends ListingsParameter {
-  id: UUID | string;
-}
-
-// Data for listing metadata and public/private custom fields.
+/**
+ * Custom data
+ */
 export interface ListingPublicData {
-  [key: string]: any;
+  [key: string]: any
 }
 
-export interface ListingCustomPublicData {}
+export interface ListingCustomPublicData extends Record<string, unknown> {
+}
 
 export interface ListingPrivateData {
-  [key: string]: any;
+  [key: string]: any
 }
 
-export interface ListingCustomPrivateData {}
+export interface ListingCustomPrivateData extends Record<string, unknown> {
+}
 
 export interface ListingMetadata {
-  [key: string]: any;
+  [key: string]: any
 }
 
-export interface ListingCustomMetadata {}
+export interface ListingCustomMetadata extends Record<string, unknown> {
+}
 
+/**
+ * All parameter types
+ */
 type AllListingsParameter =
   | ListingsShowParameter
   | ListingsQueryParameter
   | ListingsCreateParameter
-  | ListingsUpdateParameter;
+  | ListingsUpdateParameter
+  | ListingsCloseParameter
+  | ListingsOpenParameter
+  | ListingsApproveParameter;
 
-// Response types and data mapping for listings.
-type ListingsType<P extends AllListingsParameter> = "include" extends keyof P
-  ? P["include"] extends ListingsRelationshipsFields[]
-    ? true
-    : false
-  : false;
+/**
+ * Include detection — fixes TS2536
+ */
+type HasInclude<P> = P extends { include: infer I extends readonly ListingsRelationshipsFields[] } ? I : never;
+type IncludesRelationships<P> = HasInclude<P> extends never ? false : true;
 
-type IncludedType<
-  P extends AllListingsParameter,
-  I extends boolean
-> = "include" extends keyof P
-  ? P["include"] extends (keyof RelationshipTypeMap<I>)[]
-    ? Array<RelationshipTypeMap<I>[P["include"][number]]>
-    : never
-  : never;
+type IncludedResources<P> =
+  HasInclude<P> extends infer Fields extends ListingsRelationshipsFields[]
+    ? RelationshipTypeMap[Fields[number]][]
+    : never;
 
-type ExpandReturnType<
-  P extends AllListingsParameter,
-  EP,
-  I extends boolean
-> = EP extends {
-  expand: true;
-}
-  ? ListingType<ListingsType<P>, I>
-  : EP extends { expand: false }
-  ? Omit<ListingType<ListingsType<P>, I>, "attributes">
-  : Omit<ListingType<ListingsType<P>, I>, "attributes">;
+/**
+ * Expand behavior
+ */
+type ExpandResult<T, EP extends ExtraParameterType | undefined> =
+  EP extends { expand: true }
+    ? T
+    : EP extends { expand: false }
+      ? Omit<T, "attributes">
+      : Omit<T, "attributes">;
 
-type DataType<
+/**
+ * Response data per endpoint
+ */
+type ResponseData<
   E extends ListingsEndpoints,
   P extends AllListingsParameter,
-  EP extends ExtraParameter | undefined,
+  EP extends ExtraParameterType | undefined,
   I extends boolean = false
-> = E extends "query"
-  ? ListingType<ListingsType<P>, I>[]
-  : E extends "show"
-  ? ListingType<ListingsType<P>, I>
-  : E extends "create"
-  ? ExpandReturnType<P, EP, I>
-  : E extends "update"
-  ? ExpandReturnType<P, EP, I>
-  : E extends "close"
-  ? ExpandReturnType<P, EP, I>
-  : E extends "open"
-  ? ExpandReturnType<P, EP, I>
-  : E extends "approve"
-  ? ExpandReturnType<P, EP, I>
-  : never;
+> =
+  E extends "query"
+    ? ListingResource<IncludesRelationships<P>, I>[]
+    : E extends "show" | "create" | "update" | "close" | "open" | "approve"
+      ? ExpandResult<ListingResource<IncludesRelationships<P>, I>, EP>
+      : never;
 
+/**
+ * Final response
+ */
 export type ListingsResponse<
   E extends ListingsEndpoints,
   P extends AllListingsParameter,
-  EP extends ExtraParameterType = undefined,
+  EP extends ExtraParameterType | undefined = undefined,
   I extends boolean = false
 > = {
-  data: DataType<E, P, EP, I>;
-} & ("include" extends keyof P ? { included: IncludedType<P, I> } : {}) &
+  data: ResponseData<E, P, EP, I>;
+} & (IncludesRelationships<P> extends true ? { included: IncludedResources<P> } : {}) &
   (E extends "query" ? { meta: ApiMeta } : {});

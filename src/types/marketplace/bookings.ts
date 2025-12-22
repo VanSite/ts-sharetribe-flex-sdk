@@ -1,20 +1,17 @@
 /**
- * @fileoverview Type definitions for managing bookings in the Sharetribe Marketplace API.
- * These types define the structure of booking-related parameters, responses, and relationships.
+ * @fileoverview Type definitions for Bookings in the Sharetribe Marketplace API.
  */
 
-import {
-  ApiMeta,
-  ApiParameter,
-  UUID,
-  Relationship,
-  RelationshipTypeMap,
-} from "../sharetribe";
+import {ApiMeta, ApiParameter, Relationship, RelationshipTypeMap, UUID,} from "../sharetribe";
 
-// Supported API endpoints for bookings.
+/**
+ * Available endpoints
+ */
 export type BookingsEndpoints = "query";
 
-// Supported relationship fields for bookings.
+/**
+ * Relationship fields that can be included
+ */
 export type BookingsRelationshipsFields =
   | "transaction"
   | "transaction.marketplace"
@@ -26,7 +23,9 @@ export type BookingsRelationshipsFields =
   | "transaction.reviews"
   | "transaction.messages";
 
-// States that a booking can be in.
+/**
+ * Booking states
+ */
 export type BookingState =
   | "pending"
   | "proposed"
@@ -34,7 +33,9 @@ export type BookingState =
   | "declined"
   | "cancelled";
 
-// Base structure for a booking.
+/**
+ * Booking resource
+ */
 export interface Booking {
   id: UUID;
   type: "booking";
@@ -48,24 +49,28 @@ export interface Booking {
   };
 }
 
-// Booking with relationships.
-export interface BookingWithRelationShips extends Booking {
+/**
+ * With relationships
+ */
+export interface BookingWithRelationships extends Booking {
   relationships: {
     transaction: Relationship<false, "transaction">;
   };
 }
 
-// Determine the booking type based on the relationship flag.
-export type BookingType<R extends boolean> = R extends true
-  ? BookingWithRelationShips
-  : Booking;
+export type BookingResource<R extends boolean> =
+  R extends true ? BookingWithRelationships : Booking;
 
-// Base parameters for booking operations.
+/**
+ * Base request parameters
+ */
 export interface BookingsParameter extends ApiParameter {
   include?: BookingsRelationshipsFields[];
 }
 
-// Parameters for querying bookings.
+/**
+ * Query parameters
+ */
 export interface BookingsQueryParameter extends BookingsParameter {
   listingId: UUID | string;
   start: Date | string;
@@ -73,31 +78,34 @@ export interface BookingsQueryParameter extends BookingsParameter {
   state?: BookingState;
 }
 
-// Determine if the parameter includes relationships.
-type BookingsType<P extends BookingsQueryParameter> = "include" extends keyof P
-  ? P["include"] extends BookingsRelationshipsFields[]
-    ? true
-    : false
-  : false;
+/**
+ * Include detection — fixes TS2536
+ */
+type HasInclude<P> = P extends { include: infer I extends readonly BookingsRelationshipsFields[] } ? I : never;
+type IncludesRelationships<P> = HasInclude<P> extends never ? false : true;
 
-// Extract the included relationships type based on the parameter.
-type IncludedType<P extends BookingsParameter> = "include" extends keyof P
-  ? P["include"] extends (keyof RelationshipTypeMap)[]
-    ? Array<RelationshipTypeMap[P["include"][number]]>
-    : never
+type IncludedResources<P> =
+  P extends { include: infer Fields extends readonly BookingsRelationshipsFields[] }
+    ? RelationshipTypeMap[Fields[number]][]
+    : never;
+
+/**
+ * Response data
+ */
+type ResponseData<
+  E extends BookingsEndpoints,
+  P extends BookingsQueryParameter
+> = E extends "query"
+  ? BookingResource<IncludesRelationships<P>>[]
   : never;
 
-// Define the possible data type for bookings based on the endpoint and parameters.
-type DataType<
-  E extends BookingsEndpoints,
-  P extends BookingsQueryParameter
-> = E extends "query" ? BookingType<BookingsType<P>>[] : never;
-
-// Response structure for booking-related endpoints.
+/**
+ * Final response type
+ */
 export type BookingsResponse<
-  E extends BookingsEndpoints,
-  P extends BookingsQueryParameter
+  E extends BookingsEndpoints = "query",
+  P extends BookingsQueryParameter = BookingsQueryParameter
 > = {
-  data: DataType<E, P>;
-} & ("include" extends keyof P ? { included: IncludedType<P> } : {}) &
-  (E extends "query" ? { meta: ApiMeta } : {});
+  data: ResponseData<E, P>;
+} & (IncludesRelationships<P> extends true ? { included: IncludedResources<P> } : {}) &
+  { meta: ApiMeta };

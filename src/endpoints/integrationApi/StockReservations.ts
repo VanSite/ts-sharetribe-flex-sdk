@@ -6,19 +6,16 @@
  * https://www.sharetribe.com/api-reference/integration.html#stock-reservations
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import {AxiosInstance, AxiosResponse} from "axios";
 import IntegrationApi from "./index";
-import {
-  StockReservationShowParameter,
-  StockReservationsResponse,
-} from "../../types/marketplace/stockReservations";
+import {StockReservationShowParameter, StockReservationsResponse,} from "../../types";
 
 /**
  * Class representing the Stock Reservations API.
  *
  * The Stock Reservations API provides methods to manage stock reservations for marketplace resources.
  */
-class StockReservation {
+class StockReservations {
   private readonly endpoint: string;
   private readonly axios: AxiosInstance;
   private readonly headers: Record<string, string>;
@@ -53,9 +50,9 @@ class StockReservation {
   ): Promise<AxiosResponse<StockReservationsResponse<"show", P>>> {
     return this.axios.get<StockReservationsResponse<"show", P>>(
       `${this.endpoint}/show`,
-      { headers: this.headers, params }
+      {headers: this.headers, params}
     );
   }
 }
 
-export default StockReservation;
+export default StockReservations;

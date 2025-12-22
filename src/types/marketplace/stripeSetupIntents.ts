@@ -1,58 +1,63 @@
 /**
  * @fileoverview Type definitions for Stripe Setup Intents in the Sharetribe Marketplace API.
- * This file includes the structure of Stripe Setup Intents, their attributes, parameters, and response types.
  */
 
-import { ApiParameter, ExtraParameterType, UUID } from "../sharetribe";
+import {ApiParameter, ExtraParameterType, UUID} from "../sharetribe";
 
+/**
+ * Available endpoints
+ */
 export type StripeSetupIntentsEndpoints = "create";
 
 /**
- * Represents a Stripe Setup Intent object.
+ * Stripe Setup Intent resource
  */
-export interface StripeSetupIntents {
-  id: UUID; // Unique identifier for the Stripe Setup Intent.
-  type: "stripeSetupIntent"; // Type of the object, always 'stripeSetupIntent'.
+export interface StripeSetupIntent {
+  id: UUID;
+  type: "stripeSetupIntent";
   attributes: {
-    stripeSetupIntentId: string; // The ID of the setup intent in Stripe.
-    clientSecret: string; // The client secret of the setup intent, used for client-side actions.
+    stripeSetupIntentId: string;
+    clientSecret: string;
   };
 }
 
 /**
- * Parameters for making API requests involving Stripe Setup Intents.
+ * Base request parameters
  */
-export interface StripeSetupIntentsParameter extends ApiParameter {}
+export interface StripeSetupIntentsParameter extends ApiParameter {
+}
 
 /**
- * Parameters for creating a Stripe Setup Intent.
+ * Parameters for creating a setup intent
  */
 export interface StripeSetupIntentsCreateParameter
-  extends StripeSetupIntentsParameter {}
+  extends StripeSetupIntentsParameter {
+}
 
 /**
- * Determines the response type based on the `expand` parameter.
+ * Expand behavior (controls whether `attributes` is included)
  */
-type ExpandReturnType<EP> = EP extends { expand: true }
-  ? StripeSetupIntents
-  : EP extends { expand: false }
-  ? Omit<StripeSetupIntents, "attributes">
-  : Omit<StripeSetupIntents, "attributes">;
+type ExpandResult<EP extends ExtraParameterType | undefined> =
+  EP extends { expand: true }
+    ? StripeSetupIntent
+    : EP extends { expand: false }
+      ? Omit<StripeSetupIntent, "attributes">
+      : Omit<StripeSetupIntent, "attributes">;
 
 /**
- * Determines the data type based on the endpoint.
+ * Response data per endpoint
  */
-type DataType<
+type ResponseData<
   E extends StripeSetupIntentsEndpoints,
-  EP extends ExtraParameterType
-> = E extends "create" ? ExpandReturnType<EP> : never;
+  EP extends ExtraParameterType | undefined
+> = E extends "create" ? ExpandResult<EP> : never;
 
 /**
- * The response type for Stripe Setup Intents API calls.
+ * Final response type
  */
 export type StripeSetupIntentsResponse<
-  E extends StripeSetupIntentsEndpoints,
-  EP extends ExtraParameterType = undefined
+  E extends StripeSetupIntentsEndpoints = "create",
+  EP extends ExtraParameterType | undefined = undefined
 > = {
-  data: DataType<E, EP>;
+  data: ResponseData<E, EP>;
 };

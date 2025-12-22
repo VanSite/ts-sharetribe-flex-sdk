@@ -1,7 +1,6 @@
 import Cookies from "js-cookie";
-import { generateKey } from "./store";
-import { TokenStore } from "../../types/store";
-import { AuthToken } from "../../types/authentication";
+import {generateKey} from "./store";
+import {AuthToken, TokenStore} from "../../types";
 
 /**
  * Configuration options for the `BrowserStore`.
@@ -24,7 +23,7 @@ class BrowserStore implements TokenStore {
    * Initializes the `BrowserStore` with client-specific options.
    * @param options - Configuration options for the store.
    */
-  constructor({ clientId, secure }: BrowserStoreOptions) {
+  constructor({clientId, secure}: BrowserStoreOptions) {
     this.secure = secure;
     this.key = generateKey(clientId, this.namespace);
   }
@@ -43,7 +42,7 @@ class BrowserStore implements TokenStore {
    * @param token - The authentication token to store.
    */
   setToken(token: AuthToken): void {
-    const secureFlag = this.secure ? { secure: true } : {};
+    const secureFlag = this.secure ? {secure: true} : {};
     Cookies.set(this.key, JSON.stringify(token), {
       expires: this.expiration,
       ...secureFlag,

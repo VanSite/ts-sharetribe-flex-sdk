@@ -1,62 +1,55 @@
 /**
- * @fileoverview Provides the Events class for querying event data in the Sharetribe Integration API.
- * This class allows querying events related to bookings or other entities in a Sharetribe marketplace.
+ * @fileoverview Client for querying events in the Sharetribe Integration API.
  *
- * For more details, refer to the Integration API documentation:
- * https://www.sharetribe.com/api-reference/integration.html#events
+ * The Events API provides a stream of marketplace events (e.g. listing created, transaction transitioned)
+ * for building integrations, webhooks, analytics, or real-time features.
+ *
+ * @see https://www.sharetribe.com/api-reference/integration.html#events
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import IntegrationApi from "./index";
-import {
-  EventQueryParameter,
-  EventsResponse,
-} from "../../types/integration/events";
+import {EventsQueryParameter, EventsResponse} from "../../types";
 
 /**
- * Class representing the Events API.
- *
- * The Events API provides access to event data, such as booking events, allowing integration with external systems.
+ * Events API client
  */
 class Events {
-  private readonly endpoint: string;
   private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the Events class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: IntegrationApi) {
-    this.endpoint = api.endpoint + "/events";
+    this.endpoint = `${api.endpoint}/events`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Queries event data based on the specified parameters.
+   * Query marketplace events
    *
    * @template P
-   * @param {P & EventQueryParameter} params - Query parameters to filter events.
-   * @returns {Promise<EventsResponse<'query'>>} - A promise resolving to the event query response.
+   * @param {P & EventsQueryParameter} params - Query filters and pagination
+   * @returns {Promise<AxiosResponse<EventsResponse<"query">>>}
    *
    * @example
-   * const response = await integrationSdk.events.query({
-   *  startAfterSequenceId: 'event-sequence-id',
-   *  createdAtStart: '2021-01-01T00:00:00Z',
-   *  resourceId: 'resource-id',
-   *  relatedResourceId: 'related-resource-id',
-   *  eventTypes: ['eventType1', 'eventType2'],
+   * // Fetch events after a specific sequence ID
+   * const response = await sdk.events.query({
+   *   startAfterSequenceId: 12345,
+   *   eventTypes: ["transaction/initiated", "booking/created"]
    * });
    *
-   * // Access the list of events
-   * const eventsList = response.data;
+   * @example
+   * // Fetch recent events for a specific listing
+   * await sdk.events.query({
+   *   resourceId: "listing-abc-123",
+   *   createdAtStart: "2025-01-01T00:00:00Z"
+   * });
    */
-  async query<P extends EventQueryParameter>(
+  async query<P extends EventsQueryParameter>(
     params: P
   ): Promise<AxiosResponse<EventsResponse<"query">>> {
-    return this.axios.get<EventsResponse<"query">>(`${this.endpoint}/query`, {
+    return this.axios.get(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });

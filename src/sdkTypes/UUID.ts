@@ -3,8 +3,8 @@
  * This class allows for the creation and validation of UUIDs, using the `uuid` library.
  */
 
-import { v4 as uuidv4 } from "uuid";
-import { SdkType } from "../types/sdk-types";
+import {v4 as uuidv4} from "uuid";
+import {SdkType} from "../types";
 
 // Define a static class name
 const UUID_SDK_TYPE = "UUID";

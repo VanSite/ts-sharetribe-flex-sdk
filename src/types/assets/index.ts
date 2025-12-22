@@ -1,131 +1,132 @@
 /**
- * @fileoverview Type definitions for managing assets in the Sharetribe Marketplace API.
- * These types define the structure and relationships of assets such as JSON data and image assets,
- * as well as the request and response formats for the asset-related endpoints.
+ * @fileoverview Type definitions for Assets in the Sharetribe Marketplace API.
  */
 
-import { ImageVariantNames, ImageVariants } from "../marketplace/images";
-import { ApiParameter, Relationship, UUID } from "../sharetribe";
+import type {ApiParameter, Relationship, RelationshipTypeMap, UUID} from "../sharetribe";
+import type {ImageVariant, ImageVariantName} from "../marketplace/images";
 
-// Define the mapping of relationship types to their corresponding data models.
-type RelationshipTypeMap = {
-  imageAsset: ImageAsset;
-};
-
-// Enum-like definition for supported asset endpoints.
+/**
+ * Available endpoints
+ */
 export type AssetEndpoints =
   | "assetByAlias"
   | "assetsByAlias"
   | "assetByVersion"
   | "assetsByVersion";
 
-// Supported fields for relationships in assets.
+/**
+ * Relationship fields
+ */
 export type AssetRelationshipsFields = "imageAsset";
 
-// Generic structure for JSON-based assets.
-export type JsonAsset = {
-  [key: string]: any;
-};
-
-// JSON-based assets with relationships.
-export type JsonAssetWithRelationships = {
-  images: Relationship<true, "imageAsset">;
-};
-
-// Structure for image-based assets.
-export type ImageAsset = {
+/**
+ * Image asset resource
+ */
+export interface ImageAsset {
   id: UUID;
   type: "imageAsset";
   attributes: {
     assetPath: string;
-    variants: { [key in ImageVariantNames]?: ImageVariants };
+    variants: Partial<Record<ImageVariantName, ImageVariant>>;
   };
-};
-
-// Type helper to determine if a given path is a JSON path.
-type IsJsonPath<Path> = Path extends `${string}.json` ? true : false;
-
-// Determine the asset type based on the provided parameter.
-export type AssetType<P extends AllAssetParameter> = P extends {
-  path: infer Path;
 }
-  ? IsJsonPath<Path>
-  : P extends { paths: infer Paths }
-  ? Paths extends string[]
-    ? IsJsonPath<Paths[number]> extends true
-      ? JsonAsset
-      : ImageAsset
-    : never
-  : never;
 
-// Base interface for asset parameters, allowing for optional relationships.
+/**
+ * Generic JSON asset (e.g. config, translations)
+ */
+export type JsonAsset = Record<string, unknown>;
+
+/**
+ * JSON asset with embedded image relationships
+ */
+export interface JsonAssetWithRelationships {
+  images: Relationship<true, "imageAsset">;
+}
+
+/**
+ * Base request parameters
+ */
 export interface AssetParameter extends ApiParameter {
-  include?: JsonAssetWithRelationships[];
+  include?: AssetRelationshipsFields[];
 }
 
-// Parameter structure for fetching a single asset by alias.
+/**
+ * Single asset by alias/version
+ */
 export interface AssetByAliasParameter extends AssetParameter {
   path: string;
   alias: string;
 }
 
-// Parameter structure for fetching multiple assets by alias.
-export interface AssetsByAliasParameter extends AssetParameter {
-  paths: string[];
-  alias: string;
-}
-
-// Parameter structure for fetching a single asset by version.
 export interface AssetByVersionParameter extends AssetParameter {
   path: string;
   version: string;
 }
 
-// Parameter structure for fetching multiple assets by version.
+/**
+ * Multiple assets by alias/version
+ */
+export interface AssetsByAliasParameter extends AssetParameter {
+  paths: string[];
+  alias: string;
+}
+
 export interface AssetsByVersionParameter extends AssetParameter {
   paths: string[];
   version: string;
 }
 
-// Union type for all asset parameter types.
+/**
+ * All parameter types
+ */
 type AllAssetParameter =
   | AssetByAliasParameter
   | AssetsByAliasParameter
   | AssetByVersionParameter
   | AssetsByVersionParameter;
 
-// Determine if the parameter includes relationships.
-type AssetWithIncludeType<P extends AllAssetParameter> =
-  "include" extends keyof P
-    ? P["include"] extends AssetRelationshipsFields[]
-      ? true
-      : false
-    : false;
+/**
+ * Detect if path ends with .json
+ */
+type IsJsonPath<Path extends string> = Path extends `${string}.json` ? true : false;
 
-// Extract the included relationships type based on the parameter.
-export type IncludedType<P extends AllAssetParameter> =
-  "include" extends keyof P
-    ? P["include"] extends (keyof RelationshipTypeMap)[]
-      ? Array<AssetWithIncludeType<P>>[]
-      : never
+/**
+ * Resolve asset data type from path(s)
+ */
+type ResolveAssetType<P extends AllAssetParameter> =
+  P extends { path: infer Path extends string }
+    ? IsJsonPath<Path> extends true ? JsonAsset : ImageAsset
+    : P extends { paths: infer Paths extends string[] }
+      ? Paths extends [string]
+        ? IsJsonPath<Paths[0]> extends true ? JsonAsset : ImageAsset
+        : JsonAsset | ImageAsset
+      : never;
+
+/**
+ * Include detection — fixes TS2536
+ */
+type HasInclude<P> = P extends { include: infer I extends readonly AssetRelationshipsFields[] } ? I : never;
+type IncludesRelationships<P> = HasInclude<P> extends never ? false : true;
+
+type IncludedResources<P> =
+  P extends { include: infer I extends readonly AssetRelationshipsFields[] }
+    ? RelationshipTypeMap["imageAsset"][]
     : never;
 
-// Determine the data type for an asset endpoint based on the provided parameter.
-type DataType<
+/**
+ * Response data per endpoint
+ */
+type ResponseData<
   E extends AssetEndpoints,
   P extends AllAssetParameter
-> = E extends
-  | "assetByAlias"
-  | "assetsByAlias"
-  | "assetByVersion"
-  | "assetsByVersion"
-  ? AssetType<P>
-  : never;
+> = ResolveAssetType<P>;
 
-// Response structure for asset-related endpoints.
+/**
+ * Final response type
+ */
 export type AssetResponse<
   E extends AssetEndpoints,
   P extends AllAssetParameter
 > = {
-  data: DataType<E, P>;
-} & ("include" extends keyof P ? { included: IncludedType<P> } : {});
+  data: ResponseData<E, P>;
+} & (IncludesRelationships<P> extends true ? { included: IncludedResources<P> } : {});

@@ -1,14 +1,17 @@
 /**
- * @fileoverview Type definitions for managing marketplace data in the Sharetribe Marketplace API.
- * These types define the structure for marketplace parameters, attributes, and responses.
+ * @fileoverview Type definitions for Marketplace in the Sharetribe Marketplace API.
  */
 
-import { UUID } from "../sharetribe";
+import {UUID} from "../sharetribe";
 
-// Supported API endpoints for marketplace operations.
+/**
+ * Available endpoints
+ */
 export type MarketplaceEndpoints = "show";
 
-// Base structure for a marketplace.
+/**
+ * Marketplace resource
+ */
 export interface Marketplace {
   id: UUID;
   type: "marketplace";
@@ -18,15 +21,15 @@ export interface Marketplace {
   };
 }
 
-// Type alias for the marketplace type.
-export type MarketplaceType = Marketplace;
+/**
+ * Response data per endpoint
+ */
+type ResponseData<E extends MarketplaceEndpoints> =
+  E extends "show" ? Marketplace : never;
 
-// Mapping of data types for marketplace responses.
-type DataType<E extends MarketplaceEndpoints> = E extends "show"
-  ? MarketplaceType
-  : never;
-
-// Response structure for marketplace operations.
-export type MarketplaceResponse<E extends MarketplaceEndpoints> = {
-  data: DataType<E>;
+/**
+ * Final response type
+ */
+export type MarketplaceResponse<E extends MarketplaceEndpoints = "show"> = {
+  data: ResponseData<E>;
 };

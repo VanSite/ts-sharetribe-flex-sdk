@@ -1,76 +1,67 @@
 /**
- * @fileoverview Provides the Images class for handling image uploads in the Sharetribe Integration API.
- * This class allows uploading images to be used as resources in a Sharetribe marketplace.
+ * @fileoverview Client for uploading images in the Sharetribe Integration API.
  *
- * For more details, refer to the Integration API documentation:
- * https://www.sharetribe.com/api-reference/integration.html#images
+ * Images uploaded via this endpoint can be attached to listings, user profiles, or used as assets.
+ *
+ * @see https://www.sharetribe.com/api-reference/integration.html#images
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import IntegrationApi from "./index";
-import {
-  ImagesResponse,
-  ImagesUploadParameter,
-} from "../../types/marketplace/images";
-import { ExtraParameter } from "../../types/sharetribe";
+import {ExtraParameter, ImagesResponse, ImagesUploadParameter} from "../../types";
 
 /**
- * Class representing the Images API.
- *
- * The Images API allows uploading images to the marketplace for use in listings or other resources.
+ * Images API client
  */
 class Images {
-  private readonly endpoint: string;
-  private readonly axios: AxiosInstance;
-  private readonly headers: Record<string, string>;
   public readonly authRequired = true;
+  private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
+  private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the Images class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: IntegrationApi) {
-    this.endpoint = api.endpoint + "/images";
+    this.endpoint = `${api.endpoint}/images`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Uploads an image to the marketplace.
+   * Upload an image
    *
    * @template P
    * @template EP
-   * @param {P & ImagesUploadParameter} params - The image upload parameters, including image data and related metadata.
-   * @param {EP & ExtraParameter} extraParams - Optional additional parameters for the upload request.
-   * @returns {Promise<ImagesResponse<'upload', EP>>} - A promise resolving to the upload response.
+   * @param {P & ImagesUploadParameter} params - Upload parameters (must include `image: File`)
+   * @param {EP} [extraParams] - Optional extra parameters (e.g. `expand: true`)
+   * @returns {Promise<AxiosResponse<ImagesResponse<"upload", EP>>>}
    *
    * @example
-   * const response = await integrationSdk.images.upload({
-   *   image: fileData,
-   * });
-   *
-   * // Access the uploaded image details
-   * const imageDetails = response.data;
+   * const file = input.files[0];
+   * const { data } = await sdk.images.upload({ image: file });
+   * console.log(data.id); // → "img-abc123"
    */
-  async upload<P extends ImagesUploadParameter, EP extends ExtraParameter>(
+  async upload<
+    P extends ImagesUploadParameter,
+    EP extends ExtraParameter | undefined = undefined
+  >(
     params: P,
-    extraParams: EP | void = {} as EP
+    extraParams?: EP
   ): Promise<AxiosResponse<ImagesResponse<"upload", EP>>> {
-    const formDataObj = Object.entries({ ...params, ...extraParams }).reduce(
-      (fd, entry) => {
-        const [key, val] = entry;
-        fd.append(key, val);
-        return fd;
-      },
-      new FormData()
-    );
+    const formData = new FormData();
 
-    return this.axios.post<ImagesResponse<"upload", EP>>(
-      `${this.endpoint}/upload`,
-      formDataObj,
-      { headers: this.headers }
-    );
+    // Append all params (including extraParams)
+    Object.entries({...params, ...extraParams}).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value as any);
+      }
+    });
+
+    return this.axios.post(`${this.endpoint}/upload`, formData, {
+      headers: {
+        ...this.headers,
+        // Let browser set Content-Type with proper boundary
+        "Content-Type": "multipart/form-data",
+      },
+    });
   }
 }
 

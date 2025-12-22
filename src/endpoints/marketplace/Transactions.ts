@@ -1,14 +1,21 @@
 /**
- * @fileoverview Provides the Transactions class for managing transactions in the Sharetribe Marketplace API.
- * This class includes methods for querying, initiating, transitioning, and managing transactions.
+ * @fileoverview Client for managing transactions in the Sharetribe Marketplace API.
  *
- * For more details, refer to the Marketplace API documentation:
- * https://www.sharetribe.com/api-reference/marketplace.html#transactions
+ * Use this to:
+ * - Query your own transactions
+ * - Initiate new orders/inquiries
+ * - Transition transactions (accept, complete, cancel, etc.)
+ * - Perform speculative transitions (dry-run)
+ *
+ * All operations require authentication.
+ *
+ * @see https://www.sharetribe.com/api-reference/marketplace.html#transactions
  */
 
-import { AxiosInstance, AxiosResponse } from "axios";
+import type {AxiosInstance, AxiosResponse} from "axios";
 import MarketplaceApi from "./index";
 import {
+  ExtraParameter,
   TransactionsInitiateParameter,
   TransactionsInitiateSpeculativeParameter,
   TransactionsQueryParameter,
@@ -16,204 +23,150 @@ import {
   TransactionsShowParameter,
   TransactionsTransitionParameter,
   TransactionsTransitionSpeculativeParameter,
-} from "../../types/marketplace/transactions";
-import { ExtraParameter } from "../../types/sharetribe";
+} from "../../types";
 
 /**
- * Class representing the Transactions API.
- *
- * The Transactions API provides methods for managing marketplace transactions, including querying, initiating, and transitioning them.
+ * Transactions API client (current user)
  */
 class Transactions {
-  private readonly endpoint: string;
-  private readonly axios: AxiosInstance;
-  private readonly headers: Record<string, string>;
   public readonly authRequired = true;
+  private readonly axios: AxiosInstance;
+  private readonly endpoint: string;
+  private readonly headers: Record<string, string>;
 
-  /**
-   * Creates an instance of the Transactions class.
-   *
-   * @param {MarketplaceApi} api - The Marketplace API instance providing configuration and request handling.
-   */
   constructor(api: MarketplaceApi) {
-    this.endpoint = api.endpoint + "/transactions";
+    this.endpoint = `${api.endpoint}/transactions`;
     this.axios = api.axios;
     this.headers = api.headers;
   }
 
   /**
-   * Retrieves details of a specific transaction.
+   * Fetch a single transaction by ID
    *
    * @template P
-   * @param {P & TransactionsShowParameter} params - Parameters to identify the transaction.
-   * @returns {Promise<AxiosResponse<TransactionsResponse<'show', P>>>} - A promise resolving to the transaction details.
-   *
-   * @example
-   * const response = await sdk.transactions.show({ id: 'transaction-id' });
-   * const transactionDetails = response.data;
+   * @param {P & TransactionsShowParameter} params
+   * @returns {Promise<AxiosResponse<TransactionsResponse<"show", P>>>}
    */
   async show<P extends TransactionsShowParameter>(
     params: P
   ): Promise<AxiosResponse<TransactionsResponse<"show", P>>> {
-    return this.axios.get<TransactionsResponse<"show", P>>(
-      `${this.endpoint}/show`,
-      {
-        headers: this.headers,
-        params,
-      }
-    );
+    return this.axios.get(`${this.endpoint}/show`, {
+      headers: this.headers,
+      params,
+    });
   }
 
   /**
-   * Queries transactions based on specified filters.
+   * Query your own transactions
    *
    * @template P
-   * @param {P & TransactionsQueryParameter} params - Query parameters for filtering transactions.
-   * @returns {Promise<AxiosResponse<TransactionsResponse<'query', P>>>} - A promise resolving to the query results.
-   *
-   * @example
-   * const response = await sdk.transactions.query({ perPage: 10 });
-   * const transactions = response.data;
+   * @param {P & TransactionsQueryParameter} params
+   * @returns {Promise<AxiosResponse<TransactionsResponse<"query", P>>>}
    */
   async query<P extends TransactionsQueryParameter>(
-    params: P
+    params?: P
   ): Promise<AxiosResponse<TransactionsResponse<"query", P>>> {
-    return this.axios.get<TransactionsResponse<"query", P>>(
-      `${this.endpoint}/query`,
-      {
-        headers: this.headers,
-        params,
-      }
-    );
+    return this.axios.get(`${this.endpoint}/query`, {
+      headers: this.headers,
+      params,
+    });
   }
 
   /**
-   * Initiates a new transaction.
+   * Initiate a new transaction (e.g. place an order)
    *
    * @template P
    * @template EP
-   * @param {P & TransactionsInitiateParameter} params - Parameters for initiating the transaction.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<TransactionsResponse<'initiate', P, EP>>>} - A promise resolving to the initiated transaction details.
-   *
-   * @example
-   * const response = await sdk.transactions.initiate({
-   *   processAlias: 'order',
-   *   transition: 'start',
-   *   params: {}
-   * });
-   * const initiatedTransaction = response.data;
+   * @param {P & TransactionsInitiateParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<TransactionsResponse<"initiate", P, EP>>>}
    */
   async initiate<
     P extends TransactionsInitiateParameter,
-    EP extends ExtraParameter
+    EP extends ExtraParameter | undefined = undefined
   >(
     params: P,
     extraParams?: EP
   ): Promise<AxiosResponse<TransactionsResponse<"initiate", P, EP>>> {
-    return this.axios.post<TransactionsResponse<"initiate", P, EP>>(
+    return this.axios.post(
       `${this.endpoint}/initiate`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 
   /**
-   * Initiates a speculative transaction.
+   * Initiate a transaction speculatively (dry-run)
    *
    * @template P
    * @template EP
-   * @param {P & TransactionsInitiateSpeculativeParameter} params - Parameters for the speculative transaction initiation.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<TransactionsResponse<'initiateSpeculative', P, EP>>>} - A promise resolving to the speculative transaction details.
-   *
-   * @example
-   * const response = await sdk.transactions.initiateSpeculative({
-   *   processAlias: 'order',
-   *   transition: 'start',
-   *   params: {}
-   * });
-   * const speculativeTransaction = response.data;
+   * @param {P & TransactionsInitiateSpeculativeParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<TransactionsResponse<"initiateSpeculative", P, EP>>>}
    */
   async initiateSpeculative<
     P extends TransactionsInitiateSpeculativeParameter,
-    EP extends ExtraParameter
+    EP extends ExtraParameter | undefined = undefined
   >(
     params: P,
     extraParams?: EP
-  ): Promise<
-    AxiosResponse<TransactionsResponse<"initiateSpeculative", P, EP>>
-  > {
-    return this.axios.post<TransactionsResponse<"initiateSpeculative", P, EP>>(
+  ): Promise<AxiosResponse<TransactionsResponse<"initiateSpeculative", P, EP>>> {
+    return this.axios.post(
       `${this.endpoint}/initiate_speculative`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 
   /**
-   * Transitions an existing transaction.
+   * Transition a transaction to a new state
    *
    * @template P
    * @template EP
-   * @param {P & TransactionsTransitionParameter} params - Parameters for transitioning the transaction.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<TransactionsResponse<'transition', P, EP>>>} - A promise resolving to the transitioned transaction details.
+   * @param {P & TransactionsTransitionParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<TransactionsResponse<"transition", P, EP>>>}
    *
    * @example
-   * const response = await sdk.transactions.transition({
-   *   id: 'transaction-id',
-   *   transition: 'complete',
-   *   params: { review: 5 }
+   * await sdk.transactions.transition({
+   *   id: "tx-abc123",
+   *   transition: "transition/confirm-payment"
    * });
-   * const transitionedTransaction = response.data;
    */
   async transition<
     P extends TransactionsTransitionParameter,
-    EP extends ExtraParameter
+    EP extends ExtraParameter | undefined = undefined
   >(
     params: P,
     extraParams?: EP
   ): Promise<AxiosResponse<TransactionsResponse<"transition", P, EP>>> {
-    return this.axios.post<TransactionsResponse<"transition", P, EP>>(
+    return this.axios.post(
       `${this.endpoint}/transition`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 
   /**
-   * Transitions a speculative transaction.
+   * Perform a speculative transition (dry-run)
    *
    * @template P
    * @template EP
-   * @param {P & TransactionsTransitionSpeculativeParameter} params - Parameters for the speculative transaction transition.
-   * @param {EP | void} extraParams - Optional extra parameters for the request.
-   * @returns {Promise<AxiosResponse<TransactionsResponse<'transitionSpeculative', P, EP>>>} - A promise resolving to the speculative transitioned transaction details.
-   *
-   * @example
-   * const response = await sdk.transactions.transitionSpeculative({
-   *   id: 'transaction-id',
-   *   transition: 'complete',
-   *   params: { review: 5 }
-   * });
-   * const speculativeTransitionedTransaction = response.data;
+   * @param {P & TransactionsTransitionSpeculativeParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<TransactionsResponse<"transitionSpeculative", P, EP>>>}
    */
   async transitionSpeculative<
     P extends TransactionsTransitionSpeculativeParameter,
-    EP extends ExtraParameter
+    EP extends ExtraParameter | undefined = undefined
   >(
     params: P,
     extraParams?: EP
-  ): Promise<
-    AxiosResponse<TransactionsResponse<"transitionSpeculative", P, EP>>
-  > {
-    return this.axios.post<
-      TransactionsResponse<"transitionSpeculative", P, EP>
-    >(
+  ): Promise<AxiosResponse<TransactionsResponse<"transitionSpeculative", P, EP>>> {
+    return this.axios.post(
       `${this.endpoint}/transition_speculative`,
-      { ...params, ...extraParams },
-      { headers: this.headers }
+      {...params, ...extraParams},
+      {headers: this.headers}
     );
   }
 }

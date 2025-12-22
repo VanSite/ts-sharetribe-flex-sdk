@@ -1,11 +1,11 @@
 /**
  * @fileoverview Type definitions for Transactions in the Sharetribe Marketplace API.
- * This file defines the structure of transactions, their parameters, and response types for API requests.
  */
 
 import {
   ApiMeta,
   ApiParameter,
+  ExtraParameter,
   ExtraParameterType,
   Money,
   QueryMeta,
@@ -14,9 +14,10 @@ import {
   RelationshipTypeMap,
   UUID,
 } from "../sharetribe";
-import { BookingState } from "./bookings";
+import {BookingState} from "./bookings";
+
 /**
- * Available endpoints for the Transactions API.
+ * Available endpoints
  */
 export type TransactionsEndpoints =
   | "show"
@@ -28,7 +29,7 @@ export type TransactionsEndpoints =
   | "updateMetadata";
 
 /**
- * Fields available for relationships in transactions.
+ * Relationship fields that can be included
  */
 export type TransactionsRelationshipsFields =
   | "marketplace"
@@ -54,17 +55,17 @@ export type TransactionsRelationshipsFields =
   | "messages.sender";
 
 /**
- * Roles for parties in a transaction.
+ * Roles in a transaction
  */
-export type TransactionsParties = "customer" | "provider";
+export type TransactionParty = "customer" | "provider";
 
 /**
- * Varieties of transactions.
+ * Transaction variety
  */
-export type TransactionsVariety = "sale" | "order";
+export type TransactionVariety = "sale" | "order";
 
 /**
- * Defines a line item within a transaction.
+ * Line item in a transaction
  */
 export interface LineItem {
   code: string;
@@ -75,48 +76,53 @@ export interface LineItem {
   percentage?: number;
   reversal?: boolean;
   lineTotal: Money;
-  includeFor: TransactionsParties[];
+  includeFor: TransactionParty[];
 }
 
 /**
- * Defines a transition in a transaction.
+ * Process transition record
  */
-export type Transition = {
+export interface Transition {
   transition: string;
   createdAt: Date | string;
-  by: TransactionsParties;
-};
+  by: TransactionParty;
+}
 
 /**
- * Defines the structure of a transaction.
+ * Core transaction attributes (always present)
+ */
+export interface TransactionAttributes {
+  createdAt: Date;
+  processName: string;
+  processVersion: number;
+  lastTransition: string;
+  lastTransitionedAt: string | Date;
+  payinTotal: Money;
+  payoutTotal: Money;
+  lineItems: LineItem[];
+  protectedData: TransactionProtectedData & TransactionCustomProtectedData;
+  metadata: TransactionMetadata & TransactionCustomMetadata;
+  transitions: Transition[];
+}
+
+/**
+ * Base transaction type
  */
 export interface Transaction {
   id: UUID;
   type: "transaction";
-  attributes: {
-    createdAt: Date;
-    processName: string;
-    processVersion: number;
-    lastTransition: string;
-    lastTransitionedAt: string;
-    payinTotal: Money;
-    payoutTotal: Money;
-    lineItems: LineItem[];
-    protectedData: TransactionProtectedData & TransactionCustomProtectedData;
-    metadata: TransactionMetadata & TransactionCustomMetadata;
-    transitions: Transition[];
-  };
+  attributes: TransactionAttributes;
 }
 
 /**
- * Transaction with additional relationship information.
+ * Transaction with relationships
  */
 export interface TransactionWithRelationships extends Transaction {
   relationships: {
     marketplace: Relationship<false, "marketplace">;
     listing: Relationship<false, "listing">;
-    provider: Relationship<false, "user">;
-    customer: Relationship<false, "user">;
+    provider: Relationship<false, "provider">;
+    customer: Relationship<false, "customer">;
     booking: Relationship<false, "booking">;
     stockReservation: Relationship<false, "stockReservation">;
     reviews: Relationship<true, "reviews">;
@@ -125,36 +131,35 @@ export interface TransactionWithRelationships extends Transaction {
 }
 
 /**
- * Represents a transaction type based on the inclusion of relationships.
+ * Select type based on include
  */
-export type TransactionType<R extends boolean> = R extends true
-  ? TransactionWithRelationships
-  : Transaction;
+export type TransactionType<R extends boolean> =
+  R extends true ? TransactionWithRelationships : Transaction;
 
 /**
- * Base parameters for Transactions API requests.
+ * Base API parameter
  */
 export interface TransactionsParameter extends ApiParameter {
   include?: TransactionsRelationshipsFields[];
 }
 
 /**
- * Parameters for fetching a specific transaction.
+ * Show endpoint
  */
 export interface TransactionsShowParameter extends TransactionsParameter {
   id: UUID | string;
 }
 
 /**
- * Parameters for querying transactions.
+ * Query endpoint (with optional privileged fields when I = true)
  */
 export type TransactionsQueryParameter<I extends boolean = false> =
-  TransactionsParameter & {
-    [keyof: QueryMeta]: string;
-    [keyof: QueryProt]: string;
+  TransactionsParameter &
+  {
+    // Public / normal filters
     bookingEnd?: string;
     bookingStart?: string;
-    bookingStates?: Array<BookingState>;
+    bookingStates?: BookingState[];
     createdAtEnd?: string;
     createdAtStart?: string;
     hasBooking?: boolean;
@@ -164,8 +169,11 @@ export type TransactionsQueryParameter<I extends boolean = false> =
     lastTransitionedAtStart?: string;
     lastTransitions?: string[];
     listingId?: UUID | string;
-    only?: TransactionsVariety;
+    only?: TransactionVariety;
     processName?: string;
+    stockReservationStates?: string[];
+    userId?: UUID | string;
+
     sort?:
       | "bookingEnd"
       | "bookingStart"
@@ -174,139 +182,127 @@ export type TransactionsQueryParameter<I extends boolean = false> =
       | "lastTransitionedAt"
       | `meta_${string}`
       | `prot_${string}`;
-    stockReservationStates?: string[];
-    userId?: UUID | string;
+
+    // Dynamic indexed query fields
+    [keyof: QueryMeta]: string | undefined;
+    [keyof: QueryProt]: string | undefined;
   } & (I extends true
-      ? {
-          customerId?: UUID | string;
-          providerId?: UUID | string;
-        }
-      : {});
+  ? {
+    customerId?: UUID | string;
+    providerId?: UUID | string;
+  }
+  : {});
 
 /**
- * Parameters for initiating a transaction.
+ * Initiate / Speculative initiate
  */
 export interface TransactionsInitiateParameter extends TransactionsParameter {
   processAlias: string;
   transition: string;
-  params: unknown;
+  params?: unknown;
 }
 
-/**
- * Parameters for speculative initiation of a transaction.
- */
 export interface TransactionsInitiateSpeculativeParameter
-  extends TransactionsParameter {
-  processAlias: string;
-  transition: string;
-  params: unknown;
+  extends TransactionsInitiateParameter {
 }
 
 /**
- * Parameters for transitioning a transaction.
+ * Transition / Speculative transition
  */
 export interface TransactionsTransitionParameter extends TransactionsParameter {
   id: UUID | string;
   transition: string;
-  params: unknown;
+  params?: unknown;
 }
 
-/**
- * Parameters for speculative transitioning of a transaction.
- */
 export interface TransactionsTransitionSpeculativeParameter
-  extends TransactionsParameter {
-  id: UUID | string;
-  transition: string;
-  params: unknown;
+  extends TransactionsTransitionParameter {
 }
 
 /**
- * Parameters for updating transaction metadata.
+ * Update metadata
  */
-export interface TransactionsUpdateMetadataParameter
-  extends TransactionsParameter {
+export interface TransactionsUpdateMetadataParameter extends TransactionsParameter {
   id: UUID | string;
-  metadata: TransactionMetadata & TransactionCustomMetadata;
+  metadata?: TransactionMetadata & TransactionCustomMetadata;
 }
 
 /**
- * Protected data structure for a transaction.
+ * Custom data structures
  */
 export interface TransactionProtectedData {
-  [key: string]: any;
+  [key: string]: any
 }
 
-/**
- * Custom protected data structure for a transaction.
- */
-export interface TransactionCustomProtectedData {}
+export interface TransactionCustomProtectedData extends Record<string, unknown> {
+}
 
-/**
- * Metadata structure for a transaction.
- */
 export interface TransactionMetadata {
-  [key: string]: any;
+  [key: string]: any
+}
+
+export interface TransactionCustomMetadata extends Record<string, unknown> {
 }
 
 /**
- * Custom metadata structure for a transaction.
+ * Helpers
  */
-export interface TransactionCustomMetadata {}
+type HasInclude<P> = P extends { include: infer I extends TransactionsRelationshipsFields[] }
+  ? I
+  : never;
 
+type IncludesRelationships<P> = HasInclude<P> extends never ? false : true;
+
+type IncludedResources<P> =
+  HasInclude<P> extends infer Fields extends TransactionsRelationshipsFields[]
+    ? RelationshipTypeMap[Fields[number]][]
+    : never;
+
+/**
+ * Expand behavior (for transition responses)
+ */
+type ExpandResult<T, EP extends ExtraParameter | undefined> =
+  EP extends { expand: true }
+    ? T
+    : EP extends { expand: false }
+      ? Omit<T, "attributes">
+      : Omit<T, "attributes">;
+
+/**
+ * Union of all parameter types
+ */
 type AllTransactionsParameter =
   | TransactionsShowParameter
-  | TransactionsQueryParameter
+  | TransactionsQueryParameter<any>
   | TransactionsInitiateParameter
   | TransactionsInitiateSpeculativeParameter
   | TransactionsTransitionParameter
-  | TransactionsTransitionSpeculativeParameter;
-
-type TransactionsType<P extends AllTransactionsParameter> =
-  "include" extends keyof P
-    ? P["include"] extends TransactionsRelationshipsFields[]
-      ? true
-      : false
-    : false;
-
-type IncludedType<P extends AllTransactionsParameter> =
-  "include" extends keyof P
-    ? P["include"] extends (keyof RelationshipTypeMap)[]
-      ? Array<RelationshipTypeMap[P["include"][number]]>
-      : never
-    : never;
-
-type ExpandReturnType<P extends AllTransactionsParameter, EP> = EP extends {
-  expand: true;
-}
-  ? TransactionType<TransactionsType<P>>
-  : EP extends { expand: false }
-  ? Omit<TransactionType<TransactionsType<P>>, "attributes">
-  : Omit<TransactionType<TransactionsType<P>>, "attributes">;
+  | TransactionsTransitionSpeculativeParameter
+  | TransactionsUpdateMetadataParameter;
 
 /**
- * Defines the data type based on the Transactions API endpoint and parameters.
+ * Final response data type
  */
-type DataType<
+type TransactionsResponseData<
   E extends TransactionsEndpoints,
   P extends AllTransactionsParameter,
-  EP extends ExtraParameterType | undefined
+  EP extends ExtraParameter | undefined
 > = E extends "show"
-  ? TransactionType<TransactionsType<P>> // Return a single transaction for 'show'
+  ? TransactionType<IncludesRelationships<P>>
   : E extends "query"
-  ? TransactionType<TransactionsType<P>>[] // Return an array for 'query'
-  : E extends "transition"
-  ? ExpandReturnType<P, EP>
-  : never;
+    ? TransactionType<IncludesRelationships<P>>[]
+    : E extends "initiate" | "initiateSpeculative" | "transition" | "transitionSpeculative" | "updateMetadata"
+      ? ExpandResult<TransactionType<IncludesRelationships<P>>, EP>
+      : never;
 
 /**
- * Response structure for Transactions API calls.
+ * Final response type
  */
 export type TransactionsResponse<
   E extends TransactionsEndpoints,
   P extends AllTransactionsParameter,
   EP extends ExtraParameterType = undefined
 > = {
-  data: DataType<E, P, EP>;
-} & ("include" extends keyof P ? { included: IncludedType<P> } : {}) &
+  data: TransactionsResponseData<E, P, EP>;
+} & (IncludesRelationships<P> extends true ? { included: IncludedResources<P> } : {}) &
   (E extends "query" ? { meta: ApiMeta } : {});

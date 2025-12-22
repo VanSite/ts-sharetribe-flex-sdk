@@ -1,55 +1,69 @@
 /**
- * @fileoverview Type definitions for Password Reset functionality in the Sharetribe Marketplace API.
- * This file defines the structure of password reset parameters and responses for the API endpoints.
+ * @fileoverview Type definitions for Password Reset operations in the Sharetribe Marketplace API.
  */
 
-import { ApiParameter, ExtraParameterType, UUID } from "../sharetribe";
+import {ApiParameter, ExtraParameterType, UUID} from "../sharetribe";
 
-// Supported API endpoints for password reset operations.
+/**
+ * Available endpoints
+ */
 export type PasswordResetEndpoints = "request" | "reset";
 
-// Structure of a Password Reset object.
+/**
+ * Password reset resource (usually empty or minimal)
+ */
 export interface PasswordReset {
   id: UUID;
   type: "passwordReset";
-  attributes?: unknown;
+  attributes?: Record<string, never>; // Intentionally empty in practice
 }
 
-// Base parameters for password reset operations.
-export interface PasswordResetParameter extends ApiParameter {}
+/**
+ * Base request parameters
+ */
+export interface PasswordResetParameter extends ApiParameter {
+}
 
-// Parameters for requesting a password reset.
-export interface PasswordResetRequestParams extends PasswordResetParameter {
+/**
+ * Request password reset (send email)
+ */
+export interface PasswordResetRequestParameter extends PasswordResetParameter {
   email: string;
 }
 
-// Parameters for resetting the password.
-export interface PasswordResetResetParams extends PasswordResetParameter {
+/**
+ * Complete password reset using token
+ */
+export interface PasswordResetResetParameter extends PasswordResetParameter {
   email: string;
   passwordResetToken: string;
   newPassword: string;
 }
 
-// Utility types for handling return types and responses.
-type ExpandReturnType<EP> = EP extends { expand: true }
-  ? PasswordReset
-  : EP extends { expand: false }
-  ? Omit<PasswordReset, "attributes">
-  : Omit<PasswordReset, "attributes">;
+/**
+ * Expand behavior
+ */
+type ExpandResult<EP extends ExtraParameterType | undefined> =
+  EP extends { expand: true }
+    ? PasswordReset
+    : EP extends { expand: false }
+      ? Omit<PasswordReset, "attributes">
+      : Omit<PasswordReset, "attributes">;
 
-type DataType<
+/**
+ * Response data per endpoint
+ */
+type ResponseData<
   E extends PasswordResetEndpoints,
-  EP extends ExtraParameterType
-> = E extends "request"
-  ? ExpandReturnType<EP>
-  : E extends "reset"
-  ? ExpandReturnType<EP>
-  : never;
+  EP extends ExtraParameterType | undefined
+> = E extends "request" | "reset" ? ExpandResult<EP> : never;
 
-// Response type for password reset operations.
+/**
+ * Final response type
+ */
 export type PasswordResetResponse<
   E extends PasswordResetEndpoints,
-  EP extends ExtraParameterType = undefined
+  EP extends ExtraParameterType | undefined = undefined
 > = {
-  data: DataType<E, EP>;
+  data: ResponseData<E, EP>;
 };

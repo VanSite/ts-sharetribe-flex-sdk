@@ -209,3 +209,6 @@ fabric.properties
 
 # Exclude dist folder
 /dist
+
+#npm
+.npmrc

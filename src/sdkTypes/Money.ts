@@ -4,8 +4,22 @@
  */
 
 import {SdkType} from "../types";
+
 // Define a static class name
 const MONEY_SDK_TYPE = "Money";
+
+// ISO 4217 currency codes are 3 uppercase letters
+const CURRENCY_REGEX = /^[A-Z]{3}$/;
+
+/**
+ * Error thrown when invalid Money values are provided.
+ */
+export class InvalidMoneyError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "InvalidMoneyError";
+  }
+}
 
 /**
  * Class representing a monetary value.
@@ -22,7 +36,8 @@ class Money implements SdkType {
    * Creates an instance of the Money class.
    *
    * @param {number} amount - The monetary amount, represented in the smallest unit of the currency (e.g., cents for USD).
-   * @param {string} currency - The currency code, represented as a three-character string (e.g., "USD").
+   * @param {string} currency - The currency code, represented as a three-character uppercase string (e.g., "USD").
+   * @throws {InvalidMoneyError} If the amount is not an integer or currency is not a valid ISO 4217 code.
    * @example
    * const money = new Money(1000, 'USD');
    * console.log(money); // Outputs: Money { amount: 1000, currency: 'USD' }
@@ -30,26 +45,18 @@ class Money implements SdkType {
   constructor(amount: number, currency: string) {
     this._sdkType = MONEY_SDK_TYPE;
 
-    let isValid = true;
-
-    // Validate the amount.
-    if (!Number.isInteger(amount)) {
-      console.warn("Amount must be an integer.", amount);
-      isValid = false;
+    // Validate the amount
+    if (typeof amount !== "number" || !Number.isInteger(amount)) {
+      throw new InvalidMoneyError(`Amount must be an integer, received: ${amount}`);
     }
 
-    // Validate the currency code.
-    if (currency.length < 3) {
-      console.warn("Currency must be at least 3 characters long.");
-      isValid = false;
+    // Validate the currency code (ISO 4217 format)
+    if (typeof currency !== "string" || !CURRENCY_REGEX.test(currency)) {
+      throw new InvalidMoneyError(`Currency must be a 3-letter uppercase ISO 4217 code, received: "${currency}"`);
     }
 
     this.amount = amount;
     this.currency = currency;
-
-    if (!isValid) {
-      console.warn("Invalid Money values provided.");
-    }
   }
 }
 

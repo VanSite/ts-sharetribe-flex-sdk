@@ -34,6 +34,7 @@ import OwnListings from "./OwnListings";
 import PasswordReset from "./PasswordReset";
 import ProcessTransitions from "./ProcessTransitions";
 import Reviews from "./Reviews";
+import SitemapData from "./SitemapData";
 import Stock from "./Stock";
 import StockAdjustments from "./StockAdjustments";
 import StripeAccount from "./StripeAccount";
@@ -73,6 +74,7 @@ class MarketplaceApi {
   readonly passwordReset: PasswordReset;
   readonly processTransitions: ProcessTransitions;
   readonly reviews: Reviews;
+  readonly sitemapData: SitemapData;
   readonly stock: Stock;
   readonly stockAdjustments: StockAdjustments;
   readonly stripeAccount: StripeAccount;
@@ -103,6 +105,7 @@ class MarketplaceApi {
     this.passwordReset = new PasswordReset(this);
     this.processTransitions = new ProcessTransitions(this);
     this.reviews = new Reviews(this);
+    this.sitemapData = new SitemapData(this);
     this.stock = new Stock(this);
     this.stockAdjustments = new StockAdjustments(this);
     this.stripeAccount = new StripeAccount(this);

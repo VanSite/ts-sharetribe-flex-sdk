@@ -12,6 +12,7 @@ export * from "./marketplace/ownListings";
 export * from "./marketplace/passwordReset";
 export * from "./marketplace/processTransitions";
 export * from "./marketplace/reviews";
+export * from "./marketplace/sitemapData";
 export * from "./marketplace/stock";
 export * from "./marketplace/stockAdjustment";
 export * from "./marketplace/stockReservations";

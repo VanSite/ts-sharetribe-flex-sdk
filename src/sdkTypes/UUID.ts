@@ -3,11 +3,21 @@
  * This class allows for the creation and validation of UUIDs, using the `uuid` library.
  */
 
-import {v4 as uuidv4} from "uuid";
+import {v4 as uuidv4, validate as uuidValidate} from "uuid";
 import {SdkType} from "../types";
 
 // Define a static class name
 const UUID_SDK_TYPE = "UUID";
+
+/**
+ * Error thrown when an invalid UUID is provided.
+ */
+export class InvalidUUIDError extends Error {
+  constructor(value: unknown) {
+    super(`Invalid UUID: expected a valid UUID string, received ${typeof value === "string" ? `"${value}"` : typeof value}`);
+    this.name = "InvalidUUIDError";
+  }
+}
 
 /**
  * Class representing a UUID (Universally Unique Identifier).
@@ -22,6 +32,7 @@ class UUID implements SdkType {
    * Creates an instance of the UUID class.
    *
    * @param {string} [uuid] - An optional UUID string. If not provided, a new UUID will be generated.
+   * @throws {InvalidUUIDError} If the provided value is not a valid UUID string.
    * @example
    * const id = new UUID();
    * console.log(id.toString()); // Outputs a newly generated UUID.
@@ -32,13 +43,15 @@ class UUID implements SdkType {
   constructor(uuid?: string) {
     this._sdkType = UUID_SDK_TYPE;
 
-    if (uuid !== undefined && typeof uuid !== "string") {
-      console.warn("uuid must be a string");
-      // If it's not a string, fallback to a generated UUID.
+    if (uuid === undefined) {
+      // Generate a new UUID if none provided
       this.uuid = uuidv4();
+    } else if (typeof uuid !== "string") {
+      throw new InvalidUUIDError(uuid);
+    } else if (!uuidValidate(uuid)) {
+      throw new InvalidUUIDError(uuid);
     } else {
-      // Use the provided UUID or generate a new one.
-      this.uuid = uuid || uuidv4();
+      this.uuid = uuid;
     }
   }
 

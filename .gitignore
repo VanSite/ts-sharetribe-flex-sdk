@@ -211,4 +211,6 @@ fabric.properties
 /dist
 
 #npm
-.npmrc
+
+#claude
+.claude/settings.local.json

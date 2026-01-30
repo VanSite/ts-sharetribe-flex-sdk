@@ -12,6 +12,42 @@ import {createTransitConverters} from "./transit";
 import axiosRetry, {IAxiosRetryConfig} from "axios-retry";
 import {createSharetribeApiError} from "./util";
 
+// Mutex for token refresh to prevent concurrent refresh requests
+let isRefreshing = false;
+let refreshSubscribers: Array<(token: string) => void> = [];
+
+const subscribeTokenRefresh = (cb: (token: string) => void) => {
+  refreshSubscribers.push(cb);
+};
+
+const onTokenRefreshed = (token: string) => {
+  refreshSubscribers.forEach((cb) => cb(token));
+  refreshSubscribers = [];
+};
+
+/**
+ * Sanitizes error objects before logging to prevent sensitive data exposure.
+ */
+const sanitizeError = (error: unknown): object => {
+  if (!(error instanceof Error)) {
+    return {message: String(error)};
+  }
+
+  const sanitized: Record<string, unknown> = {
+    name: error.name,
+    message: error.message,
+  };
+
+  if (error instanceof AxiosError) {
+    sanitized.status = error.response?.status;
+    sanitized.url = error.config?.url;
+    sanitized.method = error.config?.method;
+    // Explicitly exclude: config.headers (may contain Authorization), config.data (may contain credentials)
+  }
+
+  return sanitized;
+};
+
 export const QUERY_PARAMETERS = [
   "include",
   "page",
@@ -121,23 +157,42 @@ export async function handleResponseFailure(
     if (error.response && isTokenExpired(error.response.status)) {
       const token = await sdk.sdkConfig.tokenStore.getToken();
       if (token && token.refresh_token) {
-        // Get a new token
-        const response = await sdk.auth.token<RefreshTokenRequest>({
-          client_id: sdk.sdkConfig.clientId,
-          grant_type: "refresh_token",
-          refresh_token: token.refresh_token,
-        });
+        // Use mutex to prevent concurrent token refresh
+        if (isRefreshing) {
+          // Wait for the ongoing refresh to complete
+          return new Promise((resolve, reject) => {
+            subscribeTokenRefresh((newToken: string) => {
+              originalRequest.headers.Authorization = `Bearer ${newToken}`;
+              resolve(sdk.axios(originalRequest));
+            });
+          });
+        }
 
-        // Update the request with the new token
-        originalRequest.headers.Authorization = prepareAuthorizationHeader(
-          response.data
-        );
+        isRefreshing = true;
 
-        // Store the new token
-        sdk.sdkConfig.tokenStore.setToken(response.data);
+        try {
+          // Get a new token
+          const response = await sdk.auth.token<RefreshTokenRequest>({
+            client_id: sdk.sdkConfig.clientId,
+            grant_type: "refresh_token",
+            refresh_token: token.refresh_token,
+          });
 
-        // Retry the request
-        return sdk.axios(originalRequest);
+          // Store the new token
+          sdk.sdkConfig.tokenStore.setToken(response.data);
+
+          // Notify all waiting requests
+          onTokenRefreshed(response.data.access_token);
+
+          // Update the request with the new token
+          originalRequest.headers.Authorization = prepareAuthorizationHeader(
+            response.data
+          );
+
+          return sdk.axios(originalRequest);
+        } finally {
+          isRefreshing = false;
+        }
       }
 
       if (isAuthTokenUnauthorized(error)) {
@@ -173,7 +228,7 @@ export async function handleResponseFailure(
     ) {
       const token = await sdk.sdkConfig.tokenStore.getToken();
       if (token?.scope !== "trusted:user") {
-        console.error("Token is not trusted:user");
+        console.error("Token does not have required scope");
         return Promise.reject(createSharetribeApiError(error));
       }
     }
@@ -181,7 +236,8 @@ export async function handleResponseFailure(
     // Default error handling
     return Promise.reject(createSharetribeApiError(error));
   } catch (e) {
-    console.error("Error in handleResponseFailure:", e);
+    // Sanitize error before logging to prevent sensitive data exposure
+    console.error("Error in handleResponseFailure:", sanitizeError(e));
     return Promise.reject(e);
   }
 }

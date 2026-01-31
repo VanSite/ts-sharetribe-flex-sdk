@@ -11,6 +11,10 @@ Transit is a format for encoding data values, similar to JSON but with support f
 SDK types are automatically serialized/deserialized:
 
 ```typescript
+import { sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { Money, LatLng } = sdkTypes;
+
 // SDK automatically converts to Transit
 await sdk.ownListings.create({
   price: new Money(5000, 'USD'),  // Serialized as Transit Money
@@ -36,7 +40,10 @@ console.log(data.data.attributes.price instanceof Money); // true
 For advanced use cases:
 
 ```typescript
-import { read, write } from 'ts-sharetribe-flex-sdk';
+import { transit, sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { read, write } = transit;
+const { UUID, Money } = sdkTypes;
 
 // Write SDK types to Transit string
 const transitString = write({
@@ -65,7 +72,9 @@ const sdk = new SharetribeSdk({
 Transform SDK types to/from application-specific types:
 
 ```typescript
-import { SharetribeSdk, Money, TypeHandler } from 'ts-sharetribe-flex-sdk';
+import { SharetribeSdk, sdkTypes, TypeHandler } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { Money } = sdkTypes;
 
 // Custom Dinero.js integration
 const moneyHandler: TypeHandler = {
@@ -98,7 +107,7 @@ console.log(data.data.attributes.price); // Dinero object
 Create custom Transit converters:
 
 ```typescript
-import { reader, writer, createTransitConverters } from 'ts-sharetribe-flex-sdk';
+import { reader, writer, createTransitConverters } from '@vansite/ts-sharetribe-flex-sdk';
 
 // Create with custom type handlers
 const { reader: r, writer: w } = createTransitConverters([moneyHandler]);
@@ -113,6 +122,10 @@ const serialized = w.write(data);
 When storing SDK types as JSON:
 
 ```typescript
+import { sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { Money, LatLng } = sdkTypes;
+
 const listing = {
   price: new Money(5000, 'USD'),
   location: new LatLng(37.7749, -122.4194),

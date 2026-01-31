@@ -5,7 +5,10 @@ Common usage patterns for the TypeScript Sharetribe Flex SDK.
 ## Client-Side: Listing Search
 
 ```typescript
-import { SharetribeSdk, BrowserStore, LatLng, LatLngBounds } from 'ts-sharetribe-flex-sdk';
+import { SharetribeSdk, TokenStores, sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { BrowserStore } = TokenStores;
+const { LatLng, LatLngBounds } = sdkTypes;
 
 const sdk = new SharetribeSdk({
   clientId: process.env.SHARETRIBE_CLIENT_ID!,
@@ -39,7 +42,9 @@ async function searchListings(query: string, center: { lat: number; lng: number 
 ## Client-Side: User Authentication
 
 ```typescript
-import { SharetribeSdk, BrowserStore } from 'ts-sharetribe-flex-sdk';
+import { SharetribeSdk, TokenStores } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { BrowserStore } = TokenStores;
 
 const sdk = new SharetribeSdk({
   clientId: process.env.SHARETRIBE_CLIENT_ID!,
@@ -76,7 +81,9 @@ async function logout() {
 ## Client-Side: Create Listing
 
 ```typescript
-import { SharetribeSdk, Money, LatLng, UUID } from 'ts-sharetribe-flex-sdk';
+import { SharetribeSdk, sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { Money, LatLng, UUID } = sdkTypes;
 
 async function createListing(sdk: SharetribeSdk, listingData: {
   title: string;
@@ -107,7 +114,9 @@ async function createListing(sdk: SharetribeSdk, listingData: {
 ```typescript
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { SharetribeSdk, ExpressStore } from 'ts-sharetribe-flex-sdk';
+import { SharetribeSdk, TokenStores } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { ExpressStore } = TokenStores;
 
 const app = express();
 app.use(cookieParser());
@@ -169,7 +178,9 @@ app.get('/api/listings', async (req, res) => {
 ## Server-Side: Integration API Admin
 
 ```typescript
-import { IntegrationSdk, UUID, Money } from 'ts-sharetribe-flex-sdk';
+import { IntegrationSdk, sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { UUID, Money } = sdkTypes;
 
 const sdk = new IntegrationSdk({
   clientId: process.env.SHARETRIBE_CLIENT_ID!,
@@ -221,7 +232,7 @@ async function processEvents(lastSequenceId?: number) {
 ## Handling Errors
 
 ```typescript
-import { SharetribeSdk } from 'ts-sharetribe-flex-sdk';
+import { SharetribeSdk } from '@vansite/ts-sharetribe-flex-sdk';
 import { AxiosError } from 'axios';
 
 async function safeApiCall<T>(fn: () => Promise<T>): Promise<T | null> {

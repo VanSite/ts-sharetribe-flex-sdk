@@ -130,15 +130,15 @@ const store = sharetribeSdk.tokenStore.memoryStore();
 **after:**
 
 ```javascript
-const { TokenStore } = require("@vansite/ts-sharetribe-flex-sdk");
-const store = new TokenStore.MemoryStore();
+const { TokenStores } = require("@vansite/ts-sharetribe-flex-sdk");
+const store = new TokenStores.MemoryStore();
 ```
 
 or
 
 ```javascript
-const { TokenStore } = require("@vansite/ts-sharetribe-flex-sdk");
-const cookieTokenStore = new TokenStore.ExpressStore({
+const { TokenStores } = require("@vansite/ts-sharetribe-flex-sdk");
+const cookieTokenStore = new TokenStores.ExpressStore({
   clientId: "client-id",
   req,
   secure: true,

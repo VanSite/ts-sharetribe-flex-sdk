@@ -93,7 +93,9 @@ const info = await sdk.authInfo();
 Tokens are automatically stored and refreshed. Configure storage:
 
 ```typescript
-import { MemoryStore, BrowserStore, ExpressStore } from 'ts-sharetribe-flex-sdk';
+import { TokenStores } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { MemoryStore, BrowserStore, ExpressStore } = TokenStores;
 
 // In-memory (default, non-persistent)
 tokenStore: new MemoryStore()

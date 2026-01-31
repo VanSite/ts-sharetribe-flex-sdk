@@ -2,6 +2,14 @@
 
 Token stores manage OAuth2 token persistence across requests.
 
+All token stores are accessed via the `TokenStores` export:
+
+```typescript
+import { TokenStores } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { MemoryStore, BrowserStore, ExpressStore } = TokenStores;
+```
+
 ## TokenStore Interface
 
 ```typescript
@@ -17,7 +25,9 @@ interface TokenStore {
 Default in-memory storage. Non-persistent - tokens lost on page reload/server restart.
 
 ```typescript
-import { SharetribeSdk, MemoryStore } from 'ts-sharetribe-flex-sdk';
+import { SharetribeSdk, TokenStores } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { MemoryStore } = TokenStores;
 
 const sdk = new SharetribeSdk({
   clientId: 'your-client-id',
@@ -35,7 +45,9 @@ const sdk = new SharetribeSdk({
 Cookie-based storage for browser environments.
 
 ```typescript
-import { SharetribeSdk, BrowserStore } from 'ts-sharetribe-flex-sdk';
+import { SharetribeSdk, TokenStores } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { BrowserStore } = TokenStores;
 
 const sdk = new SharetribeSdk({
   clientId: 'your-client-id',
@@ -62,8 +74,10 @@ const sdk = new SharetribeSdk({
 Server-side cookie storage for Express.js applications.
 
 ```typescript
-import { SharetribeSdk, ExpressStore } from 'ts-sharetribe-flex-sdk';
+import { SharetribeSdk, TokenStores } from '@vansite/ts-sharetribe-flex-sdk';
 import cookieParser from 'cookie-parser';
+
+const { ExpressStore } = TokenStores;
 
 app.use(cookieParser());
 
@@ -103,7 +117,7 @@ app.get('/api/listings', async (req, res) => {
 Implement your own storage (Redis, database, etc.):
 
 ```typescript
-import { TokenStore, AuthToken } from 'ts-sharetribe-flex-sdk';
+import { TokenStore, AuthToken } from '@vansite/ts-sharetribe-flex-sdk';
 
 class RedisStore implements TokenStore {
   private redis: RedisClient;
@@ -137,6 +151,8 @@ class RedisStore implements TokenStore {
 4. **Logout:** Token removed on `sdk.logout()`
 
 ```typescript
+import { SharetribeSdk } from '@vansite/ts-sharetribe-flex-sdk';
+
 // Check current state
 const info = await sdk.authInfo();
 if (info.isAnonymous) {

@@ -2,12 +2,22 @@
 
 The SDK provides custom types for proper data serialization with Transit format.
 
+All SDK types are accessed via the `sdkTypes` export:
+
+```typescript
+import { sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { UUID, Money, LatLng, LatLngBounds, BigDecimal } = sdkTypes;
+```
+
 ## UUID
 
 Universally unique identifier for entities.
 
 ```typescript
-import { UUID } from 'ts-sharetribe-flex-sdk';
+import { sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { UUID } = sdkTypes;
 
 // Generate new UUID
 const id = new UUID();
@@ -23,7 +33,9 @@ console.log(listingId.toString()); // "550e8400-e29b-41d4-a716-446655440000"
 ### Validation
 
 ```typescript
-import { UUID, InvalidUUIDError } from 'ts-sharetribe-flex-sdk';
+import { sdkTypes, InvalidUUIDError } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { UUID } = sdkTypes;
 
 try {
   const invalid = new UUID('not-a-uuid');
@@ -39,7 +51,9 @@ try {
 Monetary values in smallest currency units (cents).
 
 ```typescript
-import { Money } from 'ts-sharetribe-flex-sdk';
+import { sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { Money } = sdkTypes;
 
 // $50.00 USD (5000 cents)
 const price = new Money(5000, 'USD');
@@ -51,7 +65,9 @@ console.log(price.currency); // "USD"
 ### Validation
 
 ```typescript
-import { Money, InvalidMoneyError } from 'ts-sharetribe-flex-sdk';
+import { sdkTypes, InvalidMoneyError } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { Money } = sdkTypes;
 
 try {
   // Amount must be integer
@@ -85,7 +101,9 @@ try {
 Geographical coordinates (latitude, longitude).
 
 ```typescript
-import { LatLng } from 'ts-sharetribe-flex-sdk';
+import { sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { LatLng } = sdkTypes;
 
 // San Francisco
 const location = new LatLng(37.7749, -122.4194);
@@ -103,7 +121,9 @@ const loc2 = new LatLng('37.7749', '-122.4194');
 Geographic bounding box (northeast, southwest corners).
 
 ```typescript
-import { LatLng, LatLngBounds } from 'ts-sharetribe-flex-sdk';
+import { sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { LatLng, LatLngBounds } = sdkTypes;
 
 const ne = new LatLng(40.9, -73.7);
 const sw = new LatLng(40.5, -74.3);
@@ -125,7 +145,9 @@ const bounds2 = new LatLngBounds(
 High-precision decimal numbers (stored as strings).
 
 ```typescript
-import { BigDecimal } from 'ts-sharetribe-flex-sdk';
+import { sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { BigDecimal } = sdkTypes;
 
 const decimal = new BigDecimal('123456789.123456789');
 
@@ -140,6 +162,10 @@ console.log(decimal.toString()); // "123456789.123456789"
 All SDK types have an `_sdkType` property for identification:
 
 ```typescript
+import { sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { UUID, Money, LatLng } = sdkTypes;
+
 const id = new UUID();
 console.log(id._sdkType); // "UUID"
 
@@ -153,6 +179,10 @@ console.log(latLng._sdkType); // "LatLng"
 ## Using with API Calls
 
 ```typescript
+import { SharetribeSdk, sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { UUID, Money, LatLng, LatLngBounds } = sdkTypes;
+
 // Listings with Money and LatLng
 await sdk.ownListings.create({
   title: 'Yoga Class',

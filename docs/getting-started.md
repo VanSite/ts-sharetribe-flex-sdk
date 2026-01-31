@@ -5,9 +5,9 @@ TypeScript SDK for Sharetribe Flex Marketplace API and Integration API.
 ## Installation
 
 ```bash
-npm install ts-sharetribe-flex-sdk
+npm install @vansite/ts-sharetribe-flex-sdk
 # or
-yarn add ts-sharetribe-flex-sdk
+yarn add @vansite/ts-sharetribe-flex-sdk
 ```
 
 ## Two SDK Classes
@@ -19,7 +19,7 @@ The SDK provides two main classes for different use cases:
 For frontend/browser operations with public data and user authentication.
 
 ```typescript
-import { SharetribeSdk } from 'ts-sharetribe-flex-sdk';
+import { SharetribeSdk } from '@vansite/ts-sharetribe-flex-sdk';
 
 const sdk = new SharetribeSdk({
   clientId: 'your-client-id',
@@ -37,7 +37,9 @@ const { data } = await sdk.listings.query({
 For backend operations requiring privileged access. **Never use in browser.**
 
 ```typescript
-import { IntegrationSdk } from 'ts-sharetribe-flex-sdk';
+import { IntegrationSdk, sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { Money } = sdkTypes;
 
 const sdk = new IntegrationSdk({
   clientId: 'your-client-id',
@@ -71,7 +73,9 @@ interface SdkConfig {
 ### Browser
 
 ```typescript
-import { SharetribeSdk, BrowserStore } from 'ts-sharetribe-flex-sdk';
+import { SharetribeSdk, TokenStores } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { BrowserStore } = TokenStores;
 
 const sdk = new SharetribeSdk({
   clientId: 'your-client-id',
@@ -82,7 +86,9 @@ const sdk = new SharetribeSdk({
 ### Node.js (Express)
 
 ```typescript
-import { SharetribeSdk, ExpressStore } from 'ts-sharetribe-flex-sdk';
+import { SharetribeSdk, TokenStores } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { ExpressStore } = TokenStores;
 
 app.get('/api/listings', (req, res) => {
   const sdk = new SharetribeSdk({
@@ -103,7 +109,9 @@ app.get('/api/listings', (req, res) => {
 Always use SDK types for proper serialization:
 
 ```typescript
-import { UUID, Money, LatLng, BigDecimal } from 'ts-sharetribe-flex-sdk';
+import { sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { UUID, Money, LatLng, BigDecimal } = sdkTypes;
 
 const listingId = new UUID('550e8400-e29b-41d4-a716-446655440000');
 const price = new Money(5000, 'USD'); // $50.00 in cents

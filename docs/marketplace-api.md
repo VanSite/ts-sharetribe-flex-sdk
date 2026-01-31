@@ -32,6 +32,10 @@ The Marketplace API (`SharetribeSdk`) provides client-side access to public and 
 ## Listings
 
 ```typescript
+import { sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { UUID, LatLng, LatLngBounds } = sdkTypes;
+
 // Query public listings
 const { data } = await sdk.listings.query({
   keywords: 'yoga',
@@ -54,6 +58,10 @@ const { data } = await sdk.listings.show({
 ## Own Listings
 
 ```typescript
+import { sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { Money, LatLng } = sdkTypes;
+
 // Create listing
 await sdk.ownListings.create({
   title: 'Yoga Class',

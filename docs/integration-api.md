@@ -7,7 +7,7 @@ The Integration API (`IntegrationSdk`) provides server-side privileged access fo
 ## Setup
 
 ```typescript
-import { IntegrationSdk } from 'ts-sharetribe-flex-sdk';
+import { IntegrationSdk } from '@vansite/ts-sharetribe-flex-sdk';
 
 const sdk = new IntegrationSdk({
   clientId: 'your-client-id',
@@ -34,6 +34,10 @@ const sdk = new IntegrationSdk({
 ## Listings (Privileged)
 
 ```typescript
+import { sdkTypes } from '@vansite/ts-sharetribe-flex-sdk';
+
+const { UUID, Money, LatLng } = sdkTypes;
+
 // Create listing for any user
 await sdk.listings.create({
   authorId: new UUID('user-id'),

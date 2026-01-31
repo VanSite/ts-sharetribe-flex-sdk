@@ -2,7 +2,7 @@
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-4.x-blue)
 ![MIT License](https://img.shields.io/badge/license-MIT-green)
-![Version](https://img.shields.io/badge/version-2.0.0-blue)
+![Version](https://img.shields.io/badge/version-3.0.0-blue)
 
 This is a **TypeScript SDK** for the [Sharetribe Flex API](https://www.sharetribe.com/api-reference/). It simplifies interaction with the API, providing a more user-friendly and intuitive interface for developers and reduces the size of the SDK.
 
@@ -36,7 +36,7 @@ See also the migration section to see how things changed.
 ```typescript
 import {
   SharetribeSdk,
-  SharetribeIntegrationSdk,
+  IntegrationSdk,
 } from "@vansite/ts-sharetribe-flex-sdk";
 
 // Regular SDK for client-side operations
@@ -49,7 +49,7 @@ sharetribeSdk.authInfo().then((response) => {
 });
 
 // Integration SDK for server-side operations
-const integrationSdk = new SharetribeIntegrationSdk({
+const integrationSdk = new IntegrationSdk({
   clientId: "your-client-id",
   clientSecret: "your-client-secret",
 });

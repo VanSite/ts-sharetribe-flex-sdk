@@ -213,4 +213,5 @@ fabric.properties
 #npm
 
 #claude
-.claude/settings.local.json
+.claude/
+CLAUDE.md

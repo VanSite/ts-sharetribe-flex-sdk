@@ -1,0 +1,28 @@
+{
+  "projectTitle": "TypeScript Sharetribe Flex SDK",
+  "description": "TypeScript SDK for Sharetribe Flex Marketplace API and Integration API with full type safety, cross-platform support, and built-in token management.",
+  "folders": ["docs", "src"],
+  "excludeFolders": [
+    "node_modules",
+    "dist",
+    "lib",
+    "types",
+    "tests",
+    "coverage",
+    ".claude"
+  ],
+  "excludeFiles": [
+    "CHANGELOG.md",
+    "LICENSE.txt",
+    "jest.config.js",
+    "webpack.config.js",
+    "tsconfig.json"
+  ],
+  "rules": [
+    "Use SharetribeSdk for client-side/frontend operations and IntegrationSdk for server-side/backend operations",
+    "IntegrationSdk requires clientSecret and should NEVER be used in browser environments",
+    "Always use sdkTypes (Money, UUID, LatLng, etc.) for proper Transit serialization",
+    "Money amounts are in smallest currency units (e.g., cents for USD)",
+    "Use ExpressStore with httpOnly=true for production server applications"
+  ]
+}

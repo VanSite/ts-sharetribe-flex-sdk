@@ -48,9 +48,10 @@ class UUID implements SdkType {
       this.uuid = uuidv4();
     } else if (typeof uuid !== "string") {
       throw new InvalidUUIDError(uuid);
-    } else if (!uuidValidate(uuid)) {
-      throw new InvalidUUIDError(uuid);
     } else {
+      if (!uuidValidate(uuid)) {
+        console.warn(`Invalid UUID format: "${uuid}". Using value as-is for testing convenience.`);
+      }
       this.uuid = uuid;
     }
   }

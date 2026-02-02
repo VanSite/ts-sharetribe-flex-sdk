@@ -101,7 +101,7 @@ export const prepareAuthorizationHeader = (data: any) =>
 
 // Interceptor handlers
 export function handleResponseSuccess(sdk: SharetribeSdk | IntegrationSdk) {
-  return function onFulfilled(response: AxiosResponse): AxiosResponse {
+  return async function onFulfilled(response: AxiosResponse): Promise<AxiosResponse> {
     if (!sdk.sdkConfig.tokenStore) {
       throw new Error("Token store is not set");
     }
@@ -116,11 +116,11 @@ export function handleResponseSuccess(sdk: SharetribeSdk | IntegrationSdk) {
     }
 
     if (response?.data?.access_token) {
-      sdk.sdkConfig.tokenStore.setToken(response.data);
+      await sdk.sdkConfig.tokenStore.setToken(response.data);
     }
 
     if (response?.data?.revoked) {
-      sdk.sdkConfig.tokenStore.removeToken();
+      await sdk.sdkConfig.tokenStore.removeToken();
     }
 
     return response;
@@ -149,12 +149,18 @@ export async function handleResponseFailure(
     }
 
     if (error.response && isTokenUnauthorized(error.response.status) && originalRequest.url?.includes("/auth/token")) {
-      sdk.sdkConfig.tokenStore.removeToken();
+      await sdk.sdkConfig.tokenStore.removeToken();
       return Promise.reject(createSharetribeApiError(error));
     }
 
     // Handle token refresh on 401/403 errors
     if (error.response && isTokenExpired(error.response.status)) {
+      // Prevent infinite retry loop
+      if (originalRequest._retry) {
+        return Promise.reject(createSharetribeApiError(error));
+      }
+      originalRequest._retry = true;
+
       const token = await sdk.sdkConfig.tokenStore.getToken();
       if (token && token.refresh_token) {
         // Use mutex to prevent concurrent token refresh
@@ -179,7 +185,7 @@ export async function handleResponseFailure(
           });
 
           // Store the new token
-          sdk.sdkConfig.tokenStore.setToken(response.data);
+          await sdk.sdkConfig.tokenStore.setToken(response.data);
 
           // Notify all waiting requests
           onTokenRefreshed(response.data.access_token);
@@ -214,7 +220,7 @@ export async function handleResponseFailure(
         );
 
         // Store the new token
-        sdk.sdkConfig.tokenStore.setToken(response.data);
+        await sdk.sdkConfig.tokenStore.setToken(response.data);
 
         return sdk.axios(originalRequest);
       }
@@ -251,7 +257,7 @@ export async function handleRequestSuccess(
   }
 
   if (requestConfig.url?.includes("auth/revoke")) {
-    const authToken = sdk.sdkConfig.tokenStore.getToken();
+    const authToken = await sdk.sdkConfig.tokenStore.getToken();
     requestConfig.headers.Authorization = prepareAuthorizationHeader(authToken);
     return requestConfig;
   }
@@ -273,7 +279,7 @@ export async function handleRequestSuccess(
 
   // when the request has no Authorization header, we need to add it
   if (!requestConfig.headers.Authorization) {
-    const authToken = sdk.sdkConfig.tokenStore.getToken();
+    const authToken = await sdk.sdkConfig.tokenStore.getToken();
     if (authToken) {
       requestConfig.headers.Authorization =
         prepareAuthorizationHeader(authToken);
@@ -300,7 +306,7 @@ export async function handleRequestSuccess(
         throw new Error("Invalid SDK instance");
       }
 
-      sdk.sdkConfig.tokenStore.setToken(response.data);
+      await sdk.sdkConfig.tokenStore.setToken(response.data);
 
       requestConfig.headers.Authorization = prepareAuthorizationHeader(
         response.data

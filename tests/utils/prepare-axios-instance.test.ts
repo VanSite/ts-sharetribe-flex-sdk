@@ -36,13 +36,14 @@ jest.mock("../../src/utils/convert-types");
 
 describe("handleResponseSuccess", () => {
   let sdk: SharetribeSdk;
-  let onFulfilled: (response: any) => any;
+  let onFulfilled: (response: any) => Promise<any>;
 
   beforeEach(() => {
     sdk = {
       sdkConfig: {
         tokenStore: {
-          setToken: jest.fn(),
+          setToken: jest.fn().mockResolvedValue(undefined),
+          removeToken: jest.fn().mockResolvedValue(undefined),
         },
       },
     } as any;
@@ -50,17 +51,17 @@ describe("handleResponseSuccess", () => {
     onFulfilled = handleResponseSuccess(sdk);
   });
 
-  it("should set token if access_token is present", () => {
+  it("should set token if access_token is present", async () => {
     const response = { data: { access_token: "123456" } };
-    onFulfilled(response);
+    await onFulfilled(response);
     expect(sdk.sdkConfig.tokenStore!.setToken).toHaveBeenCalledWith(
       response.data
     );
   });
 
-  it("should return the response", () => {
+  it("should return the response", async () => {
     const response = { data: {} };
-    expect(onFulfilled(response)).toBe(response);
+    expect(await onFulfilled(response)).toBe(response);
   });
 });
 

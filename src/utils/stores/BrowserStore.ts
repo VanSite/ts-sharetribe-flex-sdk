@@ -37,7 +37,7 @@ class BrowserStore implements TokenStore {
    * Initializes the `BrowserStore` with client-specific options.
    * @param options - Configuration options for the store.
    */
-  constructor({clientId, secure = true, sameSite = "Lax"}: BrowserStoreOptions) {
+  constructor({clientId, secure = false, sameSite = "Lax"}: BrowserStoreOptions) {
     this.secure = secure;
     this.sameSite = sameSite;
     this.key = generateKey(clientId, this.namespace);

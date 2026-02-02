@@ -47,7 +47,7 @@ class ExpressStore implements TokenStore {
    * Initializes the `ExpressStore` with client-specific options.
    * @param options - Configuration options for the store.
    */
-  constructor({clientId, req, res, secure = true, httpOnly = true, sameSite = "lax"}: ExpressStoreOptions) {
+  constructor({clientId, req, res, secure = false, httpOnly = true, sameSite = "lax"}: ExpressStoreOptions) {
     this.key = generateKey(clientId, this.namespace);
     this.secure = secure;
     this.httpOnly = httpOnly;

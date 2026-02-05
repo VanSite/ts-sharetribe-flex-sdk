@@ -2,7 +2,7 @@
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-4.x-blue)
 ![MIT License](https://img.shields.io/badge/license-MIT-green)
-![Version](https://img.shields.io/badge/version-3.0.0-blue)
+![Version](https://img.shields.io/badge/version-3.0.3-blue)
 
 This is a **TypeScript SDK** for the [Sharetribe Flex API](https://www.sharetribe.com/api-reference/). It simplifies interaction with the API, providing a more user-friendly and intuitive interface for developers and reduces the size of the SDK.
 

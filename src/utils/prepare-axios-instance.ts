@@ -12,18 +12,49 @@ import {createTransitConverters} from "./transit";
 import axiosRetry, {IAxiosRetryConfig} from "axios-retry";
 import {createSharetribeApiError} from "./util";
 
-// Mutex for token refresh to prevent concurrent refresh requests
-let isRefreshing = false;
-let refreshSubscribers: Array<(token: string) => void> = [];
+// Per-SDK-instance token refresh manager to prevent race conditions across SDK instances
+interface RefreshSubscriber {
+  resolve: (token: string) => void;
+  reject: (error: Error) => void;
+}
 
-const subscribeTokenRefresh = (cb: (token: string) => void) => {
-  refreshSubscribers.push(cb);
-};
+class TokenRefreshManager {
+  private isRefreshing = false;
+  private refreshSubscribers: RefreshSubscriber[] = [];
 
-const onTokenRefreshed = (token: string) => {
-  refreshSubscribers.forEach((cb) => cb(token));
-  refreshSubscribers = [];
-};
+  subscribeTokenRefresh(resolve: (token: string) => void, reject: (error: Error) => void): void {
+    this.refreshSubscribers.push({ resolve, reject });
+  }
+
+  onTokenRefreshed(token: string): void {
+    this.refreshSubscribers.forEach(({ resolve }) => resolve(token));
+    this.refreshSubscribers = [];
+  }
+
+  onTokenRefreshFailed(error: Error): void {
+    this.refreshSubscribers.forEach(({ reject }) => reject(error));
+    this.refreshSubscribers = [];
+  }
+
+  get refreshing(): boolean {
+    return this.isRefreshing;
+  }
+
+  setRefreshing(value: boolean): void {
+    this.isRefreshing = value;
+  }
+}
+
+const sdkRefreshManagers = new WeakMap<SharetribeSdk | IntegrationSdk, TokenRefreshManager>();
+
+function getOrCreateRefreshManager(sdk: SharetribeSdk | IntegrationSdk): TokenRefreshManager {
+  let manager = sdkRefreshManagers.get(sdk);
+  if (!manager) {
+    manager = new TokenRefreshManager();
+    sdkRefreshManagers.set(sdk, manager);
+  }
+  return manager;
+}
 
 /**
  * Sanitizes error objects before logging to prevent sensitive data exposure.
@@ -163,18 +194,25 @@ export async function handleResponseFailure(
 
       const token = await sdk.sdkConfig.tokenStore.getToken();
       if (token && token.refresh_token) {
+        const refreshManager = getOrCreateRefreshManager(sdk);
+
         // Use mutex to prevent concurrent token refresh
-        if (isRefreshing) {
+        if (refreshManager.refreshing) {
           // Wait for the ongoing refresh to complete
           return new Promise((resolve, reject) => {
-            subscribeTokenRefresh((newToken: string) => {
-              originalRequest.headers.Authorization = `Bearer ${newToken}`;
-              resolve(sdk.axios(originalRequest));
-            });
+            refreshManager.subscribeTokenRefresh(
+              (newToken: string) => {
+                originalRequest.headers.Authorization = `Bearer ${newToken}`;
+                resolve(sdk.axios(originalRequest));
+              },
+              (error: Error) => {
+                reject(error);
+              }
+            );
           });
         }
 
-        isRefreshing = true;
+        refreshManager.setRefreshing(true);
 
         try {
           // Get a new token
@@ -188,7 +226,7 @@ export async function handleResponseFailure(
           await sdk.sdkConfig.tokenStore.setToken(response.data);
 
           // Notify all waiting requests
-          onTokenRefreshed(response.data.access_token);
+          refreshManager.onTokenRefreshed(response.data.access_token);
 
           // Update the request with the new token
           originalRequest.headers.Authorization = prepareAuthorizationHeader(
@@ -196,8 +234,14 @@ export async function handleResponseFailure(
           );
 
           return sdk.axios(originalRequest);
+        } catch (refreshError) {
+          // Notify all waiting subscribers of the failure
+          refreshManager.onTokenRefreshFailed(
+            refreshError instanceof Error ? refreshError : new Error(String(refreshError))
+          );
+          throw refreshError;
         } finally {
-          isRefreshing = false;
+          refreshManager.setRefreshing(false);
         }
       }
 

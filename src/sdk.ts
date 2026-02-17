@@ -325,8 +325,17 @@ class SharetribeSdk {
    * @returns {Promise<void>} - Resolves when the user is logged out.
    */
   async logout(): Promise<AxiosResponse<RevokeResponse>> {
-    const {access_token} = (this.sdkConfig.tokenStore!.getToken()) as AuthToken;
-    return this.auth.revoke(access_token);
+    const token = await this.sdkConfig.tokenStore!.getToken();
+    if (!token) {
+      await this.sdkConfig.tokenStore!.removeToken();
+      return { data: { revoked: true } } as AxiosResponse<RevokeResponse>;
+    }
+
+    try {
+      return await this.auth.revoke(token.access_token);
+    } finally {
+      await this.sdkConfig.tokenStore!.removeToken();
+    }
   }
 
   /**

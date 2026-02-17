@@ -94,7 +94,11 @@ class ExpressStore implements TokenStore {
    */
   removeToken(): void {
     this.currentToken = null;
-    this.res.clearCookie(this.key);
+    this.res.clearCookie(this.key, {
+      secure: this.secure,
+      httpOnly: this.httpOnly,
+      sameSite: this.sameSite,
+    });
   }
 
   /**

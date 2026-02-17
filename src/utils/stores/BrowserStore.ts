@@ -85,7 +85,10 @@ class BrowserStore implements TokenStore {
    * Removes the authentication token from browser cookies.
    */
   removeToken(): void {
-    Cookies.remove(this.key);
+    Cookies.remove(this.key, {
+      secure: this.secure,
+      sameSite: this.sameSite,
+    });
   }
 }
 

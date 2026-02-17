@@ -284,4 +284,73 @@ describe("Authentication process", () => {
       });
     });
   });
+
+  describe("Logout edge cases", () => {
+    let sharetribeSdk: SharetribeSdk;
+    let mockAdapter: AxiosMockAdapter;
+
+    beforeEach(async () => {
+      sharetribeSdk = new SharetribeSdk({
+        clientId: "test-client-id",
+      });
+      mockAdapter = new AxiosMockAdapter(sharetribeSdk.axios);
+
+      // Login to seed a token
+      mockAdapter
+        .onPost("https://flex-api.sharetribe.com/v1/auth/token")
+        .reply(200, {
+          access_token: "test-access-token",
+          token_type: "bearer",
+          expires_in: 86400,
+          scope: "user",
+        });
+
+      await sharetribeSdk.login({
+        username: "test-username",
+        password: "test-password",
+      });
+    });
+
+    it("should clear token even when revoke request fails", async () => {
+      mockAdapter.reset();
+      mockAdapter
+        .onPost("https://flex-api.sharetribe.com/v1/auth/revoke")
+        .reply(403, { error: "forbidden" });
+
+      try {
+        await sharetribeSdk.logout();
+      } catch {
+        // Expected — revoke failed
+      }
+
+      const token = sharetribeSdk.sdkConfig.tokenStore!.getToken();
+      expect(token).toBeNull();
+    });
+
+    it("should clear token even on network error during revoke", async () => {
+      mockAdapter.reset();
+      mockAdapter
+        .onPost("https://flex-api.sharetribe.com/v1/auth/revoke")
+        .networkError();
+
+      try {
+        await sharetribeSdk.logout();
+      } catch {
+        // Expected — network error
+      }
+
+      const token = sharetribeSdk.sdkConfig.tokenStore!.getToken();
+      expect(token).toBeNull();
+    });
+
+    it("should handle logout when no token exists", async () => {
+      sharetribeSdk.sdkConfig.tokenStore!.removeToken();
+
+      const response = await sharetribeSdk.logout();
+
+      expect(response.data.revoked).toBe(true);
+      const token = sharetribeSdk.sdkConfig.tokenStore!.getToken();
+      expect(token).toBeNull();
+    });
+  });
 });

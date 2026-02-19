@@ -332,7 +332,7 @@ class SharetribeSdk {
     }
 
     try {
-      return await this.auth.revoke(token.access_token);
+      return await this.auth.revoke(token.refresh_token || token.access_token);
     } finally {
       await this.sdkConfig.tokenStore!.removeToken();
     }

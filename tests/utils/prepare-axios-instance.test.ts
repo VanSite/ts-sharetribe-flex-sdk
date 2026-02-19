@@ -42,6 +42,7 @@ describe("handleResponseSuccess", () => {
     sdk = {
       sdkConfig: {
         tokenStore: {
+          getToken: jest.fn().mockResolvedValue(null),
           setToken: jest.fn().mockResolvedValue(undefined),
           removeToken: jest.fn().mockResolvedValue(undefined),
         },

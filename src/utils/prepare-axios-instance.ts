@@ -1,6 +1,7 @@
 import {AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig,} from "axios";
 import {
   AnonymousTokenRequest,
+  AuthToken,
   ExtendedInternalAxiosRequestConfig,
   IntegrationTokenRequest,
   RefreshTokenRequest
@@ -11,6 +12,19 @@ import IntegrationSdk from "../integrationSdk";
 import {createTransitConverters} from "./transit";
 import axiosRetry, {IAxiosRetryConfig} from "axios-retry";
 import {createSharetribeApiError} from "./util";
+
+/**
+ * Determines if a new token should be stored, preventing anonymous (public-read)
+ * tokens from overwriting authenticated user tokens.
+ *
+ * User/trusted tokens always have refresh_token; anonymous tokens never do.
+ */
+const shouldStoreToken = (
+  existingToken: AuthToken | null,
+  newToken: { refresh_token?: string }
+): boolean => {
+  return !existingToken?.refresh_token || !!newToken.refresh_token;
+};
 
 // Per-SDK-instance token refresh manager to prevent race conditions across SDK instances
 interface RefreshSubscriber {
@@ -147,7 +161,10 @@ export function handleResponseSuccess(sdk: SharetribeSdk | IntegrationSdk) {
     }
 
     if (response?.data?.access_token) {
-      await sdk.sdkConfig.tokenStore.setToken(response.data);
+      const existingToken = await sdk.sdkConfig.tokenStore.getToken();
+      if (shouldStoreToken(existingToken, response.data)) {
+        await sdk.sdkConfig.tokenStore.setToken(response.data);
+      }
     }
 
     if (response?.data?.revoked) {
@@ -263,8 +280,11 @@ export async function handleResponseFailure(
           response.data
         );
 
-        // Store the new token
-        await sdk.sdkConfig.tokenStore.setToken(response.data);
+        // Store the new token only if it won't overwrite a user token
+        const currentToken = await sdk.sdkConfig.tokenStore.getToken();
+        if (shouldStoreToken(currentToken, response.data)) {
+          await sdk.sdkConfig.tokenStore.setToken(response.data);
+        }
 
         return sdk.axios(originalRequest);
       }
@@ -350,11 +370,16 @@ export async function handleRequestSuccess(
         throw new Error("Invalid SDK instance");
       }
 
-      await sdk.sdkConfig.tokenStore.setToken(response.data);
-
-      requestConfig.headers.Authorization = prepareAuthorizationHeader(
-        response.data
-      );
+      // Re-check: a user token may have been stored while we were fetching
+      const currentToken = await sdk.sdkConfig.tokenStore.getToken();
+      if (currentToken?.refresh_token) {
+        requestConfig.headers.Authorization = prepareAuthorizationHeader(currentToken);
+      } else {
+        await sdk.sdkConfig.tokenStore.setToken(response.data);
+        requestConfig.headers.Authorization = prepareAuthorizationHeader(
+          response.data
+        );
+      }
     }
   }
 

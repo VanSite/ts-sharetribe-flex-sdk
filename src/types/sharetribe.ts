@@ -268,13 +268,13 @@ export type ExtraParameterType = ExtraParameter;
  */
 export interface ApiParameter {
   /** Select fields: fields.listings=title,description */
-  [K: QueryFields]: string | undefined;
+  [K: QueryFields]: string | string[] | undefined;
 
   /** Pagination limits per resource type */
   [K: QueryLimit]: number | undefined;
 
   /** Image variants */
-  [K: QueryImageVariant]: string | undefined;
+  [K: QueryImageVariant]: string | string[] | undefined;
 
   /** Public custom fields */
   [K: QueryPub]: string | undefined;

@@ -53,8 +53,9 @@ const sdk = new SharetribeSdk({
   clientId: 'your-client-id',
   tokenStore: new BrowserStore({
     clientId: 'your-client-id',
-    secure: true,      // HTTPS only (default: true)
+    secure: true,      // HTTPS only (default: false)
     sameSite: 'Lax',   // CSRF protection (default: 'Lax')
+    path: '/',         // Cookie path (default: '/')
   }),
 });
 ```
@@ -64,10 +65,13 @@ const sdk = new SharetribeSdk({
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `clientId` | string | required | Unique key for cookie |
-| `secure` | boolean | `true` | HTTPS only |
+| `secure` | boolean | `false` | HTTPS only |
 | `sameSite` | string | `'Lax'` | `'Strict'`, `'Lax'`, or `'None'` |
+| `path` | string | `'/'` | Cookie path |
+| `domain` | string | _not set_ | Cookie domain for subdomain sharing |
 
 **Security note:** Cookies are accessible via JavaScript. For maximum security on server-rendered apps, use `ExpressStore` with `httpOnly: true`.
+**Reliability note:** Use explicit `secure` (on HTTPS) and `path: '/'` so login/logout cycles clear and replace cookies consistently.
 
 ## ExpressStore
 
@@ -89,7 +93,7 @@ app.get('/api/listings', async (req, res) => {
       req,
       res,
       httpOnly: true,   // Prevents XSS (default: true)
-      secure: true,     // HTTPS only (default: true)
+      secure: true,     // HTTPS only (default: false)
       sameSite: 'lax',  // CSRF protection (default: 'lax')
     }),
   });
@@ -107,7 +111,7 @@ app.get('/api/listings', async (req, res) => {
 | `req` | Request | required | Express request object |
 | `res` | Response | required | Express response object |
 | `httpOnly` | boolean | `true` | Prevent JavaScript access |
-| `secure` | boolean | `true` | HTTPS only |
+| `secure` | boolean | `false` | HTTPS only |
 | `sameSite` | string | `'lax'` | `'strict'`, `'lax'`, or `'none'` |
 
 **Production recommendation:** Always use `httpOnly: true` to prevent XSS attacks.

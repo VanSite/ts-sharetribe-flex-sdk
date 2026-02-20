@@ -52,12 +52,68 @@ describe("handleResponseSuccess", () => {
     onFulfilled = handleResponseSuccess(sdk);
   });
 
-  it("should set token if access_token is present", async () => {
-    const response = { data: { access_token: "123456" } };
+  it("should set token if token payload is present", async () => {
+    const response = {
+      data: {
+        access_token: "123456",
+        token_type: "bearer",
+        expires_in: 86400,
+        scope: "public-read",
+      },
+    };
     await onFulfilled(response);
     expect(sdk.sdkConfig.tokenStore!.setToken).toHaveBeenCalledWith(
       response.data
     );
+  });
+
+  it("should not set token for malformed token payload", async () => {
+    const response = { data: { access_token: "123456" } };
+    await onFulfilled(response);
+    expect(sdk.sdkConfig.tokenStore!.setToken).not.toHaveBeenCalled();
+  });
+
+  it("should not overwrite authenticated token with anonymous token", async () => {
+    (sdk.sdkConfig.tokenStore!.getToken as jest.Mock).mockResolvedValue({
+      access_token: "user-token",
+      token_type: "bearer",
+      expires_in: 86400,
+      scope: "user",
+    });
+
+    const response = {
+      data: {
+        access_token: "public-token",
+        token_type: "bearer",
+        expires_in: 86400,
+        scope: "public-read",
+      },
+    };
+
+    await onFulfilled(response);
+    expect(sdk.sdkConfig.tokenStore!.setToken).not.toHaveBeenCalled();
+  });
+
+  it("should overwrite stale authenticated token with new authenticated token without refresh_token", async () => {
+    (sdk.sdkConfig.tokenStore!.getToken as jest.Mock).mockResolvedValue({
+      access_token: "stale-user-token",
+      token_type: "bearer",
+      expires_in: 86400,
+      scope: "user",
+      refresh_token: "stale-refresh-token",
+    });
+
+    const response = {
+      data: {
+        access_token: "fresh-user-token",
+        token_type: "bearer",
+        expires_in: 86400,
+        scope: "user",
+      },
+    };
+
+    await onFulfilled(response);
+    expect(sdk.sdkConfig.tokenStore!.setToken).toHaveBeenCalledWith(response.data);
   });
 
   it("should return the response", async () => {
@@ -130,8 +186,6 @@ describe("handleResponseFailure", () => {
     });
   });
 });
-
-jest.mock("../../src/utils/convert-types");
 
 describe("handleRequestSuccess", () => {
   let sdk: SharetribeSdk;

@@ -353,4 +353,71 @@ describe("Authentication process", () => {
       expect(token).toBeNull();
     });
   });
+
+  describe("Relogin regression", () => {
+    it("should use fresh login token after logout even if stale authenticated token remains", async () => {
+      const sharetribeSdk = new SharetribeSdk({
+        clientId: "test-client-id",
+      });
+      const mockAdapter = new AxiosMockAdapter(sharetribeSdk.axios);
+
+      const staleTokenWithRefresh: AuthToken = {
+        access_token: "stale-user-token",
+        token_type: "bearer",
+        expires_in: 86400,
+        scope: "user",
+        refresh_token: "stale-refresh-token",
+      };
+
+      mockAdapter
+        .onPost("https://flex-api.sharetribe.com/v1/auth/token")
+        .replyOnce(200, staleTokenWithRefresh);
+
+      await sharetribeSdk.login({
+        username: "test-username",
+        password: "test-password",
+      });
+
+      mockAdapter
+        .onPost("https://flex-api.sharetribe.com/v1/auth/revoke")
+        .replyOnce(200, {
+          revoked: true,
+        });
+      await sharetribeSdk.logout();
+
+      // Simulate stale cookie/token that survived logout.
+      sharetribeSdk.sdkConfig.tokenStore!.setToken(staleTokenWithRefresh);
+
+      const freshTokenWithoutRefresh: AuthToken = {
+        access_token: "fresh-user-token",
+        token_type: "bearer",
+        expires_in: 86400,
+        scope: "user",
+      };
+
+      mockAdapter
+        .onPost("https://flex-api.sharetribe.com/v1/auth/token")
+        .replyOnce(200, freshTokenWithoutRefresh);
+
+      await sharetribeSdk.login({
+        username: "test-username",
+        password: "test-password",
+      });
+
+      mockAdapter
+        .onGet("https://flex-api.sharetribe.com/v1/api/current_user/show")
+        .reply((config) => {
+          if (config.headers?.Authorization === "bearer fresh-user-token") {
+            return [200, {data: {id: "current-user"}}];
+          }
+          return [401, {error: "Unauthorized"}];
+        });
+
+      const response = await sharetribeSdk.currentUser.show({});
+      expect(response.status).toBe(200);
+      expect(sharetribeSdk.sdkConfig.tokenStore!.getToken()).toEqual(
+        freshTokenWithoutRefresh
+      );
+    });
+  });
 });

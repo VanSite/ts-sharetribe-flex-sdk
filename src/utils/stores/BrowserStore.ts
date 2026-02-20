@@ -9,7 +9,7 @@ export type BrowserStoreOptions = {
   clientId: string; // Unique identifier for the client
   /**
    * Whether to use secure cookies (HTTPS only).
-   * Defaults to true for security. Set to false only for local development.
+   * Defaults to false. Set to true in production (HTTPS).
    */
   secure?: boolean;
   /**
@@ -18,6 +18,15 @@ export type BrowserStoreOptions = {
    * Use 'Strict' for maximum security, 'None' for cross-site usage (requires secure=true).
    */
   sameSite?: "Strict" | "Lax" | "None";
+  /**
+   * Cookie path.
+   * Defaults to '/' to make delete behavior consistent with set behavior.
+   */
+  path?: string;
+  /**
+   * Cookie domain, if needed for subdomain sharing.
+   */
+  domain?: string;
 };
 
 /**
@@ -30,16 +39,30 @@ class BrowserStore implements TokenStore {
   expiration: number = 30; // Default cookie expiration in days
   private namespace: string = "st"; // Namespace for cookie keys
   private readonly key: string; // Generated key for the cookie
-  private readonly secure: boolean; // Indicates if cookies should be marked as secure
-  private readonly sameSite: "Strict" | "Lax" | "None"; // SameSite attribute for CSRF protection
+  private readonly cookieOptions: {
+    secure: boolean;
+    sameSite: "Strict" | "Lax" | "None";
+    path: string;
+    domain?: string;
+  };
 
   /**
    * Initializes the `BrowserStore` with client-specific options.
    * @param options - Configuration options for the store.
    */
-  constructor({clientId, secure = false, sameSite = "Lax"}: BrowserStoreOptions) {
-    this.secure = secure;
-    this.sameSite = sameSite;
+  constructor({
+    clientId,
+    secure = false,
+    sameSite = "Lax",
+    path = "/",
+    domain,
+  }: BrowserStoreOptions) {
+    this.cookieOptions = {
+      secure,
+      sameSite,
+      path,
+      ...(domain ? {domain} : {}),
+    };
     this.key = generateKey(clientId, this.namespace);
 
     // Warn if using insecure configuration
@@ -76,8 +99,7 @@ class BrowserStore implements TokenStore {
   setToken(token: AuthToken): void {
     Cookies.set(this.key, JSON.stringify(token), {
       expires: this.expiration,
-      secure: this.secure,
-      sameSite: this.sameSite,
+      ...this.cookieOptions,
     });
   }
 
@@ -85,10 +107,7 @@ class BrowserStore implements TokenStore {
    * Removes the authentication token from browser cookies.
    */
   removeToken(): void {
-    Cookies.remove(this.key, {
-      secure: this.secure,
-      sameSite: this.sameSite,
-    });
+    Cookies.remove(this.key, this.cookieOptions);
   }
 }
 

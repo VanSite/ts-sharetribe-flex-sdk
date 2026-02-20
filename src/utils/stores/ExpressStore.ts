@@ -11,7 +11,7 @@ export type ExpressStoreOptions = {
   res: Response; // Express response object
   /**
    * Whether to use secure cookies (HTTPS only).
-   * Defaults to true for security. Set to false only for local development.
+   * Defaults to false. Set to true in production (HTTPS).
    */
   secure?: boolean;
   /**
@@ -36,9 +36,11 @@ class ExpressStore implements TokenStore {
   expiration: number = 180; // Default cookie expiration in days
   private namespace: string = "st"; // Namespace for cookie keys
   private key: string; // Generated key for the cookie
-  private secure: boolean; // Indicates if cookies should be marked as secure
-  private httpOnly: boolean; // Prevents JavaScript access to cookie
-  private sameSite: "strict" | "lax" | "none"; // SameSite attribute for CSRF protection
+  private cookieOptions: {
+    secure: boolean;
+    httpOnly: boolean;
+    sameSite: "strict" | "lax" | "none";
+  }; // Shared cookie options for set/remove
   private req: Request; // Reference to the Express request object
   private res: Response; // Reference to the Express response object
   private currentToken: AuthToken | null = null; // Cached token
@@ -49,9 +51,11 @@ class ExpressStore implements TokenStore {
    */
   constructor({clientId, req, res, secure = false, httpOnly = true, sameSite = "lax"}: ExpressStoreOptions) {
     this.key = generateKey(clientId, this.namespace);
-    this.secure = secure;
-    this.httpOnly = httpOnly;
-    this.sameSite = sameSite;
+    this.cookieOptions = {
+      secure,
+      httpOnly,
+      sameSite,
+    };
 
     if (!req || !res) {
       throw new Error("Request and Response are required");
@@ -83,9 +87,7 @@ class ExpressStore implements TokenStore {
     this.currentToken = token;
     this.res.cookie(this.key, JSON.stringify(token), {
       maxAge: 1000 * 60 * 60 * 24 * this.expiration, // Convert expiration to milliseconds
-      secure: this.secure,
-      httpOnly: this.httpOnly,
-      sameSite: this.sameSite,
+      ...this.cookieOptions,
     });
   }
 
@@ -94,11 +96,7 @@ class ExpressStore implements TokenStore {
    */
   removeToken(): void {
     this.currentToken = null;
-    this.res.clearCookie(this.key, {
-      secure: this.secure,
-      httpOnly: this.httpOnly,
-      sameSite: this.sameSite,
-    });
+    this.res.clearCookie(this.key, this.cookieOptions);
   }
 
   /**

@@ -17,13 +17,56 @@ import {createSharetribeApiError} from "./util";
  * Determines if a new token should be stored, preventing anonymous (public-read)
  * tokens from overwriting authenticated user tokens.
  *
- * User/trusted tokens always have refresh_token; anonymous tokens never do.
+ * Authenticated tokens are those with scope user/trusted:user/integ,
+ * or legacy tokens that include a refresh_token.
  */
+const AUTHENTICATED_SCOPES = new Set(["user", "trusted:user", "integ"]);
+
+const normalizeScopes = (scope: AuthToken["scope"]): string[] => {
+  if (!scope) {
+    return [];
+  }
+
+  if (Array.isArray(scope)) {
+    return scope;
+  }
+
+  return scope.split(" ").filter(Boolean);
+};
+
+const isAuthenticatedToken = (token: Partial<AuthToken> | null | undefined): boolean => {
+  if (!token) {
+    return false;
+  }
+
+  const scopes = normalizeScopes(token.scope as AuthToken["scope"]);
+  if (scopes.length > 0) {
+    return scopes.some((scope) => AUTHENTICATED_SCOPES.has(scope));
+  }
+
+  // Backward compatibility for legacy tokens without scope information.
+  return Boolean(token.refresh_token);
+};
+
+const isTokenPayload = (payload: any): payload is AuthToken =>
+  Boolean(payload) &&
+  typeof payload === "object" &&
+  typeof payload.access_token === "string" &&
+  typeof payload.token_type === "string";
+
 const shouldStoreToken = (
   existingToken: AuthToken | null,
-  newToken: { refresh_token?: string }
+  newToken: Partial<AuthToken>
 ): boolean => {
-  return !existingToken?.refresh_token || !!newToken.refresh_token;
+  if (!existingToken) {
+    return true;
+  }
+
+  if (isAuthenticatedToken(newToken)) {
+    return true;
+  }
+
+  return !isAuthenticatedToken(existingToken);
 };
 
 // Per-SDK-instance token refresh manager to prevent race conditions across SDK instances
@@ -160,7 +203,7 @@ export function handleResponseSuccess(sdk: SharetribeSdk | IntegrationSdk) {
       response.data = JSON.parse(response.data);
     }
 
-    if (response?.data?.access_token) {
+    if (isTokenPayload(response?.data)) {
       const existingToken = await sdk.sdkConfig.tokenStore.getToken();
       if (shouldStoreToken(existingToken, response.data)) {
         await sdk.sdkConfig.tokenStore.setToken(response.data);

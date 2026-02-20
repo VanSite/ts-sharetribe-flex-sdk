@@ -48,7 +48,7 @@ class OwnListings {
    */
   async show<P extends OwnListingsShowParameter>(
     params: P
-  ): Promise<AxiosResponse<OwnListingsResponse<"show", P>>> {
+  ): Promise<AxiosResponse<OwnListingsResponse<"show", P, {expand: true}>>> {
     return this.axios.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,

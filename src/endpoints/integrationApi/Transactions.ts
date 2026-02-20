@@ -43,7 +43,7 @@ class Transactions {
    */
   async show<P extends TransactionsShowParameter>(
     params: P
-  ): Promise<AxiosResponse<TransactionsResponse<"show", P>>> {
+  ): Promise<AxiosResponse<TransactionsResponse<"show", P, {expand: true}>>> {
     return this.axios.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,

@@ -38,7 +38,7 @@ class Reviews {
    */
   async show<P extends ReviewsShowParameter>(
     params: P
-  ): Promise<AxiosResponse<ReviewsResponse<"show", P>>> {
+  ): Promise<AxiosResponse<ReviewsResponse<"show", P, {expand: true}>>> {
     return this.axios.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,

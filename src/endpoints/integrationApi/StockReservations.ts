@@ -47,9 +47,8 @@ class StockReservations {
    */
   async show<P extends StockReservationShowParameter>(
     params: P
-  ): Promise<AxiosResponse<StockReservationsResponse<"show", P>>> {
-    return this.axios.get<StockReservationsResponse<"show", P>>(
-      `${this.endpoint}/show`,
+  ): Promise<AxiosResponse<StockReservationsResponse<"show", P, {expand: true}>>> {
+    return this.axios.get(`${this.endpoint}/show`,
       {headers: this.headers, params}
     );
   }

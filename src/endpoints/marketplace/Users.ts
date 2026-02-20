@@ -39,7 +39,7 @@ class Users {
    */
   async show<P extends UsersShowParameter>(
     params: P
-  ): Promise<AxiosResponse<UsersResponse<"show", P>>> {
+  ): Promise<AxiosResponse<UsersResponse<"show", P, {expand: true}>>> {
     return this.axios.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,

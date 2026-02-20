@@ -47,7 +47,7 @@ class Users {
    */
   async show<P extends UsersShowParameter<true>>(
     params: P
-  ): Promise<AxiosResponse<UsersResponse<"show", P>>> {
+  ): Promise<AxiosResponse<UsersResponse<"show", P, {expand: true}>>> {
     if (!params.id && !params.email) {
       throw new Error("Either 'id' or 'email' must be provided");
     }

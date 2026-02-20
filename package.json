@@ -1,6 +1,6 @@
 {
   "name": "@vansite/ts-sharetribe-flex-sdk",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "This is a TypeScript SDK for Sharetribe Flex API. It reduces the complexity of the API and provides a more user-friendly interface.",
   "keywords": [
     "sharetribe",

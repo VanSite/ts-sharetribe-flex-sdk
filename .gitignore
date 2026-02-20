@@ -211,6 +211,7 @@ fabric.properties
 /dist
 
 #npm
+.npmrc
 
 #claude
 .claude/

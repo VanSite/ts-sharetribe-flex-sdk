@@ -16,7 +16,10 @@ export type ExpressStoreOptions = {
   secure?: boolean;
   /**
    * Whether to set httpOnly flag (prevents JavaScript access).
-   * Defaults to true for security. This is the recommended setting for server-side token storage.
+   * Defaults to false to match the original Sharetribe SDK behavior and allow
+   * the BrowserStore to share the same cookie. Setting to true will prevent
+   * client-side JavaScript from reading or writing the token cookie, which
+   * breaks the shared session model between server and client SDK instances.
    */
   httpOnly?: boolean;
   /**
@@ -29,8 +32,9 @@ export type ExpressStoreOptions = {
 /**
  * `ExpressStore` is an implementation of the `TokenStore` interface for managing authentication tokens via cookies in an Express application.
  *
- * **Security Note:** This store supports `httpOnly` cookies (default: true), which prevents JavaScript access to tokens
- * and is the recommended approach for production server-side token storage.
+ * **Note:** This store defaults to `httpOnly: false` to match the original Sharetribe SDK behavior.
+ * Server and client SDK instances share the same cookie, so httpOnly must be false
+ * for the BrowserStore to read/write the token set by the server.
  */
 class ExpressStore implements TokenStore {
   expiration: number = 180; // Default cookie expiration in days
@@ -49,7 +53,7 @@ class ExpressStore implements TokenStore {
    * Initializes the `ExpressStore` with client-specific options.
    * @param options - Configuration options for the store.
    */
-  constructor({clientId, req, res, secure = false, httpOnly = true, sameSite = "lax"}: ExpressStoreOptions) {
+  constructor({clientId, req, res, secure = false, httpOnly = false, sameSite = "lax"}: ExpressStoreOptions) {
     this.key = generateKey(clientId, this.namespace);
     this.cookieOptions = {
       secure,

@@ -32,8 +32,9 @@ export type BrowserStoreOptions = {
 /**
  * `BrowserStore` is an implementation of the `TokenStore` interface for storing authentication tokens in browser cookies.
  *
- * **Security Note:** This store uses JavaScript-accessible cookies. For maximum security in production,
- * consider using `ExpressStore` with `httpOnly: true` which prevents JavaScript access to tokens.
+ * **Note:** This store shares the same cookie key as `ExpressStore` (using the `st` namespace).
+ * The `ExpressStore` must NOT use `httpOnly: true` when both stores are used together,
+ * as that would prevent this store from reading or writing the shared cookie.
  */
 class BrowserStore implements TokenStore {
   expiration: number = 30; // Default cookie expiration in days

@@ -198,9 +198,13 @@ export function handleResponseSuccess(sdk: SharetribeSdk | IntegrationSdk) {
       const {reader} = createTransitConverters(sdk.sdkConfig.typeHandlers, {
         verbose: sdk.sdkConfig.transitVerbose,
       });
-      response.data = reader.read(response.data);
+      if (typeof response.data === 'string') {
+        response.data = reader.read(response.data);
+      }
     } else if (isJson(response)) {
-      response.data = JSON.parse(response.data);
+      if (typeof response.data === 'string') {
+        response.data = JSON.parse(response.data);
+      }
     }
 
     if (isTokenPayload(response?.data)) {
@@ -234,9 +238,13 @@ export async function handleResponseFailure(
       const {reader} = createTransitConverters(sdk.sdkConfig.typeHandlers, {
         verbose: sdk.sdkConfig.transitVerbose,
       });
-      error.response.data = reader.read(error.response.data as string);
+      if (typeof error.response.data === 'string') {
+        error.response.data = reader.read(error.response.data as string);
+      }
     } else if (error.response && isJson(error.response)) {
-      error.response.data = JSON.parse(error.response.data as string);
+      if (typeof error.response.data === 'string') {
+        error.response.data = JSON.parse(error.response.data as string);
+      }
     }
 
     if (error.response && isTokenUnauthorized(error.response.status) && originalRequest.url?.includes("/auth/token")) {

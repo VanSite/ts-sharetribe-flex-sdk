@@ -3,7 +3,7 @@
  */
 
 import {ApiParameter, ExtraParameterType, UUID} from "../sharetribe";
-import type Stripe from "stripe";
+import type Stripe from "stripe/esm/stripe.esm.node";
 
 /**
  * Available endpoints

@@ -202,14 +202,14 @@ export interface ApiErrorResponse {
 }
 
 /**
- *
+ * Error thrown by the SDK for any non-2xx API response. Extends the native
+ * Error so `instanceof Error` checks and stringification behave correctly
+ * (including in error loggers like Sentry).
  */
-export interface SharetribeApiError {
-  name: string;
-  message: string;
+export interface SharetribeApiError extends Error {
   status?: number;
-  statusText?: string,
-  data: any
+  statusText?: string;
+  data: any;
 }
 
 /**

@@ -1,4 +1,4 @@
-import {SharetribeApiError} from "../types";
+import {ApiError, SharetribeApiError} from "../types";
 import {AxiosError} from "axios";
 
 type ObjectQueryStringParam = Record<string, any>;
@@ -46,10 +46,22 @@ export const objectQueryString = (obj: ObjectQueryStringParam): string => {
     .join(";"); // Join the serialized pairs with semicolons
 };
 
-export const createSharetribeApiError = (error: AxiosError): SharetribeApiError => ({
-  name: error.name,
-  message: error.message,
-  status: error.status,
-  statusText: error.code,
-  data: error.response?.data
-})
+export const createSharetribeApiError = (error: AxiosError): SharetribeApiError => {
+  const responseData = error.response?.data as { errors?: ApiError[] } | undefined;
+  const firstApiError = responseData?.errors?.[0];
+
+  // Axios's default message ("Request failed with status code 400") is useless
+  // for Sentry grouping and debugging. Enrich it with the first Sharetribe API
+  // error's code/detail when available.
+  const baseMessage = error.message || `Request failed with status ${error.status ?? "unknown"}`;
+  const message = firstApiError
+    ? `${baseMessage}: ${firstApiError.code}${firstApiError.detail ? ` - ${firstApiError.detail}` : ""}`
+    : baseMessage;
+
+  const apiError = new Error(message) as SharetribeApiError;
+  apiError.name = "SharetribeApiError";
+  apiError.status = error.status;
+  apiError.statusText = error.code;
+  apiError.data = error.response?.data;
+  return apiError;
+};

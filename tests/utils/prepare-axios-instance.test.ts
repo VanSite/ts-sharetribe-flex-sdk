@@ -177,10 +177,11 @@ describe("handleResponseFailure", () => {
 
   it("should reject if status is not 401 or 403", async () => {
     error.response!.status = 500;
-    await expect(handleResponseFailure(sdk, error)).rejects.toMatchObject({
+    const rejection = handleResponseFailure(sdk, error);
+    await expect(rejection).rejects.toBeInstanceOf(Error);
+    await expect(rejection).rejects.toMatchObject({
       data: undefined,
-      message: undefined,
-      name: undefined,
+      name: "SharetribeApiError",
       status: undefined,
       statusText: undefined,
     });

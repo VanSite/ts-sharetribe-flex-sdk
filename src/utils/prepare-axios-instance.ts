@@ -303,11 +303,14 @@ export async function handleResponseFailure(
 
           return sdk.axios(originalRequest);
         } catch (refreshError) {
-          // Notify all waiting subscribers of the failure
-          refreshManager.onTokenRefreshFailed(
-            refreshError instanceof Error ? refreshError : new Error(String(refreshError))
-          );
-          throw refreshError;
+          // createSharetribeApiError now always returns an Error instance, but
+          // keep a defensive wrap so a stray non-Error never stringifies to
+          // "[object Object]" in Sentry.
+          const wrappedError = refreshError instanceof Error
+            ? refreshError
+            : new Error((refreshError as any)?.message ?? "Token refresh failed");
+          refreshManager.onTokenRefreshFailed(wrappedError);
+          throw wrappedError;
         } finally {
           refreshManager.setRefreshing(false);
         }

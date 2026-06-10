@@ -177,6 +177,105 @@ describe("Authentication process", () => {
   });
 
   describe("Trusted user", () => {
+    // Regression: exchangeToken() authenticates via client_secret and sends the
+    // stored access token as `subject_token`, so it bypasses the bearer-token
+    // refresh interceptor. A lapsed access token would be rejected by /auth/token
+    // with 401 (and the error handler drops the stored token). It must refresh
+    // the access token up-front when a refresh_token is available.
+    it("refreshes the access token before exchanging, using the fresh token as subject_token", async () => {
+      const store = new MemoryStore();
+      store.setToken({
+        access_token: "stale-access-token",
+        token_type: "bearer",
+        expires_in: 86400,
+        scope: "user",
+        refresh_token: "valid-refresh-token",
+      } as AuthToken);
+
+      const sdk = new SharetribeSdk({
+        clientId: "test-client-id",
+        clientSecret: "test-client-secret",
+        tokenStore: store,
+      } as any);
+
+      sdk.auth.token = jest.fn().mockImplementation((params: any) => {
+        if (params.grant_type === "refresh_token") {
+          return Promise.resolve({
+            data: {
+              access_token: "fresh-access-token",
+              token_type: "bearer",
+              expires_in: 86400,
+              scope: "user",
+              refresh_token: "valid-refresh-token",
+            },
+          });
+        }
+        return Promise.resolve({
+          data: {
+            access_token: "trusted-access-token",
+            token_type: "bearer",
+            expires_in: 86400,
+            scope: "trusted:user",
+            refresh_token: "trusted-refresh-token",
+          },
+        });
+      }) as any;
+
+      const response = await sdk.exchangeToken();
+
+      expect(sdk.auth.token).toHaveBeenCalledWith(
+        expect.objectContaining({
+          grant_type: "refresh_token",
+          refresh_token: "valid-refresh-token",
+        })
+      );
+      expect(sdk.auth.token).toHaveBeenCalledWith(
+        expect.objectContaining({
+          grant_type: "token_exchange",
+          subject_token: "fresh-access-token",
+        })
+      );
+      expect(response.data.scope).toEqual("trusted:user");
+    });
+
+    it("exchanges directly (no refresh) when the stored token has no refresh_token", async () => {
+      const store = new MemoryStore();
+      store.setToken({
+        access_token: "only-access-token",
+        token_type: "bearer",
+        expires_in: 86400,
+        scope: "user",
+      } as AuthToken);
+
+      const sdk = new SharetribeSdk({
+        clientId: "test-client-id",
+        clientSecret: "test-client-secret",
+        tokenStore: store,
+      } as any);
+
+      sdk.auth.token = jest.fn().mockResolvedValue({
+        data: {
+          access_token: "trusted-access-token",
+          token_type: "bearer",
+          expires_in: 86400,
+          scope: "trusted:user",
+          refresh_token: "trusted-refresh-token",
+        },
+      }) as any;
+
+      await sdk.exchangeToken();
+
+      expect(sdk.auth.token).not.toHaveBeenCalledWith(
+        expect.objectContaining({ grant_type: "refresh_token" })
+      );
+      expect(sdk.auth.token).toHaveBeenCalledWith(
+        expect.objectContaining({
+          grant_type: "token_exchange",
+          subject_token: "only-access-token",
+        })
+      );
+    });
+
     it("should exchange access token with sharetribe to create a trusted:user token", async () => {
       const memoryTokenStore = (token: AuthToken) => {
         const store = new MemoryStore();

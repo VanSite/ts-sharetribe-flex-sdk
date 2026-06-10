@@ -31,6 +31,7 @@ import {
   AuthToken,
   LoginParameter,
   LoginWithIdpParameter,
+  RefreshTokenRequest,
   RevokeResponse,
   Scope,
   TokenResponse,
@@ -345,16 +346,35 @@ class SharetribeSdk {
    * @returns {Promise<AuthToken>} - The exchanged token.
    */
   async exchangeToken(): Promise<AxiosResponse<TokenResponse<TrustedUserTokenRequest>>> {
-    const {access_token} = (await this.sdkConfig.tokenStore!.getToken())!;
     if (this.sdkConfig.clientSecret === undefined) {
       throw new Error("clientSecret is required to exchange token");
     }
+
+    const storedToken = (await this.sdkConfig.tokenStore!.getToken())!;
+    let subjectAccessToken = storedToken.access_token;
+
+    // The exchange authenticates via the client secret and passes the stored
+    // access token as `subject_token`, so it never goes through the bearer-token
+    // refresh interceptor. A lapsed access token would therefore be sent as-is
+    // and rejected by /auth/token with 401 (the error handler then drops the
+    // stored token). Refresh up-front when a refresh_token is available so the
+    // exchange always uses a valid subject_token.
+    if (storedToken.refresh_token) {
+      const refreshed = await this.auth.token<RefreshTokenRequest>({
+        client_id: this.sdkConfig.clientId,
+        grant_type: "refresh_token",
+        refresh_token: storedToken.refresh_token,
+      });
+      await this.sdkConfig.tokenStore!.setToken(refreshed.data);
+      subjectAccessToken = refreshed.data.access_token;
+    }
+
     return this.auth.token<TrustedUserTokenRequest>({
       client_id: this.sdkConfig.clientId,
       client_secret: this.sdkConfig.clientSecret!,
       grant_type: "token_exchange",
       scope: "trusted:user",
-      subject_token: access_token,
+      subject_token: subjectAccessToken,
     });
   }
 

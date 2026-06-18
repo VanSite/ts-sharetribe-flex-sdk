@@ -8,6 +8,11 @@ import Listings from "./endpoints/marketplace/Listings";
 import AvailabilityExceptions from "./endpoints/marketplace/AvailabilityExceptions";
 import Bookings from "./endpoints/marketplace/Bookings";
 import CurrentUser from "./endpoints/marketplace/CurrentUser";
+import Files from "./endpoints/marketplace/Files";
+import OwnFiles from "./endpoints/marketplace/OwnFiles";
+import FileUploads from "./endpoints/marketplace/FileUploads";
+import FileDownloads from "./endpoints/marketplace/FileDownloads";
+import OwnFileDownloads from "./endpoints/marketplace/OwnFileDownloads";
 import Images from "./endpoints/marketplace/Images";
 import Marketplace from "./endpoints/marketplace/Marketplace";
 import Messages from "./endpoints/marketplace/Messages";
@@ -104,6 +109,36 @@ class SharetribeSdk {
    *  @type {CurrentUser}
    */
   currentUser: CurrentUser;
+
+  /**
+   * Endpoint for reading shared files.
+   * @type {Files}
+   */
+  files: Files;
+
+  /**
+   * Endpoint for managing the current user's own files.
+   * @type {OwnFiles}
+   */
+  ownFiles: OwnFiles;
+
+  /**
+   * Endpoint for obtaining signed upload URLs.
+   * @type {FileUploads}
+   */
+  fileUploads: FileUploads;
+
+  /**
+   * Endpoint for obtaining signed download URLs for shared files.
+   * @type {FileDownloads}
+   */
+  fileDownloads: FileDownloads;
+
+  /**
+   * Endpoint for obtaining signed download URLs for own files.
+   * @type {OwnFileDownloads}
+   */
+  ownFileDownloads: OwnFileDownloads;
 
   /**
    * Endpoint for handling images.
@@ -237,6 +272,11 @@ class SharetribeSdk {
     this.availabilityExceptions = this.api.availabilityExceptions;
     this.bookings = this.api.bookings;
     this.currentUser = this.api.currentUser;
+    this.files = this.api.files;
+    this.ownFiles = this.api.ownFiles;
+    this.fileUploads = this.api.fileUploads;
+    this.fileDownloads = this.api.fileDownloads;
+    this.ownFileDownloads = this.api.ownFileDownloads;
     this.images = this.api.images;
     this.listings = this.api.listings;
     this.marketplace = this.api.marketplace;

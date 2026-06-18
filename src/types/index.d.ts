@@ -4,6 +4,7 @@ export * from "./integration/events";
 export * from "./marketplace/availabilityExceptions";
 export * from "./marketplace/bookings";
 export * from "./marketplace/currentUser";
+export * from "./marketplace/files";
 export * from "./marketplace/images";
 export * from "./marketplace/listings";
 export * from "./marketplace/marketplace";

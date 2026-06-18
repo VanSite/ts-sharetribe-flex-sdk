@@ -13,6 +13,11 @@ The Marketplace API (`SharetribeSdk`) provides client-side access to public and 
 | `transactions` | Handle transactions |
 | `bookings` | View bookings |
 | `messages` | Send/receive messages |
+| `files` | Read a shared file via its attachment |
+| `ownFiles` | Create/read the current user's own files |
+| `fileUploads` | Get a signed upload URL for an own file |
+| `fileDownloads` | Get a signed download URL for a shared file |
+| `ownFileDownloads` | Get a signed download URL for an own file |
 | `reviews` | Manage reviews |
 | `timeslots` | Query availability |
 | `availabilityExceptions` | Manage availability |
@@ -151,6 +156,37 @@ await sdk.messages.query({
   transactionId,
   include: ['sender'],
 });
+```
+
+## File Sharing
+
+Files are uploaded by their owner, then shared with others by attaching them to
+a resource (e.g. a message via `publicFileAttachments`). Recipients access a
+shared file through its `fileAttachmentId`, never the file id directly.
+
+```typescript
+// 1. Register a file (metadata only) — first step of the upload workflow
+const { data: file } = await sdk.ownFiles.create({
+  name: 'document.pdf',
+  mimeType: 'application/pdf',
+  size: 1024000,
+});
+
+// 2. Get a signed upload URL, then PUT the bytes to it (outside the SDK)
+const { data: upload } = await sdk.fileUploads.create({ fileId: file.data.id });
+await fetch(upload.data.attributes.url, {
+  method: upload.data.attributes.method, // typically "PUT"
+  headers: upload.data.attributes.headers,
+  body: fileBytes,
+});
+
+// 3. Read / download your own file
+await sdk.ownFiles.show({ id: file.data.id });
+const { data: ownDl } = await sdk.ownFileDownloads.create({ fileId: file.data.id });
+
+// 4. A recipient reads or downloads a shared file via its attachment id
+await sdk.files.show({ fileAttachmentId });
+const { data: dl } = await sdk.fileDownloads.create({ fileAttachmentId });
 ```
 
 ## Reviews

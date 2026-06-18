@@ -22,7 +22,9 @@ const sdk = new IntegrationSdk({
 | `listings` | Full listing CRUD + approve |
 | `users` | User management |
 | `transactions` | Transaction operations |
-| `messages` | Messaging |
+| `messages` | Query transaction messages |
+| `files` | Query files (by owner) |
+| `fileAttachments` | Query file attachments (by message) |
 | `stock` | Stock management |
 | `stockAdjustments` | Stock adjustments |
 | `stockReservations` | Stock reservations |
@@ -92,6 +94,12 @@ await sdk.users.updateProfile({
   firstName: 'Updated',
   metadata: { verified: true },
 });
+
+// Verify a user's email — `email` must match the user's email or pendingEmail
+await sdk.users.verifyEmail({
+  id: userId,
+  email: 'john@example.com',
+});
 ```
 
 ## Transactions
@@ -113,6 +121,32 @@ await sdk.transactions.transition({
 await sdk.transactions.updateMetadata({
   id: transactionId,
   metadata: { adminNote: 'Verified' },
+});
+```
+
+## Messages
+
+```typescript
+// Query messages in a transaction (read-only on the Integration API)
+const { data } = await sdk.messages.query({
+  transactionId,
+  include: ['sender'],
+});
+```
+
+## Files & Attachments
+
+```typescript
+// Query files owned by a user
+const { data } = await sdk.files.query({
+  ownerId: userId,
+  include: ['owner'],
+});
+
+// Query file attachments for a message (include the underlying file)
+await sdk.fileAttachments.query({
+  messageId,
+  include: ['file'],
 });
 ```
 

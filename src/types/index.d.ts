@@ -1,6 +1,7 @@
 export * from "./assets";
 export * from "./authentication";
 export * from "./integration/events";
+export * from "./integration/files";
 export * from "./marketplace/availabilityExceptions";
 export * from "./marketplace/bookings";
 export * from "./marketplace/currentUser";

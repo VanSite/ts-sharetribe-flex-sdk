@@ -25,9 +25,12 @@ import IntegrationSdk from "../../integrationSdk";
 
 import AvailabilityExceptions from "./AvailabilityExceptions";
 import Events from "./Events";
+import FileAttachments from "./FileAttachments";
+import Files from "./Files";
 import Images from "./Images";
 import Listings from "./Listings";
 import Marketplace from "./Marketplace";
+import Messages from "./Messages";
 import Stock from "./Stock";
 import StockAdjustments from "./StockAdjustments";
 import StockReservations from "./StockReservations";
@@ -53,9 +56,12 @@ class IntegrationApi {
   // Sub-clients
   readonly availabilityExceptions: AvailabilityExceptions;
   readonly events: Events;
+  readonly fileAttachments: FileAttachments;
+  readonly files: Files;
   readonly images: Images;
   readonly listings: Listings;
   readonly marketplace: Marketplace;
+  readonly messages: Messages;
   readonly stock: Stock;
   readonly stockAdjustments: StockAdjustments;
   readonly stockReservations: StockReservations;
@@ -72,9 +78,12 @@ class IntegrationApi {
     // Initialize all sub-APIs
     this.availabilityExceptions = new AvailabilityExceptions(this);
     this.events = new Events(this);
+    this.fileAttachments = new FileAttachments(this);
+    this.files = new Files(this);
     this.images = new Images(this);
     this.listings = new Listings(this);
     this.marketplace = new Marketplace(this);
+    this.messages = new Messages(this);
     this.stock = new Stock(this);
     this.stockAdjustments = new StockAdjustments(this);
     this.stockReservations = new StockReservations(this);

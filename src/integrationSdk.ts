@@ -6,9 +6,12 @@ import {createAxiosConfig, prepareAxiosInstance,} from "./utils/prepare-axios-in
 import AuthenticationApi from "./endpoints/auth";
 import AvailabilityExceptions from "./endpoints/integrationApi/AvailabilityExceptions";
 import Events from "./endpoints/integrationApi/Events";
+import FileAttachments from "./endpoints/integrationApi/FileAttachments";
+import Files from "./endpoints/integrationApi/Files";
 import Images from "./endpoints/integrationApi/Images";
 import Listings from "./endpoints/integrationApi/Listings";
 import Marketplace from "./endpoints/integrationApi/Marketplace";
+import Messages from "./endpoints/integrationApi/Messages";
 import Stock from "./endpoints/integrationApi/Stock";
 import StockAdjustments from "./endpoints/integrationApi/StockAdjustments";
 import StockReservations from "./endpoints/integrationApi/StockReservations";
@@ -74,6 +77,20 @@ class IntegrationSdk {
   events: Events;
 
   /**
+   * Endpoint for querying file attachments.
+   *
+   * @type {FileAttachments}
+   */
+  fileAttachments: FileAttachments;
+
+  /**
+   * Endpoint for querying files.
+   *
+   * @type {Files}
+   */
+  files: Files;
+
+  /**
    * Endpoint for handling image-related operations.
    *
    * @type {Images}
@@ -93,6 +110,13 @@ class IntegrationSdk {
    * @type {Marketplace}
    */
   marketplace: Marketplace;
+
+  /**
+   * Endpoint for querying messages.
+   *
+   * @type {Messages}
+   */
+  messages: Messages;
 
   /**
    * Endpoint for managing stock.
@@ -157,9 +181,12 @@ class IntegrationSdk {
     // Api Endpoints
     this.availabilityExceptions = this.integration_api.availabilityExceptions;
     this.events = this.integration_api.events;
+    this.fileAttachments = this.integration_api.fileAttachments;
+    this.files = this.integration_api.files;
     this.images = this.integration_api.images;
     this.listings = this.integration_api.listings;
     this.marketplace = this.integration_api.marketplace;
+    this.messages = this.integration_api.messages;
     this.stock = this.integration_api.stock;
     this.stockAdjustments = this.integration_api.stockAdjustments;
     this.stockReservations = this.integration_api.stockReservations;

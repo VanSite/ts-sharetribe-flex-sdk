@@ -24,7 +24,8 @@ export type UsersEndpoints =
   | "query"
   | "updateProfile"
   | "approve"
-  | "updatePermissions";
+  | "updatePermissions"
+  | "verifyEmail";
 
 /**
  * Fields available for relationships in users.
@@ -175,6 +176,15 @@ export interface UsersUpdatePermissionsParameter extends UsersParameter {
 }
 
 /**
+ * Verify a user's email (Integration API). `email` must match the user's
+ * current `email` or `pendingEmail` (case-insensitive).
+ */
+export interface UsersVerifyEmailParameter extends UsersParameter {
+  id: UUID | string;
+  email: string;
+}
+
+/**
  * Custom profile data types (extensible but typed)
  */
 export interface UserProfilePublicData {
@@ -241,7 +251,7 @@ type UsersResponseData<
   ? UserType<IncludesRelationships<P>, I>
   : E extends "query"
     ? UserType<IncludesRelationships<P>, I>[]
-    : E extends "updateProfile" | "approve" | "updatePermissions"
+    : E extends "updateProfile" | "approve" | "updatePermissions" | "verifyEmail"
       ? ExpandReturnType<UserType<IncludesRelationships<P>, I>, EP>
       : never;
 
@@ -253,7 +263,8 @@ type AllUsersParameter =
   | UsersQueryParameter
   | UsersUpdateProfileParameter
   | UsersApproveParameter
-  | UsersUpdatePermissionsParameter;
+  | UsersUpdatePermissionsParameter
+  | UsersVerifyEmailParameter;
 
 /**
  * Final response type

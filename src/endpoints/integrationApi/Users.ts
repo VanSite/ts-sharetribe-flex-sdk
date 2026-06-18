@@ -17,6 +17,7 @@ import {
   UsersShowParameter,
   UsersUpdatePermissionsParameter,
   UsersUpdateProfileParameter,
+  UsersVerifyEmailParameter,
 } from "../../types";
 
 /**
@@ -138,6 +139,35 @@ class Users {
   ): Promise<AxiosResponse<UsersResponse<"updatePermissions", P, EP>>> {
     return this.axios.post(
       `${this.endpoint}/update_permissions`,
+      {...params, ...extraParams},
+      {headers: this.headers}
+    );
+  }
+
+  /**
+   * Verify a user's email address.
+   *
+   * `email` must match the user's current `email` or `pendingEmail`
+   * (case-insensitive).
+   *
+   * @template P
+   * @template EP
+   * @param {P & UsersVerifyEmailParameter} params - `id` and `email`
+   * @param {EP} [extraParams]
+   * @returns {Promise<AxiosResponse<UsersResponse<"verifyEmail", P, EP>>>}
+   *
+   * @example
+   * await sdk.users.verifyEmail({ id: "user-abc123", email: "john@example.com" });
+   */
+  async verifyEmail<
+    P extends UsersVerifyEmailParameter,
+    EP extends ExtraParameter | undefined = undefined
+  >(
+    params: P,
+    extraParams?: EP
+  ): Promise<AxiosResponse<UsersResponse<"verifyEmail", P, EP>>> {
+    return this.axios.post(
+      `${this.endpoint}/verify_email`,
       {...params, ...extraParams},
       {headers: this.headers}
     );

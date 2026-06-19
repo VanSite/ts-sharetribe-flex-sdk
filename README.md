@@ -99,6 +99,17 @@ Published in three formats (resolved automatically via the `exports` field):
 | CommonJS | `dist/index.js` | `require` |
 | UMD / Browser | `dist/index.umd.js` | global `TsSharetribeFlexSdk` |
 
+## Changelog
+
+### 3.1.1
+- Docs: fixed the `listings.query` price filter example — it's a range string `"min,max"` in minor units, not a `{ gte, lte }` object
+- Docs: list **yarn** and **npm** alongside pnpm for the dev commands
+
+### 3.1.0
+- Marketplace file-sharing endpoints: `files`, `fileUploads`, `fileDownloads`, `ownFiles`, `ownFileDownloads`
+- Integration query endpoints: `messages`, `files`, `fileAttachments`
+- `integrationSdk.users.verifyEmail`
+
 ## Migration from `sharetribe-flex-sdk`
 
 <details>

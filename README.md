@@ -35,7 +35,7 @@ const sdk = new SharetribeSdk({ clientId: "your-client-id" });
 
 const { data } = await sdk.listings.query({
   keywords: "yoga",
-  price: { gte: 1000, lte: 10000 }, // minor units (cents)
+  price: "1000,10000", // range "min,max" in minor units (cents)
   include: ["author", "images"],
 });
 
@@ -141,13 +141,13 @@ const store = new TokenStores.MemoryStore();
 
 ## Development
 
-This repo uses **pnpm**.
+Works with **pnpm**, **yarn** or **npm**:
 
 ```bash
-pnpm install
-pnpm build      # bundles (CJS/ESM/UMD) + type declarations
-pnpm test       # Jest test suite
-pnpm analyze    # bundle size analysis
+pnpm install   # yarn install      | npm install
+pnpm build     # yarn build        | npm run build    — bundles (CJS/ESM/UMD) + types
+pnpm test      # yarn test         | npm test         — Jest test suite
+pnpm analyze   # yarn analyze      | npm run analyze  — bundle size analysis
 ```
 
 ## Contributing

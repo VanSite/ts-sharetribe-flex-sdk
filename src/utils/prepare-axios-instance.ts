@@ -136,6 +136,30 @@ const sanitizeError = (error: unknown): object => {
   return sanitized;
 };
 
+/**
+ * Marker key used to remember the raw (pre-transit) request body across an
+ * axios-retry retry. axios-retry re-invokes the axios instance with
+ * `error.config`, which axios merges against the instance defaults before
+ * handing it back to this same request interceptor -- so without this,
+ * a retried POST would have its already-transit-serialized `data` string
+ * serialized a second time (see `handleRequestSuccess`).
+ *
+ * Must be a plain string key, not a Symbol: axios' config merge only
+ * carries over string/number-keyed own properties on retry.
+ *
+ * The raw body is wrapped in `{ value }` rather than stored directly:
+ * axios' merge drops any custom config key whose value is `undefined`
+ * (its default merge strategy treats `undefined` as "not set"), which
+ * would silently lose the marker for requests whose body is legitimately
+ * `undefined`. Wrapping guarantees the marker object itself is always
+ * defined, even when the raw value it carries is `undefined` or `null`.
+ */
+const RAW_TRANSIT_DATA_KEY = "__sdkRawTransitData";
+
+type ConfigWithRawTransitData = InternalAxiosRequestConfig & {
+  [RAW_TRANSIT_DATA_KEY]?: { value: unknown };
+};
+
 export const QUERY_PARAMETERS = [
   "include",
   "page",
@@ -478,6 +502,18 @@ export async function handleRequestSuccess(
     if (requestConfig.url?.endsWith("/upload")) {
       delete requestConfig.headers["Content-Type"]
     } else {
+      const configWithRawData = requestConfig as ConfigWithRawTransitData;
+
+      if (RAW_TRANSIT_DATA_KEY in configWithRawData) {
+        // Retry / re-issue of this exact request config: the interceptor
+        // already ran once and replaced `data` with the transit-serialized
+        // result. Restore the original body before serializing again, or
+        // we'd serialize an already-serialized transit string.
+        requestConfig.data = configWithRawData[RAW_TRANSIT_DATA_KEY]!.value;
+      } else {
+        configWithRawData[RAW_TRANSIT_DATA_KEY] = { value: requestConfig.data };
+      }
+
       const {writer} = createTransitConverters(sdk.sdkConfig.typeHandlers, {
         verbose: sdk.sdkConfig.transitVerbose,
       });

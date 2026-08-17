@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.1 (2026-08-17)
+
+- docs: README — version guide (4.x vs 3.2.x), subpath-export examples, updated changelog section.
+
 ## 4.0.0 (2026-08-17)
 
 ### axios is gone — native fetch under the hood 🚀

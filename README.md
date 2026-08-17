@@ -23,6 +23,34 @@ npm install @vansite/ts-sharetribe-flex-sdk
 # or: pnpm add … / yarn add …
 ```
 
+## Choosing a Version: 4.x vs 3.2
+
+Both lines expose the **same public API** (endpoints, method signatures, `SharetribeApiError`
+error shape) and both ship the tree-shakeable build with the `./types` and `./transit`
+subpath exports. The difference is the HTTP layer:
+
+| | **4.x** (recommended) | **3.2.x** |
+|---|---|---|
+| HTTP layer | Native `fetch` — no axios | axios + axios-retry |
+| Runtime dependencies | `js-cookie`, `transit-js`, `uuid` | + `axios`, `axios-retry` |
+| Bundle size | ~50 KB (raw) smaller for every consumer | baseline |
+| Node.js | **≥ 18 required** (native fetch) | ≥ 14 |
+| `httpAgent` / `httpsAgent` config | removed (undici pools connections automatically) | supported |
+| `sdk.axios` | deprecated alias for `sdk.httpClient` (axios-compatible surface) | axios instance |
+
+**Pick 4.x** unless you are stuck on Node < 18, pass custom `http(s).Agent`s to the
+Integration SDK, or depend on the real axios instance (e.g. axios interceptors/adapters
+of your own). In those cases stay on **3.2.x** — it still gets the full bundle-size win
+from tree-shaking and the subpath exports.
+
+```bash
+npm install @vansite/ts-sharetribe-flex-sdk@^4   # fetch-based (default)
+npm install @vansite/ts-sharetribe-flex-sdk@^3.2 # axios-based
+```
+
+Typical app code needs **no changes** when upgrading 3.2 → 4.0 — see the
+[CHANGELOG](./CHANGELOG.md) for the full breaking-change list.
+
 ## Quick Start
 
 ```typescript
@@ -89,7 +117,7 @@ const sdk = new SharetribeSdk({
 | `BrowserStore` | Single-page apps (browser cookies) |
 | `ExpressStore` | Server apps; pair with `httpOnly: true` in production |
 
-## Module Formats
+## Module Formats & Subpath Exports
 
 Published in three formats (resolved automatically via the `exports` field):
 
@@ -99,16 +127,35 @@ Published in three formats (resolved automatically via the `exports` field):
 | CommonJS | `dist/index.js` | `require` |
 | UMD / Browser | `dist/index.umd.js` | global `TsSharetribeFlexSdk` |
 
+Since 3.2.0 the build is tree-shakeable (`sideEffects: false`) and two lightweight
+subpaths let you keep the HTTP client out of bundles that don't need it:
+
+```typescript
+// SDK value types only — no HTTP client in your bundle (~5 KB min+gz)
+import { UUID, Money, LatLng, LatLngBounds, BigDecimal, reviver }
+  from "@vansite/ts-sharetribe-flex-sdk/types";
+
+// Transit serialization only
+import { read, write } from "@vansite/ts-sharetribe-flex-sdk/transit";
+```
+
+Class identity is shared across entry points: a `UUID` imported from `./types` is the
+same class the full SDK uses internally, so `instanceof` checks and custom type
+handlers keep working.
+
 ## Changelog
 
-### 3.1.1
-- Docs: fixed the `listings.query` price filter example — it's a range string `"min,max"` in minor units, not a `{ gte, lte }` object
-- Docs: list **yarn** and **npm** alongside pnpm for the dev commands
+### 4.0.0
+- **axios replaced with native `fetch`** — axios/axios-retry dropped, ~50 KB (raw) less in every consumer bundle; retries (3×, exponential backoff) built in
+- Breaking: Node.js ≥ 18 required; `httpAgent`/`httpsAgent` config removed; `sdk.axios` deprecated in favor of `sdk.httpClient`
+- Public API, response shape and `SharetribeApiError` unchanged
 
-### 3.1.0
-- Marketplace file-sharing endpoints: `files`, `fileUploads`, `fileDownloads`, `ownFiles`, `ownFileDownloads`
-- Integration query endpoints: `messages`, `files`, `fileAttachments`
-- `integrationSdk.users.verifyEmail`
+### 3.2.0
+- Tree-shakeable ESM/CJS builds (tsup with code splitting) and `sideEffects: false`
+- New subpath exports `./types` and `./transit`
+- ESM build no longer references Node's `http`/`https` — no bundler fallbacks needed
+
+See [CHANGELOG.md](./CHANGELOG.md) for details and older releases.
 
 ## Migration from `sharetribe-flex-sdk`
 

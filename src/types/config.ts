@@ -3,8 +3,8 @@ import LatLng from "../sdkTypes/LatLng";
 import Money from "../sdkTypes/Money";
 import LatLngBounds from "../sdkTypes/LatLngBounds";
 import BigDecimal from "../sdkTypes/BigDecimal";
-import {Agent as HttpAgent} from "http";
-import {Agent as HttpsAgent} from "https";
+import type {Agent as HttpAgent} from "http";
+import type {Agent as HttpsAgent} from "https";
 import {TokenStore} from "./store";
 
 /**

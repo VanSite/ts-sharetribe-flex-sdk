@@ -1,7 +1,7 @@
 import MemoryStore from "./stores/MemoryStore";
 import {TypeHandler} from "../types";
-import {Agent as HttpAgent} from "http";
-import {Agent as HttpsAgent} from "https";
+import type {Agent as HttpAgent} from "http";
+import type {Agent as HttpsAgent} from "https";
 
 type DefaultSdkConfigType = {
   baseUrl: string;
@@ -25,20 +25,24 @@ type DefaultIntegrationSdkConfigType = {
 };
 
 const isNode = typeof window === "undefined";
-const hasAgents =
-  typeof HttpAgent === "function" && typeof HttpsAgent === "function";
 
-// Create safe agent creators that work in both ESM and CommonJS environments
+// Create safe agent creators that work in both ESM and CommonJS environments.
+// No static `import from "http"` here — that would break browser bundlers.
+// A guarded require keeps the pre-3.2.0 behavior: agents in Node/CJS,
+// no agents in ESM/browser builds.
 let httpAgentCreator: (options: any) => any = () => undefined;
 let httpsAgentCreator: (options: any) => any = () => undefined;
 
-// Only initialize agents if we're in a Node.js environment and the modules are available
-if (isNode && hasAgents) {
+if (isNode) {
   try {
-    httpAgentCreator = (options: any) => new HttpAgent(options);
-    httpsAgentCreator = (options: any) => new HttpsAgent(options);
-  } catch (e) {
-    console.warn("Failed to initialize HTTP/HTTPS agents:", e);
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const http = require("http");
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const https = require("https");
+    httpAgentCreator = (options: any) => new http.Agent(options);
+    httpsAgentCreator = (options: any) => new https.Agent(options);
+  } catch {
+    // require() is unavailable (ESM bundle) — keep the no-op creators.
   }
 }
 

@@ -1,18 +1,12 @@
+// Webpack only builds the UMD browser bundle. CJS/ESM come from tsup
+// (see tsup.config.ts), type declarations from `tsc -p tsconfig.build.json`.
 const path = require("path");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const TerserPlugin = require("terser-webpack-plugin");
 
 const isAnalyze = process.env.ANALYZE === "true";
 
-const createAnalyzerPlugin = (name) => {
-  return new BundleAnalyzerPlugin({
-    analyzerMode: "static",
-    reportFilename: `bundle-analysis-${name}.html`,
-    openAnalyzer: false,
-  });
-};
-
-const commonConfig = {
+const umdConfig = {
   mode: "production",
   entry: "./src/index.ts",
   resolve: {
@@ -33,7 +27,6 @@ const commonConfig = {
     ],
   },
   devtool: "source-map",
-  plugins: [],
   optimization: {
     minimize: true,
     concatenateModules: false,
@@ -54,49 +47,6 @@ const commonConfig = {
       }),
     ],
   },
-};
-
-const cjsConfig = {
-  ...commonConfig,
-  target: "node",
-  output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "index.js",
-    library: {
-      type: "commonjs2",
-    },
-    pathinfo: true,
-  },
-  externals: {
-    http: "commonjs http",
-    https: "commonjs https",
-  },
-  plugins: isAnalyze ? [createAnalyzerPlugin("cjs")] : [],
-};
-
-const esmConfig = {
-  ...commonConfig,
-  target: ["web", "es2020"],
-  output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "index.mjs",
-    library: {
-      type: "module",
-    },
-    pathinfo: true,
-    environment: {
-      module: true,
-    },
-  },
-  experiments: {
-    outputModule: true,
-  },
-  externalsType: "import",
-  plugins: isAnalyze ? [createAnalyzerPlugin("esm")] : [],
-};
-
-const umdConfig = {
-  ...commonConfig,
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "index.umd.js",
@@ -108,7 +58,15 @@ const umdConfig = {
     pathinfo: true,
     globalObject: "this",
   },
+  plugins: isAnalyze
+    ? [
+        new BundleAnalyzerPlugin({
+          analyzerMode: "static",
+          reportFilename: "bundle-analysis-umd.html",
+          openAnalyzer: false,
+        }),
+      ]
+    : [],
 };
 
-
-module.exports = [cjsConfig, esmConfig, umdConfig];
+module.exports = [umdConfig];

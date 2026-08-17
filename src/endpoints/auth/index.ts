@@ -4,7 +4,7 @@
  * @see https://www.sharetribe.com/api-reference/authentication.html
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import SharetribeSdk from "../../sdk";
 import IntegrationSdk from "../../integrationSdk";
 import {
@@ -37,7 +37,7 @@ export const urlEncodeFormData = (obj: Record<string, any> | null): string => {
 };
 
 class AuthenticationApi {
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
@@ -45,7 +45,7 @@ class AuthenticationApi {
     const config = sdk.apisConfigs.auth(sdk.sdkConfig);
     this.endpoint = config.baseUrl;
     this.headers = {...config.headers, "Content-Type": "application/x-www-form-urlencoded"};
-    this.axios = sdk.axios;
+    this.httpClient = sdk.httpClient;
   }
 
   /**
@@ -53,12 +53,12 @@ class AuthenticationApi {
    *
    * @template T - Token request type
    * @param {T} params - OAuth2 token request parameters
-   * @returns {Promise<AxiosResponse<TokenResponse<T>>>}
+   * @returns {Promise<HttpResponse<TokenResponse<T>>>}
    */
   async token<T extends TokenRequest>(
     params: T
-  ): Promise<AxiosResponse<TokenResponse<T>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<TokenResponse<T>>> {
+    return this.httpClient.post(
       `${this.endpoint}/token`,
       urlEncodeFormData(params as Record<string, any>),
       {headers: this.headers}
@@ -69,12 +69,12 @@ class AuthenticationApi {
    * Authenticate via external Identity Provider
    *
    * @param {AuthWithIdpParameter} params
-   * @returns {Promise<AxiosResponse<TokenResponse<UserTokenRequest>>>}
+   * @returns {Promise<HttpResponse<TokenResponse<UserTokenRequest>>>}
    */
   async authWithIdp(
     params: AuthWithIdpParameter
-  ): Promise<AxiosResponse<TokenResponse<UserTokenRequest>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<TokenResponse<UserTokenRequest>>> {
+    return this.httpClient.post(
       `${this.endpoint}/auth_with_idp`,
       urlEncodeFormData(params),
       {headers: this.headers}
@@ -86,8 +86,8 @@ class AuthenticationApi {
    *
    * @param {string} token - Refresh token to revoke
    */
-  async revoke(token: string): Promise<AxiosResponse<RevokeResponse>> {
-    return this.axios.post(
+  async revoke(token: string): Promise<HttpResponse<RevokeResponse>> {
+    return this.httpClient.post(
       `${this.endpoint}/revoke`,
       urlEncodeFormData({token}),
       {headers: this.headers}
@@ -97,8 +97,8 @@ class AuthenticationApi {
   /**
    * Introspect current access token
    */
-  async details(): Promise<AxiosResponse<TokenDetails>> {
-    return this.axios.get(`${this.endpoint}/details`, {
+  async details(): Promise<HttpResponse<TokenDetails>> {
+    return this.httpClient.get(`${this.endpoint}/details`, {
       headers: this.headers,
     });
   }

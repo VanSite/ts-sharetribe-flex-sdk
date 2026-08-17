@@ -11,7 +11,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#stripe-customer
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {
   ExtraParameter,
@@ -26,13 +26,13 @@ import {
  */
 class StripeCustomer {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/stripe_customer`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -43,7 +43,7 @@ class StripeCustomer {
    * @template EP
    * @param {P & StripeCustomerCreateParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<StripeCustomerResponse<"create", P, EP>>>}
+   * @returns {Promise<HttpResponse<StripeCustomerResponse<"create", P, EP>>>}
    *
    * @example
    * await sdk.stripeCustomer.create({
@@ -57,8 +57,8 @@ class StripeCustomer {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StripeCustomerResponse<"create", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<StripeCustomerResponse<"create", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/create`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -72,7 +72,7 @@ class StripeCustomer {
    * @template EP
    * @param {P & StripeCustomerAddPaymentMethodParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<StripeCustomerResponse<"addPaymentMethod", P, EP>>>}
+   * @returns {Promise<HttpResponse<StripeCustomerResponse<"addPaymentMethod", P, EP>>>}
    */
   async addPaymentMethod<
     P extends StripeCustomerAddPaymentMethodParameter,
@@ -80,8 +80,8 @@ class StripeCustomer {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StripeCustomerResponse<"addPaymentMethod", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<StripeCustomerResponse<"addPaymentMethod", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/add_payment_method`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -95,7 +95,7 @@ class StripeCustomer {
    * @template EP
    * @param {P & StripeCustomerDeletePaymentMethodParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<StripeCustomerResponse<"deletePaymentMethod", P, EP>>>}
+   * @returns {Promise<HttpResponse<StripeCustomerResponse<"deletePaymentMethod", P, EP>>>}
    */
   async deletePaymentMethod<
     P extends StripeCustomerDeletePaymentMethodParameter,
@@ -103,8 +103,8 @@ class StripeCustomer {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StripeCustomerResponse<"deletePaymentMethod", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<StripeCustomerResponse<"deletePaymentMethod", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/delete_payment_method`,
       {...params, ...extraParams},
       {headers: this.headers}

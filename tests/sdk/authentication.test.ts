@@ -1,18 +1,18 @@
 import SharetribeSdk from "../../src/sdk";
-import AxiosMockAdapter from "axios-mock-adapter";
+import FetchMockAdapter from "../helpers/FetchMockAdapter";
 import { AuthToken } from "../../src/types/authentication";
 import MemoryStore from "../../src/utils/stores/MemoryStore";
 
 describe("Authentication process", () => {
   describe("Non-trusted user", () => {
     let sharetribeSdk: SharetribeSdk;
-    let mockAdapter: AxiosMockAdapter;
+    let mockAdapter: FetchMockAdapter;
 
     beforeAll(() => {
       sharetribeSdk = new SharetribeSdk({
         clientId: "test-client-id",
       });
-      mockAdapter = new AxiosMockAdapter(sharetribeSdk.axios);
+      mockAdapter = new FetchMockAdapter(sharetribeSdk.axios);
     });
 
     it("should get auth info", async () => {
@@ -293,7 +293,7 @@ describe("Authentication process", () => {
           refresh_token: "test-refresh-token",
         }),
       });
-      const mockAdapter = new AxiosMockAdapter(sharetribeSdk.axios);
+      const mockAdapter = new FetchMockAdapter(sharetribeSdk.axios);
       mockAdapter
         .onPost("https://flex-api.sharetribe.com/v1/auth/token")
         .reply(200, {
@@ -335,7 +335,7 @@ describe("Authentication process", () => {
           refresh_token: "test-refresh-token",
         }),
       });
-      const mockAdapter = new AxiosMockAdapter(sharetribeSdk.axios);
+      const mockAdapter = new FetchMockAdapter(sharetribeSdk.axios);
       mockAdapter
         .onPost("https://flex-api.sharetribe.com/v1/auth/token")
         .reply(200, {
@@ -353,7 +353,7 @@ describe("Authentication process", () => {
         clientSecret: "test-client-secret",
         tokenStore: memoryTokenStore(response.data),
       });
-      const trustedMockAdapter = new AxiosMockAdapter(
+      const trustedMockAdapter = new FetchMockAdapter(
         trustedSharetribeSdk.axios
       );
 
@@ -386,13 +386,13 @@ describe("Authentication process", () => {
 
   describe("Logout edge cases", () => {
     let sharetribeSdk: SharetribeSdk;
-    let mockAdapter: AxiosMockAdapter;
+    let mockAdapter: FetchMockAdapter;
 
     beforeEach(async () => {
       sharetribeSdk = new SharetribeSdk({
         clientId: "test-client-id",
       });
-      mockAdapter = new AxiosMockAdapter(sharetribeSdk.axios);
+      mockAdapter = new FetchMockAdapter(sharetribeSdk.axios);
 
       // Login to seed a token
       mockAdapter
@@ -458,7 +458,7 @@ describe("Authentication process", () => {
       const sharetribeSdk = new SharetribeSdk({
         clientId: "test-client-id",
       });
-      const mockAdapter = new AxiosMockAdapter(sharetribeSdk.axios);
+      const mockAdapter = new FetchMockAdapter(sharetribeSdk.axios);
 
       const staleTokenWithRefresh: AuthToken = {
         access_token: "stale-user-token",

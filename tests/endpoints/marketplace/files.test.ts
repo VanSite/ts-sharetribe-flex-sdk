@@ -1,5 +1,5 @@
 import SharetribeSdk from "../../../src/sdk";
-import AxiosMockAdapter from "axios-mock-adapter";
+import FetchMockAdapter from "../../helpers/FetchMockAdapter";
 import MemoryStore from "../../../src/utils/stores/MemoryStore";
 
 /**
@@ -29,14 +29,14 @@ const idOnly = (type: string) => ({
 
 describe("Marketplace file endpoints", () => {
   let sdk: SharetribeSdk;
-  let mock: AxiosMockAdapter;
+  let mock: FetchMockAdapter;
 
   beforeEach(() => {
     sdk = new SharetribeSdk({
       clientId: "test-client-id",
       tokenStore: new MemoryStore(),
     });
-    mock = new AxiosMockAdapter(sdk.axios);
+    mock = new FetchMockAdapter(sdk.axios);
     mock.onPost(TOKEN_URL).reply(200, tokenReply);
   });
 

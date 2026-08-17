@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#show-user
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {UsersResponse, UsersShowParameter,} from "../../types";
 
@@ -15,13 +15,13 @@ import {UsersResponse, UsersShowParameter,} from "../../types";
  * Public Users API client
  */
 class Users {
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/users`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -30,7 +30,7 @@ class Users {
    *
    * @template P
    * @param {P & UsersShowParameter} params
-   * @returns {Promise<AxiosResponse<UsersResponse<"show", P>>>}
+   * @returns {Promise<HttpResponse<UsersResponse<"show", P>>>}
    *
    * @example
    * const { data } = await sdk.users.show({ id: "user-abc123" });
@@ -39,8 +39,8 @@ class Users {
    */
   async show<P extends UsersShowParameter>(
     params: P
-  ): Promise<AxiosResponse<UsersResponse<"show", P, {expand: true}>>> {
-    return this.axios.get(`${this.endpoint}/show`, {
+  ): Promise<HttpResponse<UsersResponse<"show", P, {expand: true}>>> {
+    return this.httpClient.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,
     });

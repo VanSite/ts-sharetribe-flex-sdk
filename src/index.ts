@@ -52,6 +52,8 @@ export * from "./types/sharetribe";
 export * from "./types/apiConfigs";
 export * from "./types/config";
 export * from "./types/store";
+export * from "./types/http";
+export {HttpError, createHttpClient} from "./utils/http-client";
 
 /**
  * SDK-specific types provided for advanced usage.

@@ -20,7 +20,7 @@
  * });
  */
 
-import type {AxiosInstance} from "axios";
+import type {HttpClient} from "../../types";
 import IntegrationSdk from "../../integrationSdk";
 
 import AvailabilityExceptions from "./AvailabilityExceptions";
@@ -41,8 +41,8 @@ import Users from "./Users";
  * Integration API client
  */
 class IntegrationApi {
-  /** Axios instance with auth headers */
-  readonly axios: AxiosInstance;
+  /** HTTP client with auth headers */
+  readonly httpClient: HttpClient;
 
   /** Base URL for all Integration API endpoints */
   readonly endpoint: string;
@@ -71,7 +71,7 @@ class IntegrationApi {
   constructor(sdk: IntegrationSdk) {
     const config = sdk.apisConfigs.integrationApi(sdk.sdkConfig);
 
-    this.axios = sdk.axios;
+    this.httpClient = sdk.httpClient;
     this.endpoint = config.baseUrl;
     this.headers = config.headers;
 

@@ -9,7 +9,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#time-slots
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {TimeSlotsQueryParameter, TimeSlotsResponse,} from "../../types";
 
@@ -17,13 +17,13 @@ import {TimeSlotsQueryParameter, TimeSlotsResponse,} from "../../types";
  * Time Slots API client
  */
 class TimeSlots {
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/timeslots`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -32,7 +32,7 @@ class TimeSlots {
    *
    * @template P
    * @param {P & TimeSlotsQueryParameter} params
-   * @returns {Promise<AxiosResponse<TimeSlotsResponse<"query">>>}
+   * @returns {Promise<HttpResponse<TimeSlotsResponse<"query">>>}
    *
    * @example
    * const { data } = await sdk.timeSlots.query({
@@ -45,8 +45,8 @@ class TimeSlots {
    */
   async query<P extends TimeSlotsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<TimeSlotsResponse<"query">>> {
-    return this.axios.get(`${this.endpoint}/query`, {
+  ): Promise<HttpResponse<TimeSlotsResponse<"query">>> {
+    return this.httpClient.get(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });

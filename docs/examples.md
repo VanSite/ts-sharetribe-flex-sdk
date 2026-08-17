@@ -232,16 +232,15 @@ async function processEvents(lastSequenceId?: number) {
 ## Handling Errors
 
 ```typescript
-import { SharetribeSdk } from '@vansite/ts-sharetribe-flex-sdk';
-import { AxiosError } from 'axios';
+import { SharetribeSdk, SharetribeApiError } from '@vansite/ts-sharetribe-flex-sdk';
 
 async function safeApiCall<T>(fn: () => Promise<T>): Promise<T | null> {
   try {
     return await fn();
   } catch (error) {
-    if (error instanceof AxiosError) {
-      const status = error.response?.status;
-      const apiError = error.response?.data;
+    // API failures reject with a SharetribeApiError (name, status, data)
+    if (error instanceof Error && error.name === 'SharetribeApiError') {
+      const { status, data: apiError } = error as SharetribeApiError;
 
       switch (status) {
         case 401:

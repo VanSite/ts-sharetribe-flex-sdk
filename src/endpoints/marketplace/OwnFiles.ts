@@ -8,7 +8,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#own-files
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {
   ExtraParameter,
@@ -23,13 +23,13 @@ import {
  */
 class OwnFiles {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/own_files`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -37,15 +37,15 @@ class OwnFiles {
    * Fetch one of the current user's own files by id.
    *
    * @param {OwnFilesShowParameter} params - Requires `id`
-   * @returns {Promise<AxiosResponse<OwnFilesShowResponse>>}
+   * @returns {Promise<HttpResponse<OwnFilesShowResponse>>}
    *
    * @example
    * const { data } = await sdk.ownFiles.show({ id: "file-abc123" });
    */
   async show(
     params: OwnFilesShowParameter
-  ): Promise<AxiosResponse<OwnFilesShowResponse>> {
-    return this.axios.get(`${this.endpoint}/show`, {
+  ): Promise<HttpResponse<OwnFilesShowResponse>> {
+    return this.httpClient.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,
     });
@@ -58,7 +58,7 @@ class OwnFiles {
    * @template EP
    * @param {OwnFilesCreateParameter} params - `name`, `mimeType`, `size`
    * @param {EP} [extraParams] - Optional extra parameters (e.g. `expand: true`)
-   * @returns {Promise<AxiosResponse<OwnFilesCreateResponse<EP>>>}
+   * @returns {Promise<HttpResponse<OwnFilesCreateResponse<EP>>>}
    *
    * @example
    * const { data } = await sdk.ownFiles.create(
@@ -69,8 +69,8 @@ class OwnFiles {
   async create<EP extends ExtraParameter | undefined = undefined>(
     params: OwnFilesCreateParameter,
     extraParams?: EP
-  ): Promise<AxiosResponse<OwnFilesCreateResponse<EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<OwnFilesCreateResponse<EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/create`,
       {...params, ...extraParams},
       {headers: this.headers}

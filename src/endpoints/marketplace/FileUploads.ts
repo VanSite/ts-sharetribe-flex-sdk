@@ -8,7 +8,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#file-uploads
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {FileUploadsCreateParameter, FileUploadsCreateResponse} from "../../types";
 
@@ -17,13 +17,13 @@ import {FileUploadsCreateParameter, FileUploadsCreateResponse} from "../../types
  */
 class FileUploads {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/file_uploads`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -31,7 +31,7 @@ class FileUploads {
    * Obtain a signed URL to upload the bytes of an own file.
    *
    * @param {FileUploadsCreateParameter} params - Requires `fileId`
-   * @returns {Promise<AxiosResponse<FileUploadsCreateResponse>>}
+   * @returns {Promise<HttpResponse<FileUploadsCreateResponse>>}
    *
    * @example
    * const { data } = await sdk.fileUploads.create({ fileId: "file-abc123" });
@@ -39,8 +39,8 @@ class FileUploads {
    */
   async create(
     params: FileUploadsCreateParameter
-  ): Promise<AxiosResponse<FileUploadsCreateResponse>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<FileUploadsCreateResponse>> {
+    return this.httpClient.post(
       `${this.endpoint}/create`,
       {...params},
       {headers: this.headers}

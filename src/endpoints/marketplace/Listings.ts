@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#listings
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {ListingsQueryParameter, ListingsResponse, ListingsShowParameter,} from "../../types";
 
@@ -15,13 +15,13 @@ import {ListingsQueryParameter, ListingsResponse, ListingsShowParameter,} from "
  * Public Listings API client
  */
 class Listings {
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/listings`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -30,15 +30,15 @@ class Listings {
    *
    * @template P
    * @param {P & ListingsShowParameter} params
-   * @returns {Promise<AxiosResponse<ListingsResponse<"show", P>>>}
+   * @returns {Promise<HttpResponse<ListingsResponse<"show", P>>>}
    *
    * @example
    * const { data } = await sdk.listings.show({ id: "listing-abc123" });
    */
   async show<P extends ListingsShowParameter>(
     params: P
-  ): Promise<AxiosResponse<ListingsResponse<"show", P, {expand: true}>>> {
-    return this.axios.get(`${this.endpoint}/show`, {
+  ): Promise<HttpResponse<ListingsResponse<"show", P, {expand: true}>>> {
+    return this.httpClient.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,
     });
@@ -49,7 +49,7 @@ class Listings {
    *
    * @template P
    * @param {P & ListingsQueryParameter} params
-   * @returns {Promise<AxiosResponse<ListingsResponse<"query", P>>>}
+   * @returns {Promise<HttpResponse<ListingsResponse<"query", P>>>}
    *
    * @example
    * // Basic keyword search
@@ -65,8 +65,8 @@ class Listings {
    */
   async query<P extends ListingsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<ListingsResponse<"query", P>>> {
-    return this.axios.get(`${this.endpoint}/query`, {
+  ): Promise<HttpResponse<ListingsResponse<"query", P>>> {
+    return this.httpClient.get(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });

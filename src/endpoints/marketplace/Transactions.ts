@@ -12,7 +12,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#transactions
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {
   ExtraParameter,
@@ -30,13 +30,13 @@ import {
  */
 class Transactions {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/transactions`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -45,12 +45,12 @@ class Transactions {
    *
    * @template P
    * @param {P & TransactionsShowParameter} params
-   * @returns {Promise<AxiosResponse<TransactionsResponse<"show", P>>>}
+   * @returns {Promise<HttpResponse<TransactionsResponse<"show", P>>>}
    */
   async show<P extends TransactionsShowParameter>(
     params: P
-  ): Promise<AxiosResponse<TransactionsResponse<"show", P, {expand: true}>>> {
-    return this.axios.get(`${this.endpoint}/show`, {
+  ): Promise<HttpResponse<TransactionsResponse<"show", P, {expand: true}>>> {
+    return this.httpClient.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,
     });
@@ -61,12 +61,12 @@ class Transactions {
    *
    * @template P
    * @param {P & TransactionsQueryParameter} params
-   * @returns {Promise<AxiosResponse<TransactionsResponse<"query", P>>>}
+   * @returns {Promise<HttpResponse<TransactionsResponse<"query", P>>>}
    */
   async query<P extends TransactionsQueryParameter>(
     params?: P
-  ): Promise<AxiosResponse<TransactionsResponse<"query", P>>> {
-    return this.axios.get(`${this.endpoint}/query`, {
+  ): Promise<HttpResponse<TransactionsResponse<"query", P>>> {
+    return this.httpClient.get(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });
@@ -79,7 +79,7 @@ class Transactions {
    * @template EP
    * @param {P & TransactionsInitiateParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<TransactionsResponse<"initiate", P, EP>>>}
+   * @returns {Promise<HttpResponse<TransactionsResponse<"initiate", P, EP>>>}
    */
   async initiate<
     P extends TransactionsInitiateParameter,
@@ -87,8 +87,8 @@ class Transactions {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<TransactionsResponse<"initiate", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<TransactionsResponse<"initiate", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/initiate`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -102,7 +102,7 @@ class Transactions {
    * @template EP
    * @param {P & TransactionsInitiateSpeculativeParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<TransactionsResponse<"initiateSpeculative", P, EP>>>}
+   * @returns {Promise<HttpResponse<TransactionsResponse<"initiateSpeculative", P, EP>>>}
    */
   async initiateSpeculative<
     P extends TransactionsInitiateSpeculativeParameter,
@@ -110,8 +110,8 @@ class Transactions {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<TransactionsResponse<"initiateSpeculative", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<TransactionsResponse<"initiateSpeculative", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/initiate_speculative`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -125,7 +125,7 @@ class Transactions {
    * @template EP
    * @param {P & TransactionsTransitionParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<TransactionsResponse<"transition", P, EP>>>}
+   * @returns {Promise<HttpResponse<TransactionsResponse<"transition", P, EP>>>}
    *
    * @example
    * await sdk.transactions.transition({
@@ -139,8 +139,8 @@ class Transactions {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<TransactionsResponse<"transition", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<TransactionsResponse<"transition", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/transition`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -154,7 +154,7 @@ class Transactions {
    * @template EP
    * @param {P & TransactionsTransitionSpeculativeParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<TransactionsResponse<"transitionSpeculative", P, EP>>>}
+   * @returns {Promise<HttpResponse<TransactionsResponse<"transitionSpeculative", P, EP>>>}
    */
   async transitionSpeculative<
     P extends TransactionsTransitionSpeculativeParameter,
@@ -162,8 +162,8 @@ class Transactions {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<TransactionsResponse<"transitionSpeculative", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<TransactionsResponse<"transitionSpeculative", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/transition_speculative`,
       {...params, ...extraParams},
       {headers: this.headers}

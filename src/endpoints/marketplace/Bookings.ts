@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#bookings
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {BookingsQueryParameter, BookingsResponse,} from "../../types";
 
@@ -16,13 +16,13 @@ import {BookingsQueryParameter, BookingsResponse,} from "../../types";
  */
 class Bookings {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/bookings`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -31,7 +31,7 @@ class Bookings {
    *
    * @template P
    * @param {P & BookingsQueryParameter} params
-   * @returns {Promise<AxiosResponse<BookingsResponse<"query", P>>>}
+   * @returns {Promise<HttpResponse<BookingsResponse<"query", P>>>}
    *
    * @example
    * // Fetch all bookings for one of your listings
@@ -50,8 +50,8 @@ class Bookings {
    */
   async query<P extends BookingsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<BookingsResponse<"query", P>>> {
-    return this.axios.get(`${this.endpoint}/query`, {
+  ): Promise<HttpResponse<BookingsResponse<"query", P>>> {
+    return this.httpClient.get(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });

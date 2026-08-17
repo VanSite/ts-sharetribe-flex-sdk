@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#stripe-account-links
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {ExtraParameter, StripeAccountLinksCreateParameter, StripeAccountLinksResponse,} from "../../types";
 
@@ -16,13 +16,13 @@ import {ExtraParameter, StripeAccountLinksCreateParameter, StripeAccountLinksRes
  */
 class StripeAccountLinks {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/stripe_account_links`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -33,7 +33,7 @@ class StripeAccountLinks {
    * @template EP
    * @param {P & StripeAccountLinksCreateParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<StripeAccountLinksResponse<"create", EP>>>}
+   * @returns {Promise<HttpResponse<StripeAccountLinksResponse<"create", EP>>>}
    *
    * @example
    * const { data } = await sdk.stripeAccountLinks.create({
@@ -51,8 +51,8 @@ class StripeAccountLinks {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StripeAccountLinksResponse<"create", EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<StripeAccountLinksResponse<"create", EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/create`,
       {...params, ...extraParams},
       {headers: this.headers}

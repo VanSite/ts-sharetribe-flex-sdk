@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/integration.html#events
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import IntegrationApi from "./index";
 import {EventsQueryParameter, EventsResponse} from "../../types";
 
@@ -15,13 +15,13 @@ import {EventsQueryParameter, EventsResponse} from "../../types";
  * Events API client
  */
 class Events {
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: IntegrationApi) {
     this.endpoint = `${api.endpoint}/events`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -30,7 +30,7 @@ class Events {
    *
    * @template P
    * @param {P & EventsQueryParameter} params - Query filters and pagination
-   * @returns {Promise<AxiosResponse<EventsResponse<"query">>>}
+   * @returns {Promise<HttpResponse<EventsResponse<"query">>>}
    *
    * @example
    * // Fetch events after a specific sequence ID
@@ -48,8 +48,8 @@ class Events {
    */
   async query<P extends EventsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<EventsResponse<"query">>> {
-    return this.axios.get(`${this.endpoint}/query`, {
+  ): Promise<HttpResponse<EventsResponse<"query">>> {
+    return this.httpClient.get(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });

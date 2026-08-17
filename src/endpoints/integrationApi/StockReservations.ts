@@ -6,7 +6,7 @@
  * https://www.sharetribe.com/api-reference/integration.html#stock-reservations
  */
 
-import {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import IntegrationApi from "./index";
 import {StockReservationShowParameter, StockReservationsResponse,} from "../../types";
 
@@ -17,7 +17,7 @@ import {StockReservationShowParameter, StockReservationsResponse,} from "../../t
  */
 class StockReservations {
   private readonly endpoint: string;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly headers: Record<string, string>;
 
   /**
@@ -27,7 +27,7 @@ class StockReservations {
    */
   constructor(api: IntegrationApi) {
     this.endpoint = api.endpoint + "/stock_reservations";
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -36,7 +36,7 @@ class StockReservations {
    *
    * @template P
    * @param {P & StockReservationShowParameter} params - The parameters to identify the stock reservation.
-   * @returns {Promise<AxiosResponse<StockReservationsResponse<'show', P>>>} - A promise resolving to the stock reservation details.
+   * @returns {Promise<HttpResponse<StockReservationsResponse<'show', P>>>} - A promise resolving to the stock reservation details.
    *
    * @example
    * const response = await integrationSdk.stockReservations.show({
@@ -47,8 +47,8 @@ class StockReservations {
    */
   async show<P extends StockReservationShowParameter>(
     params: P
-  ): Promise<AxiosResponse<StockReservationsResponse<"show", P, {expand: true}>>> {
-    return this.axios.get(`${this.endpoint}/show`,
+  ): Promise<HttpResponse<StockReservationsResponse<"show", P, {expand: true}>>> {
+    return this.httpClient.get(`${this.endpoint}/show`,
       {headers: this.headers, params}
     );
   }

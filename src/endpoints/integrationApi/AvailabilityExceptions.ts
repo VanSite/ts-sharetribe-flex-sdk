@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/integration.html#availability-exceptions
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import IntegrationApi from "./index";
 import {
   AvailabilityExceptionsCreateParameter,
@@ -22,13 +22,13 @@ import {
  */
 class AvailabilityExceptions {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: IntegrationApi) {
     this.endpoint = `${api.endpoint}/availability_exceptions`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -37,7 +37,7 @@ class AvailabilityExceptions {
    *
    * @template P
    * @param {P & AvailabilityExceptionsQueryParameter} params
-   * @returns {Promise<AxiosResponse<AvailabilityExceptionsResponse<"query", P>>>}
+   * @returns {Promise<HttpResponse<AvailabilityExceptionsResponse<"query", P>>>}
    *
    * @example
    * const { data } = await sdk.availabilityExceptions.query({
@@ -48,8 +48,8 @@ class AvailabilityExceptions {
    */
   async query<P extends AvailabilityExceptionsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<AvailabilityExceptionsResponse<"query", P>>> {
-    return this.axios.get(`${this.endpoint}/query`, {
+  ): Promise<HttpResponse<AvailabilityExceptionsResponse<"query", P>>> {
+    return this.httpClient.get(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });
@@ -62,7 +62,7 @@ class AvailabilityExceptions {
    * @template EP
    * @param {P & AvailabilityExceptionsCreateParameter} params
    * @param {EP} [extraParams] - Optional extra parameters (e.g. expand)
-   * @returns {Promise<AxiosResponse<AvailabilityExceptionsResponse<"create", P, EP>>>}
+   * @returns {Promise<HttpResponse<AvailabilityExceptionsResponse<"create", P, EP>>>}
    *
    * @example
    * await sdk.availabilityExceptions.create({
@@ -78,8 +78,8 @@ class AvailabilityExceptions {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<AvailabilityExceptionsResponse<"create", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<AvailabilityExceptionsResponse<"create", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/create`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -91,15 +91,15 @@ class AvailabilityExceptions {
    *
    * @template P
    * @param {P & AvailabilityExceptionsDeleteParameter} params
-   * @returns {Promise<AxiosResponse<AvailabilityExceptionsResponse<"delete", P>>>}
+   * @returns {Promise<HttpResponse<AvailabilityExceptionsResponse<"delete", P>>>}
    *
    * @example
    * await sdk.availabilityExceptions.delete({ id: "exc-456-def" });
    */
   async delete<P extends AvailabilityExceptionsDeleteParameter>(
     params: P
-  ): Promise<AxiosResponse<AvailabilityExceptionsResponse<"delete", P>>> {
-    return this.axios.post(`${this.endpoint}/delete`, params, {
+  ): Promise<HttpResponse<AvailabilityExceptionsResponse<"delete", P>>> {
+    return this.httpClient.post(`${this.endpoint}/delete`, params, {
       headers: this.headers,
     });
   }

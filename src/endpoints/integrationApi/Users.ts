@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/integration.html#users
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import IntegrationApi from "./index";
 import {
   ExtraParameter,
@@ -25,13 +25,13 @@ import {
  */
 class Users {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: IntegrationApi) {
     this.endpoint = `${api.endpoint}/users`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -40,7 +40,7 @@ class Users {
    *
    * @template P
    * @param {P & UsersShowParameter<true>} params - Either `id` or `email` is required
-   * @returns {Promise<AxiosResponse<UsersResponse<"show", P>>>}
+   * @returns {Promise<HttpResponse<UsersResponse<"show", P>>>}
    *
    * @example
    * const { data } = await sdk.users.show({ id: "user-abc123" });
@@ -48,12 +48,12 @@ class Users {
    */
   async show<P extends UsersShowParameter<true>>(
     params: P
-  ): Promise<AxiosResponse<UsersResponse<"show", P, {expand: true}>>> {
+  ): Promise<HttpResponse<UsersResponse<"show", P, {expand: true}>>> {
     if (!params.id && !params.email) {
       throw new Error("Either 'id' or 'email' must be provided");
     }
 
-    return this.axios.get(`${this.endpoint}/show`, {
+    return this.httpClient.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,
     });
@@ -64,12 +64,12 @@ class Users {
    *
    * @template P
    * @param {P & UsersQueryParameter} params
-   * @returns {Promise<AxiosResponse<UsersResponse<"query", P>>>}
+   * @returns {Promise<HttpResponse<UsersResponse<"query", P>>>}
    */
   async query<P extends UsersQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<UsersResponse<"query", P>>> {
-    return this.axios.get(`${this.endpoint}/query`, {
+  ): Promise<HttpResponse<UsersResponse<"query", P>>> {
+    return this.httpClient.get(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });
@@ -82,7 +82,7 @@ class Users {
    * @template EP
    * @param {P & UsersUpdateProfileParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<UsersResponse<"updateProfile", P, EP>>>}
+   * @returns {Promise<HttpResponse<UsersResponse<"updateProfile", P, EP>>>}
    */
   async updateProfile<
     P extends UsersUpdateProfileParameter,
@@ -90,8 +90,8 @@ class Users {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<UsersResponse<"updateProfile", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<UsersResponse<"updateProfile", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/update_profile`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -105,7 +105,7 @@ class Users {
    * @template EP
    * @param {P & UsersApproveParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<UsersResponse<"approve", P, EP>>>}
+   * @returns {Promise<HttpResponse<UsersResponse<"approve", P, EP>>>}
    */
   async approve<
     P extends UsersApproveParameter,
@@ -113,8 +113,8 @@ class Users {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<UsersResponse<"approve", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<UsersResponse<"approve", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/approve`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -128,7 +128,7 @@ class Users {
    * @template EP
    * @param {P & UsersUpdatePermissionsParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<UsersResponse<"updatePermissions", P, EP>>>}
+   * @returns {Promise<HttpResponse<UsersResponse<"updatePermissions", P, EP>>>}
    */
   async updatePermissions<
     P extends UsersUpdatePermissionsParameter,
@@ -136,8 +136,8 @@ class Users {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<UsersResponse<"updatePermissions", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<UsersResponse<"updatePermissions", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/update_permissions`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -154,7 +154,7 @@ class Users {
    * @template EP
    * @param {P & UsersVerifyEmailParameter} params - `id` and `email`
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<UsersResponse<"verifyEmail", P, EP>>>}
+   * @returns {Promise<HttpResponse<UsersResponse<"verifyEmail", P, EP>>>}
    *
    * @example
    * await sdk.users.verifyEmail({ id: "user-abc123", email: "john@example.com" });
@@ -165,8 +165,8 @@ class Users {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<UsersResponse<"verifyEmail", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<UsersResponse<"verifyEmail", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/verify_email`,
       {...params, ...extraParams},
       {headers: this.headers}

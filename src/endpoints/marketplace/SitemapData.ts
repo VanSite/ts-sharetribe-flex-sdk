@@ -10,7 +10,7 @@
  * @see https://www.sharetribe.com/docs/concepts/sitemap-in-sharetribe/
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {SitemapAssetsResponse, SitemapListingsResponse} from "../../types/marketplace/sitemapData";
 
@@ -21,13 +21,13 @@ import {SitemapAssetsResponse, SitemapListingsResponse} from "../../types/market
  * These endpoints return minimal data needed for sitemap XML generation.
  */
 class SitemapData {
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/sitemap_data`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -38,7 +38,7 @@ class SitemapData {
    * For marketplaces with more listings, use Integration API
    * with createdAt filtering for older listings.
    *
-   * @returns {Promise<AxiosResponse<SitemapListingsResponse>>}
+   * @returns {Promise<HttpResponse<SitemapListingsResponse>>}
    *
    * @example
    * const { data } = await sdk.sitemapData.queryListings();
@@ -47,8 +47,8 @@ class SitemapData {
    *   console.log(`/l/${listing.id}`);
    * });
    */
-  async queryListings(): Promise<AxiosResponse<SitemapListingsResponse>> {
-    return this.axios.get(`${this.endpoint}/query_listings`, {
+  async queryListings(): Promise<HttpResponse<SitemapListingsResponse>> {
+    return this.httpClient.get(`${this.endpoint}/query_listings`, {
       headers: this.headers,
     });
   }
@@ -59,7 +59,7 @@ class SitemapData {
    * Returns pages created in Sharetribe Console.
    * Excludes pages with built-in or custom paths.
    *
-   * @returns {Promise<AxiosResponse<SitemapAssetsResponse>>}
+   * @returns {Promise<HttpResponse<SitemapAssetsResponse>>}
    *
    * @example
    * const { data } = await sdk.sitemapData.queryAssets();
@@ -68,8 +68,8 @@ class SitemapData {
    *   console.log(`/p/${asset.attributes.assetPath}`);
    * });
    */
-  async queryAssets(): Promise<AxiosResponse<SitemapAssetsResponse>> {
-    return this.axios.get(`${this.endpoint}/query_assets`, {
+  async queryAssets(): Promise<HttpResponse<SitemapAssetsResponse>> {
+    return this.httpClient.get(`${this.endpoint}/query_assets`, {
       headers: this.headers,
     });
   }

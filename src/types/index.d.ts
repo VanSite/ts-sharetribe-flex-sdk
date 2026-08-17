@@ -28,7 +28,7 @@ export * from "./marketplace/timeSlots";
 export * from "./marketplace/transactions";
 export * from "./marketplace/user";
 export * from "./apiConfigs";
-export * from "./axios";
+export * from "./http";
 export * from "./config";
 export * from "./sdk-types";
 export * from "./store";

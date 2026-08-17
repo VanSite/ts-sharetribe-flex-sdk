@@ -9,7 +9,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#stripe-setup-intents
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {ExtraParameter, StripeSetupIntentsCreateParameter, StripeSetupIntentsResponse,} from "../../types";
 
@@ -18,13 +18,13 @@ import {ExtraParameter, StripeSetupIntentsCreateParameter, StripeSetupIntentsRes
  */
 class StripeSetupIntents {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/stripe_setup_intents`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -35,7 +35,7 @@ class StripeSetupIntents {
    * @template EP
    * @param {P & StripeSetupIntentsCreateParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<StripeSetupIntentsResponse<"create">>>}
+   * @returns {Promise<HttpResponse<StripeSetupIntentsResponse<"create">>>}
    *
    * @example
    * const { data } = await sdk.stripeSetupIntents.create({});
@@ -51,8 +51,8 @@ class StripeSetupIntents {
   >(
     params: P = {} as P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StripeSetupIntentsResponse<"create">>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<StripeSetupIntentsResponse<"create">>> {
+    return this.httpClient.post(
       `${this.endpoint}/create`,
       {...params, ...extraParams},
       {headers: this.headers}

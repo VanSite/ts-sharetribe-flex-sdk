@@ -4,7 +4,7 @@
  * @see https://www.sharetribe.com/api-reference/asset-delivery-api.html
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import SharetribeSdk from "../../sdk";
 import {
   AssetByAliasParameter,
@@ -43,7 +43,7 @@ const extractCommonPathAndAssets = (paths: readonly string[]) => {
 };
 
 class AssetsApi {
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
@@ -51,7 +51,7 @@ class AssetsApi {
     const config = sdk.apisConfigs.assets(sdk.sdkConfig);
     this.endpoint = `${config.baseUrl}/pub/${sdk.sdkConfig.clientId}`;
     this.headers = config.headers;
-    this.axios = sdk.axios;
+    this.httpClient = sdk.httpClient;
   }
 
   /**
@@ -59,16 +59,16 @@ class AssetsApi {
    *
    * @template P
    * @param {P & AssetByAliasParameter} params
-   * @returns {Promise<AxiosResponse<AssetResponse<"assetByAlias", P & AssetByAliasParameter>>>}
+   * @returns {Promise<HttpResponse<AssetResponse<"assetByAlias", P & AssetByAliasParameter>>>}
    */
   async assetByAlias<P extends AssetByAliasParameter>(
     params: P & AssetByAliasParameter
-  ): Promise<AxiosResponse<AssetResponse<"assetByAlias", P & AssetByAliasParameter>>> {
+  ): Promise<HttpResponse<AssetResponse<"assetByAlias", P & AssetByAliasParameter>>> {
     const {path, alias, ...rest} = params;
     if (path.startsWith("/")) throw new Error("Asset path must not start with '/'");
 
     const url = `${this.endpoint}/a/${encodeURIComponent(alias)}/${path}`;
-    return this.axios.get(url, {headers: this.headers, params: rest});
+    return this.httpClient.get(url, {headers: this.headers, params: rest});
   }
 
   /**
@@ -76,11 +76,11 @@ class AssetsApi {
    *
    * @template P
    * @param {P & AssetsByAliasParameter} params
-   * @returns {Promise<AxiosResponse<AssetResponse<"assetsByAlias", P & AssetsByAliasParameter>>>}
+   * @returns {Promise<HttpResponse<AssetResponse<"assetsByAlias", P & AssetsByAliasParameter>>>}
    */
   async assetsByAlias<P extends AssetsByAliasParameter>(
     params: P & AssetsByAliasParameter
-  ): Promise<AxiosResponse<AssetResponse<"assetsByAlias", P & AssetsByAliasParameter>>> {
+  ): Promise<HttpResponse<AssetResponse<"assetsByAlias", P & AssetsByAliasParameter>>> {
     const {paths, alias, ...rest} = params;
     if (paths.some(p => p.startsWith("/"))) {
       throw new Error("Asset paths must not start with '/'");
@@ -89,7 +89,7 @@ class AssetsApi {
     const {commonPath, assets} = extractCommonPathAndAssets(paths);
     const url = `${this.endpoint}/a/${encodeURIComponent(alias)}/${commonPath}/`;
 
-    return this.axios.get(url, {
+    return this.httpClient.get(url, {
       headers: this.headers,
       params: {...rest, assets},
     });
@@ -100,16 +100,16 @@ class AssetsApi {
    *
    * @template P
    * @param {P & AssetByVersionParameter} params
-   * @returns {Promise<AxiosResponse<AssetResponse<"assetByVersion", P & AssetByVersionParameter>>>}
+   * @returns {Promise<HttpResponse<AssetResponse<"assetByVersion", P & AssetByVersionParameter>>>}
    */
   async assetByVersion<P extends AssetByVersionParameter>(
     params: P & AssetByVersionParameter
-  ): Promise<AxiosResponse<AssetResponse<"assetByVersion", P & AssetByVersionParameter>>> {
+  ): Promise<HttpResponse<AssetResponse<"assetByVersion", P & AssetByVersionParameter>>> {
     const {path, version, ...rest} = params;
     if (path.startsWith("/")) throw new Error("Asset path must not start with '/'");
 
     const url = `${this.endpoint}/v/${encodeURIComponent(version)}/${path}`;
-    return this.axios.get(url, {headers: this.headers, params: rest});
+    return this.httpClient.get(url, {headers: this.headers, params: rest});
   }
 
   /**
@@ -117,11 +117,11 @@ class AssetsApi {
    *
    * @template P
    * @param {P & AssetsByVersionParameter} params
-   * @returns {Promise<AxiosResponse<AssetResponse<"assetsByVersion", P & AssetsByVersionParameter>>>}
+   * @returns {Promise<HttpResponse<AssetResponse<"assetsByVersion", P & AssetsByVersionParameter>>>}
    */
   async assetsByVersion<P extends AssetsByVersionParameter>(
     params: P & AssetsByVersionParameter
-  ): Promise<AxiosResponse<AssetResponse<"assetsByVersion", P & AssetsByVersionParameter>>> {
+  ): Promise<HttpResponse<AssetResponse<"assetsByVersion", P & AssetsByVersionParameter>>> {
     const {paths, version, ...rest} = params;
     if (paths.some(p => p.startsWith("/"))) {
       throw new Error("Asset paths must not start with '/'");
@@ -130,7 +130,7 @@ class AssetsApi {
     const {commonPath, assets} = extractCommonPathAndAssets(paths);
     const url = `${this.endpoint}/v/${encodeURIComponent(version)}/${commonPath}/`;
 
-    return this.axios.get(url, {
+    return this.httpClient.get(url, {
       headers: this.headers,
       params: {...rest, assets},
     });

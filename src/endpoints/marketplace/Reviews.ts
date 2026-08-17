@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#reviews
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {ReviewsQueryParameter, ReviewsResponse, ReviewsShowParameter,} from "../../types";
 
@@ -16,13 +16,13 @@ import {ReviewsQueryParameter, ReviewsResponse, ReviewsShowParameter,} from "../
  */
 class Reviews {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/reviews`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -31,15 +31,15 @@ class Reviews {
    *
    * @template P
    * @param {P & ReviewsShowParameter} params
-   * @returns {Promise<AxiosResponse<ReviewsResponse<"show", P>>>}
+   * @returns {Promise<HttpResponse<ReviewsResponse<"show", P>>>}
    *
    * @example
    * const { data } = await sdk.reviews.show({ id: "rev-abc123" });
    */
   async show<P extends ReviewsShowParameter>(
     params: P
-  ): Promise<AxiosResponse<ReviewsResponse<"show", P, {expand: true}>>> {
-    return this.axios.get(`${this.endpoint}/show`, {
+  ): Promise<HttpResponse<ReviewsResponse<"show", P, {expand: true}>>> {
+    return this.httpClient.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,
     });
@@ -50,7 +50,7 @@ class Reviews {
    *
    * @template P
    * @param {P & ReviewsQueryParameter} params
-   * @returns {Promise<AxiosResponse<ReviewsResponse<"query", P>>>}
+   * @returns {Promise<HttpResponse<ReviewsResponse<"query", P>>>}
    *
    * @example
    * // All reviews you've received
@@ -62,8 +62,8 @@ class Reviews {
    */
   async query<P extends ReviewsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<ReviewsResponse<"query", P>>> {
-    return this.axios.get(`${this.endpoint}/query`, {
+  ): Promise<HttpResponse<ReviewsResponse<"query", P>>> {
+    return this.httpClient.get(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });

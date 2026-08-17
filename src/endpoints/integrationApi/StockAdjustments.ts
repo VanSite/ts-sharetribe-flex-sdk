@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/integration.html#stock-adjustments
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import IntegrationApi from "./index";
 import {
   ExtraParameter,
@@ -21,13 +21,13 @@ import {
  */
 class StockAdjustments {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: IntegrationApi) {
     this.endpoint = `${api.endpoint}/stock_adjustments`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -36,7 +36,7 @@ class StockAdjustments {
    *
    * @template P
    * @param {P & StockAdjustmentsQueryParameter} params
-   * @returns {Promise<AxiosResponse<StockAdjustmentsResponse<"query", P>>>}
+   * @returns {Promise<HttpResponse<StockAdjustmentsResponse<"query", P>>>}
    *
    * @example
    * const { data } = await sdk.stockAdjustments.query({
@@ -47,8 +47,8 @@ class StockAdjustments {
    */
   async query<P extends StockAdjustmentsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<StockAdjustmentsResponse<"query", P>>> {
-    return this.axios.get(`${this.endpoint}/query`, {
+  ): Promise<HttpResponse<StockAdjustmentsResponse<"query", P>>> {
+    return this.httpClient.get(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });
@@ -64,7 +64,7 @@ class StockAdjustments {
    * @template EP
    * @param {P & StockAdjustmentsCreateParameter} params
    * @param {EP} [extraParams] - Optional extra parameters (e.g. `expand: true`)
-   * @returns {Promise<AxiosResponse<StockAdjustmentsResponse<"create", P, EP>>>}
+   * @returns {Promise<HttpResponse<StockAdjustmentsResponse<"create", P, EP>>>}
    *
    * @example
    * // Restock 50 units
@@ -86,8 +86,8 @@ class StockAdjustments {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StockAdjustmentsResponse<"create", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<StockAdjustmentsResponse<"create", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/create`,
       {...params, ...extraParams},
       {headers: this.headers}

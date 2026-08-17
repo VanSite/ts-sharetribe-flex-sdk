@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#stripe-persons
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {ExtraParameter, StripePersonsCreateParameter, StripePersonsResponse,} from "../../types";
 
@@ -16,13 +16,13 @@ import {ExtraParameter, StripePersonsCreateParameter, StripePersonsResponse,} fr
  */
 class StripePersons {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/stripe_persons`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -33,7 +33,7 @@ class StripePersons {
    * @template EP
    * @param {P & StripePersonsCreateParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<StripePersonsResponse<"create">>>}
+   * @returns {Promise<HttpResponse<StripePersonsResponse<"create">>>}
    *
    * @example
    * await sdk.stripePersons.create({
@@ -46,8 +46,8 @@ class StripePersons {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StripePersonsResponse<"create">>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<StripePersonsResponse<"create">>> {
+    return this.httpClient.post(
       `${this.endpoint}/create`,
       {...params, ...extraParams},
       {headers: this.headers}

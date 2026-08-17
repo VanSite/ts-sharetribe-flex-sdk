@@ -1,12 +1,12 @@
 import SharetribeSdk from "../../src/sdk";
 import MemoryStore from "../../src/utils/stores/MemoryStore";
-import { AxiosInstance } from "axios";
-import MockAdapter from "axios-mock-adapter";
+import type { HttpClient } from "../../src/types";
+import FetchMockAdapter from "../helpers/FetchMockAdapter";
 import { AuthToken } from "../../src/types/authentication";
 
 describe("TokenStore functionality with login and logout", () => {
   let sdk: SharetribeSdk;
-  let mockAdapter: MockAdapter;
+  let mockAdapter: FetchMockAdapter;
   let tokenStore: MemoryStore;
 
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe("TokenStore functionality with login and logout", () => {
     });
 
     // Setup mock adapter
-    mockAdapter = new MockAdapter(sdk.axios);
+    mockAdapter = new FetchMockAdapter(sdk.axios);
   });
 
   afterEach(() => {

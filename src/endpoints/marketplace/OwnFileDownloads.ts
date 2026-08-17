@@ -5,7 +5,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#own-file-downloads
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {
   OwnFileDownloadsCreateParameter,
@@ -17,13 +17,13 @@ import {
  */
 class OwnFileDownloads {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/own_file_downloads`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -31,15 +31,15 @@ class OwnFileDownloads {
    * Obtain a signed download URL for one of the current user's own files.
    *
    * @param {OwnFileDownloadsCreateParameter} params - Requires `fileId`
-   * @returns {Promise<AxiosResponse<OwnFileDownloadsCreateResponse>>}
+   * @returns {Promise<HttpResponse<OwnFileDownloadsCreateResponse>>}
    *
    * @example
    * const { data } = await sdk.ownFileDownloads.create({ fileId: "file-abc123" });
    */
   async create(
     params: OwnFileDownloadsCreateParameter
-  ): Promise<AxiosResponse<OwnFileDownloadsCreateResponse>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<OwnFileDownloadsCreateResponse>> {
+    return this.httpClient.post(
       `${this.endpoint}/create`,
       {...params},
       {headers: this.headers}

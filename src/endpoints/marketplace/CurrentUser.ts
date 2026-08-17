@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#current-user
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {
   CurrentUserChangeEmailParameter,
@@ -28,13 +28,13 @@ import {
  */
 class CurrentUser {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/current_user`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -43,12 +43,12 @@ class CurrentUser {
    *
    * @template P
    * @param {P & CurrentUserShowParameter} params
-   * @returns {Promise<AxiosResponse<CurrentUserResponse<"show", P>>>}
+   * @returns {Promise<HttpResponse<CurrentUserResponse<"show", P>>>}
    */
   async show<P extends CurrentUserShowParameter>(
     params: P = {} as P
-  ): Promise<AxiosResponse<CurrentUserResponse<"show", P, {expand: true}>>> {
-    return this.axios.get(`${this.endpoint}/show`, {
+  ): Promise<HttpResponse<CurrentUserResponse<"show", P, {expand: true}>>> {
+    return this.httpClient.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,
     });
@@ -61,7 +61,7 @@ class CurrentUser {
    * @template EP
    * @param {P & CurrentUserCreateParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<CurrentUserResponse<"create", P, EP>>>}
+   * @returns {Promise<HttpResponse<CurrentUserResponse<"create", P, EP>>>}
    */
   async create<
     P extends CurrentUserCreateParameter,
@@ -69,8 +69,8 @@ class CurrentUser {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<CurrentUserResponse<"create", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<CurrentUserResponse<"create", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/create`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -84,7 +84,7 @@ class CurrentUser {
    * @template EP
    * @param {P & CurrentUserCreateWithIdpParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<CurrentUserResponse<"create_with_idp", P, EP>>>}
+   * @returns {Promise<HttpResponse<CurrentUserResponse<"create_with_idp", P, EP>>>}
    */
   async createWithIdp<
     P extends CurrentUserCreateWithIdpParameter,
@@ -92,8 +92,8 @@ class CurrentUser {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<CurrentUserResponse<"create_with_idp", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<CurrentUserResponse<"create_with_idp", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/create_with_idp`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -107,7 +107,7 @@ class CurrentUser {
    * @template EP
    * @param {P & CurrentUserUpdateProfileParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<CurrentUserResponse<"update_profile", P, EP>>>}
+   * @returns {Promise<HttpResponse<CurrentUserResponse<"update_profile", P, EP>>>}
    */
   async updateProfile<
     P extends CurrentUserUpdateProfileParameter,
@@ -115,8 +115,8 @@ class CurrentUser {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<CurrentUserResponse<"update_profile", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<CurrentUserResponse<"update_profile", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/update_profile`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -130,7 +130,7 @@ class CurrentUser {
    * @template EP
    * @param {P & CurrentUserChangePasswordParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<CurrentUserResponse<"change_password", P, EP>>>}
+   * @returns {Promise<HttpResponse<CurrentUserResponse<"change_password", P, EP>>>}
    */
   async changePassword<
     P extends CurrentUserChangePasswordParameter,
@@ -138,8 +138,8 @@ class CurrentUser {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<CurrentUserResponse<"change_password", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<CurrentUserResponse<"change_password", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/change_password`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -153,7 +153,7 @@ class CurrentUser {
    * @template EP
    * @param {P & CurrentUserChangeEmailParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<CurrentUserResponse<"change_email", P, EP>>>}
+   * @returns {Promise<HttpResponse<CurrentUserResponse<"change_email", P, EP>>>}
    */
   async changeEmail<
     P extends CurrentUserChangeEmailParameter,
@@ -161,8 +161,8 @@ class CurrentUser {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<CurrentUserResponse<"change_email", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<CurrentUserResponse<"change_email", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/change_email`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -176,7 +176,7 @@ class CurrentUser {
    * @template EP
    * @param {P & CurrentUserVerifyEmailParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<CurrentUserResponse<"verify_email", P, EP>>>}
+   * @returns {Promise<HttpResponse<CurrentUserResponse<"verify_email", P, EP>>>}
    */
   async verifyEmail<
     P extends CurrentUserVerifyEmailParameter,
@@ -184,8 +184,8 @@ class CurrentUser {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<CurrentUserResponse<"verify_email", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<CurrentUserResponse<"verify_email", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/verify_email`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -195,12 +195,12 @@ class CurrentUser {
   /**
    * Resend email verification
    *
-   * @returns {Promise<AxiosResponse<CurrentUserResponse<"send_verification_email">>>}
+   * @returns {Promise<HttpResponse<CurrentUserResponse<"send_verification_email">>>}
    */
   async sendVerificationEmail<P extends CurrentUserSendVerificationEmailParameter>(): Promise<
-    AxiosResponse<CurrentUserResponse<"send_verification_email", P>>
+    HttpResponse<CurrentUserResponse<"send_verification_email", P>>
   > {
-    return this.axios.post(`${this.endpoint}/send_verification_email`, null, {
+    return this.httpClient.post(`${this.endpoint}/send_verification_email`, null, {
       headers: this.headers,
     });
   }
@@ -208,10 +208,10 @@ class CurrentUser {
   /**
    * Delete current user account
    *
-   * @returns {Promise<AxiosResponse<CurrentUserResponse<"delete">>>}
+   * @returns {Promise<HttpResponse<CurrentUserResponse<"delete">>>}
    */
-  async delete<P extends CurrentUserDeleteParameter>(): Promise<AxiosResponse<CurrentUserResponse<"delete", P>>> {
-    return this.axios.post(`${this.endpoint}/delete`, null, {
+  async delete<P extends CurrentUserDeleteParameter>(): Promise<HttpResponse<CurrentUserResponse<"delete", P>>> {
+    return this.httpClient.post(`${this.endpoint}/delete`, null, {
       headers: this.headers,
     });
   }

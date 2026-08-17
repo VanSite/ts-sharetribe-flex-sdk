@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#marketplace
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {MarketplaceResponse} from "../../types";
 
@@ -15,20 +15,20 @@ import {MarketplaceResponse} from "../../types";
  * Public Marketplace API client
  */
 class Marketplace {
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/marketplace`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
   /**
    * Fetch current marketplace configuration
    *
-   * @returns {Promise<AxiosResponse<MarketplaceResponse<"show">>>}
+   * @returns {Promise<HttpResponse<MarketplaceResponse<"show">>>}
    *
    * @example
    * const { data } = await sdk.marketplace.show();
@@ -36,8 +36,8 @@ class Marketplace {
    * console.log(data.attributes.currency);    // → "USD"
    * console.log(data.attributes.country);     // → "FI"
    */
-  async show(): Promise<AxiosResponse<MarketplaceResponse<"show">>> {
-    return this.axios.get(`${this.endpoint}/show`, {
+  async show(): Promise<HttpResponse<MarketplaceResponse<"show">>> {
+    return this.httpClient.get(`${this.endpoint}/show`, {
       headers: this.headers,
     });
   }

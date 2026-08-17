@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#messages
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {ExtraParameter, MessagesQueryParameter, MessagesResponse, MessagesSendParameter,} from "../../types";
 
@@ -16,13 +16,13 @@ import {ExtraParameter, MessagesQueryParameter, MessagesResponse, MessagesSendPa
  */
 class Messages {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/messages`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -31,7 +31,7 @@ class Messages {
    *
    * @template P
    * @param {P & MessagesQueryParameter} params
-   * @returns {Promise<AxiosResponse<MessagesResponse<"query", P>>>}
+   * @returns {Promise<HttpResponse<MessagesResponse<"query", P>>>}
    *
    * @example
    * const { data } = await sdk.messages.query({
@@ -40,8 +40,8 @@ class Messages {
    */
   async query<P extends MessagesQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<MessagesResponse<"query", P>>> {
-    return this.axios.get(`${this.endpoint}/query`, {
+  ): Promise<HttpResponse<MessagesResponse<"query", P>>> {
+    return this.httpClient.get(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });
@@ -54,7 +54,7 @@ class Messages {
    * @template EP
    * @param {P & MessagesSendParameter} params
    * @param {EP} [extraParams] - Optional extra parameters (e.g. `expand: true`)
-   * @returns {Promise<AxiosResponse<MessagesResponse<"send", P, EP>>>}
+   * @returns {Promise<HttpResponse<MessagesResponse<"send", P, EP>>>}
    *
    * @example
    * await sdk.messages.send({
@@ -68,8 +68,8 @@ class Messages {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<MessagesResponse<"send", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<MessagesResponse<"send", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/send`,
       {...params, ...extraParams},
       {headers: this.headers}

@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/integration.html#messages
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import IntegrationApi from "./index";
 import {MessagesQueryParameter, MessagesResponse} from "../../types";
 
@@ -16,13 +16,13 @@ import {MessagesQueryParameter, MessagesResponse} from "../../types";
  */
 class Messages {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: IntegrationApi) {
     this.endpoint = `${api.endpoint}/messages`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -31,15 +31,15 @@ class Messages {
    *
    * @template P
    * @param {P & MessagesQueryParameter} params - Requires `transactionId`
-   * @returns {Promise<AxiosResponse<MessagesResponse<"query", P>>>}
+   * @returns {Promise<HttpResponse<MessagesResponse<"query", P>>>}
    *
    * @example
    * const { data } = await sdk.messages.query({ transactionId: "tx-abc123" });
    */
   async query<P extends MessagesQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<MessagesResponse<"query", P>>> {
-    return this.axios.get(`${this.endpoint}/query`, {
+  ): Promise<HttpResponse<MessagesResponse<"query", P>>> {
+    return this.httpClient.get(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });

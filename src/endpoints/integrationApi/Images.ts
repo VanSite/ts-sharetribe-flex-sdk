@@ -6,7 +6,7 @@
  * @see https://www.sharetribe.com/api-reference/integration.html#images
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import IntegrationApi from "./index";
 import {ExtraParameter, ImagesResponse, ImagesUploadParameter} from "../../types";
 
@@ -15,13 +15,13 @@ import {ExtraParameter, ImagesResponse, ImagesUploadParameter} from "../../types
  */
 class Images {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: IntegrationApi) {
     this.endpoint = `${api.endpoint}/images`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -32,7 +32,7 @@ class Images {
    * @template EP
    * @param {P & ImagesUploadParameter} params - Upload parameters (must include `image: File`)
    * @param {EP} [extraParams] - Optional extra parameters (e.g. `expand: true`)
-   * @returns {Promise<AxiosResponse<ImagesResponse<"upload", EP>>>}
+   * @returns {Promise<HttpResponse<ImagesResponse<"upload", EP>>>}
    *
    * @example
    * const file = input.files[0];
@@ -45,7 +45,7 @@ class Images {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<ImagesResponse<"upload", EP>>> {
+  ): Promise<HttpResponse<ImagesResponse<"upload", EP>>> {
     const formData = new FormData();
 
     // Append all params (including extraParams)
@@ -55,7 +55,7 @@ class Images {
       }
     });
 
-    return this.axios.post(`${this.endpoint}/upload`, formData, {
+    return this.httpClient.post(`${this.endpoint}/upload`, formData, {
       headers: {
         ...this.headers,
         // Let browser set Content-Type with proper boundary

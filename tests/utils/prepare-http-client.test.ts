@@ -4,9 +4,9 @@ import {
   handleResponseSuccess,
   isTokenExpired,
   prepareAuthorizationHeader,
-} from "../../src/utils/prepare-axios-instance";
+} from "../../src/utils/prepare-http-client";
 import SharetribeSdk from "../../src/sdk";
-import { AxiosError, AxiosInstance } from "axios";
+import type { HttpClient } from "../../src/types";
 import MemoryStore from "../../src/utils/stores/MemoryStore";
 
 describe("Utility Functions", () => {
@@ -125,7 +125,7 @@ describe("handleResponseSuccess", () => {
 
 describe("handleResponseFailure", () => {
   let sdk: SharetribeSdk;
-  let error: AxiosError & { config: any };
+  let error: any;
   let originalRequest: any;
 
   beforeEach(() => {
@@ -149,7 +149,7 @@ describe("handleResponseFailure", () => {
           },
         }),
       },
-      axios: jest.fn().mockResolvedValue({ data: "success" }),
+      httpClient: jest.fn().mockResolvedValue({ data: "success" }),
     }) as any;
 
     originalRequest = { _retry: false, headers: {} };
@@ -173,7 +173,7 @@ describe("handleResponseFailure", () => {
     expect(originalRequest.headers.Authorization).toBe(
       "Bearer new-access-token"
     );
-    expect(sdk.axios).toHaveBeenCalledWith(originalRequest);
+    expect(sdk.httpClient).toHaveBeenCalledWith(originalRequest);
   });
 
   it("should reject if status is not 401 or 403", async () => {
@@ -245,28 +245,24 @@ describe("handleRequestSuccess", () => {
 });
 
 /**
- * Regression tests for request-body corruption on axios-retry retries.
+ * Regression tests for request-body corruption on transport-level retries.
  *
- * `prepareAxiosInstance` wires `axios-retry` onto the SDK's axios instance.
- * axios-retry's default `retryCondition` retries any method (including POST)
- * on a network error (no response: ECONNRESET, socket hang up, ...) by
- * re-invoking the axios instance with `error.config`. `handleRequestSuccess`
- * transit-serializes `requestConfig.data` in place, so on the retry the
- * request interceptor runs a second time over the already-serialized
- * transit STRING from the first attempt and serializes it again, producing
- * a double-encoded body (`["~#'","<escaped transit>"]`) that Sharetribe
- * rejects with a generic 400 bad-request.
+ * The SDK's http client retries network errors (any method, including POST)
+ * below the interceptors. Historically (axios-retry) the retry re-entered
+ * the request interceptor, which transit-serialized the already-serialized
+ * transit STRING a second time, producing a double-encoded body
+ * (`["~#'","<escaped transit>"]`) that Sharetribe rejects with a generic
+ * 400 bad-request.
  *
  * These tests drive a real `SharetribeSdk` instance (real interceptor +
- * axios-retry chain), with a custom adapter that records the exact
- * `config.data` sent on every attempt -- analogous to the flaky-adapter
- * pattern used in the consumer repo's `sdk.retry.test.js`.
+ * retry chain), with a custom adapter that records the exact `config.data`
+ * sent on every attempt -- analogous to the flaky-adapter pattern used in
+ * the consumer repo's `sdk.retry.test.js`.
  */
 describe("handleRequestSuccess retry data corruption (regression)", () => {
   const networkError = (config: any) =>
     Object.assign(new Error("socket hang up"), {
       code: "ECONNRESET",
-      isAxiosError: true,
       config,
       request: {},
     });
@@ -274,13 +270,13 @@ describe("handleRequestSuccess retry data corruption (regression)", () => {
   /**
    * Installs an adapter that records every attempt's `config.data` and
    * fails only the first attempt with a network error (no HTTP response),
-   * which is exactly what axios-retry's default retryCondition retries on.
+   * which is exactly what the client's default retry condition retries on.
    */
-  const installFlakyAdapter = (axiosInstance: AxiosInstance): any[] => {
+  const installFlakyAdapter = (httpClient: HttpClient): any[] => {
     const bodies: any[] = [];
     let attempts = 0;
 
-    axiosInstance.defaults.adapter = async (config: any) => {
+    httpClient.defaults.adapter = async (config: any) => {
       bodies.push(config.data);
       attempts += 1;
 
@@ -319,9 +315,9 @@ describe("handleRequestSuccess retry data corruption (regression)", () => {
 
   it("sends the same transit body on the retry as on the first attempt", async () => {
     const sdk = createSdk();
-    const bodies = installFlakyAdapter(sdk.axios);
+    const bodies = installFlakyAdapter(sdk.httpClient);
 
-    await sdk.axios.post("/listings/query", {
+    await sdk.httpClient.post("/listings/query", {
       title: "Van",
       nested: { a: 1 },
     });
@@ -334,9 +330,9 @@ describe("handleRequestSuccess retry data corruption (regression)", () => {
 
   it("keeps the retried body a transit map, not a double-encoded transit string", async () => {
     const sdk = createSdk();
-    const bodies = installFlakyAdapter(sdk.axios);
+    const bodies = installFlakyAdapter(sdk.httpClient);
 
-    await sdk.axios.post("/listings/query", {
+    await sdk.httpClient.post("/listings/query", {
       title: "Van",
       nested: { a: 1 },
     });
@@ -354,7 +350,7 @@ describe("handleRequestSuccess retry data corruption (regression)", () => {
     const sdk = createSdk();
     const bodies: any[] = [];
 
-    sdk.axios.defaults.adapter = async (config: any) => {
+    sdk.httpClient.defaults.adapter = async (config: any) => {
       bodies.push(config.data);
       return {
         status: 200,
@@ -365,7 +361,7 @@ describe("handleRequestSuccess retry data corruption (regression)", () => {
       };
     };
 
-    await sdk.axios.post("/listings/query", { title: "Van" });
+    await sdk.httpClient.post("/listings/query", { title: "Van" });
 
     expect(bodies).toHaveLength(1);
     expect(bodies[0]).toBe('["^ ","~:title","Van"]');
@@ -378,9 +374,9 @@ describe("handleRequestSuccess retry data corruption (regression)", () => {
     "survives a retry with data === %s without mis-firing the presence check",
     async (_label, data) => {
       const sdk = createSdk();
-      const bodies = installFlakyAdapter(sdk.axios);
+      const bodies = installFlakyAdapter(sdk.httpClient);
 
-      await sdk.axios.post("/listings/query", data);
+      await sdk.httpClient.post("/listings/query", data);
 
       expect(bodies).toHaveLength(2);
       // transit-js legitimately wraps a bare null in a `["~#'",null]` quote

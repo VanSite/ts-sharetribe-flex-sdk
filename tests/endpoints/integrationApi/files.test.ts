@@ -1,5 +1,5 @@
 import IntegrationSdk from "../../../src/integrationSdk";
-import AxiosMockAdapter from "axios-mock-adapter";
+import FetchMockAdapter from "../../helpers/FetchMockAdapter";
 import MemoryStore from "../../../src/utils/stores/MemoryStore";
 
 /**
@@ -23,7 +23,7 @@ const emptyQuery = {
 
 describe("Integration API new endpoints", () => {
   let sdk: IntegrationSdk;
-  let mock: AxiosMockAdapter;
+  let mock: FetchMockAdapter;
 
   beforeEach(() => {
     sdk = new IntegrationSdk({
@@ -31,7 +31,7 @@ describe("Integration API new endpoints", () => {
       clientSecret: "test-client-secret",
       tokenStore: new MemoryStore(),
     });
-    mock = new AxiosMockAdapter(sdk.axios);
+    mock = new FetchMockAdapter(sdk.axios);
     mock.onPost(TOKEN_URL).reply(200, tokenReply);
   });
 

@@ -1,9 +1,10 @@
 import {ApiConfigs, SdkConfig} from "./types";
 import {createApisConfigs} from "./utils/apis";
-import axios, {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "./types";
+import {createHttpClient} from "./utils/http-client";
 import AuthenticationApi from "./endpoints/auth";
 import MarketplaceApi from "./endpoints/marketplace";
-import {createAxiosConfig, prepareAxiosInstance,} from "./utils/prepare-axios-instance";
+import {createHttpConfig, prepareHttpClient,} from "./utils/prepare-http-client";
 import Listings from "./endpoints/marketplace/Listings";
 import AvailabilityExceptions from "./endpoints/marketplace/AvailabilityExceptions";
 import Bookings from "./endpoints/marketplace/Bookings";
@@ -61,10 +62,17 @@ class SharetribeSdk {
   apisConfigs: ApiConfigs;
 
   /**
-   * Axios instance for making HTTP requests.
-   * @type {AxiosInstance}
+   * Fetch-based HTTP client for making API requests.
+   * @type {HttpClient}
    */
-  axios: AxiosInstance;
+  httpClient: HttpClient;
+
+  /**
+   * @deprecated Use `httpClient` instead. Alias kept for 3.x compatibility.
+   */
+  get axios(): HttpClient {
+    return this.httpClient;
+  }
 
   /**
    * Endpoint for handling authentication.
@@ -255,14 +263,12 @@ class SharetribeSdk {
     };
 
     this.apisConfigs = createApisConfigs();
-    this.axios = axios.create(
-      createAxiosConfig(this, {
+    this.httpClient = createHttpClient(
+      createHttpConfig(this, {
         baseURL: `${this.sdkConfig.baseUrl}/${this.sdkConfig.version}/`,
-        httpAgent: this.sdkConfig.httpAgent,
-        httpsAgent: this.sdkConfig.httpsAgent,
       })
     );
-    prepareAxiosInstance(this);
+    prepareHttpClient(this);
 
     this.auth = new AuthenticationApi(this);
     this.api = new MarketplaceApi(this);
@@ -312,7 +318,7 @@ class SharetribeSdk {
    */
   async login(
     params: LoginParameter<'user'>
-  ): Promise<AxiosResponse<TokenResponse<UserTokenRequest>>> {
+  ): Promise<HttpResponse<TokenResponse<UserTokenRequest>>> {
     return this.auth.token<UserTokenRequest>({
       client_id: this.sdkConfig.clientId,
       scope: "user",
@@ -330,7 +336,7 @@ class SharetribeSdk {
    */
   async loginAs(
     params: LoginParameter<'auth_code'>
-  ): Promise<AxiosResponse<TokenResponse<UserTokenRequestWithAuthCode>>> {
+  ): Promise<HttpResponse<TokenResponse<UserTokenRequestWithAuthCode>>> {
     return this.auth.token<UserTokenRequestWithAuthCode>({
       client_id: this.sdkConfig.clientId,
       grant_type: "authorization_code",
@@ -348,7 +354,7 @@ class SharetribeSdk {
    */
   async loginWithIdp(
     params: LoginWithIdpParameter
-  ): Promise<AxiosResponse<TokenResponse<UserTokenRequest>>> {
+  ): Promise<HttpResponse<TokenResponse<UserTokenRequest>>> {
     if (this.sdkConfig.clientSecret === undefined) {
       throw new Error("clientSecret is required to login with idp");
     }
@@ -365,11 +371,11 @@ class SharetribeSdk {
    * @async
    * @returns {Promise<void>} - Resolves when the user is logged out.
    */
-  async logout(): Promise<AxiosResponse<RevokeResponse>> {
+  async logout(): Promise<HttpResponse<RevokeResponse>> {
     const token = await this.sdkConfig.tokenStore!.getToken();
     if (!token) {
       await this.sdkConfig.tokenStore!.removeToken();
-      return { data: { revoked: true } } as AxiosResponse<RevokeResponse>;
+      return { data: { revoked: true } } as HttpResponse<RevokeResponse>;
     }
 
     try {
@@ -385,7 +391,7 @@ class SharetribeSdk {
    * @async
    * @returns {Promise<AuthToken>} - The exchanged token.
    */
-  async exchangeToken(): Promise<AxiosResponse<TokenResponse<TrustedUserTokenRequest>>> {
+  async exchangeToken(): Promise<HttpResponse<TokenResponse<TrustedUserTokenRequest>>> {
     if (this.sdkConfig.clientSecret === undefined) {
       throw new Error("clientSecret is required to exchange token");
     }

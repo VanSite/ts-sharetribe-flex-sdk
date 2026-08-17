@@ -20,7 +20,7 @@
  * const { data: listings } = await sdk.marketplace.listings.query({ perPage: 20 });
  */
 
-import type {AxiosInstance} from "axios";
+import type {HttpClient} from "../../types";
 import SharetribeSdk from "../../sdk";
 
 import AvailabilityExceptions from "./AvailabilityExceptions";
@@ -55,8 +55,8 @@ import Users from "./Users";
  * Marketplace API client
  */
 class MarketplaceApi {
-  /** Axios instance with auth & base config */
-  readonly axios: AxiosInstance;
+  /** HTTP client with auth & base config */
+  readonly httpClient: HttpClient;
 
   /** Base URL for all Marketplace API endpoints */
   readonly endpoint: string;
@@ -99,7 +99,7 @@ class MarketplaceApi {
   constructor(sdk: SharetribeSdk) {
     const config = sdk.apisConfigs.api(sdk.sdkConfig);
 
-    this.axios = sdk.axios;
+    this.httpClient = sdk.httpClient;
     this.endpoint = config.baseUrl;
     this.headers = config.headers;
 

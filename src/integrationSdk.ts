@@ -1,8 +1,9 @@
 import {ApiConfigs, SdkConfig} from "./types";
-import axios, {AxiosInstance} from "axios";
+import type {HttpClient} from "./types";
+import {createHttpClient} from "./utils/http-client";
 import IntegrationApi from "./endpoints/integrationApi";
 import {createApisConfigs} from "./utils/apis";
-import {createAxiosConfig, prepareAxiosInstance,} from "./utils/prepare-axios-instance";
+import {createHttpConfig, prepareHttpClient,} from "./utils/prepare-http-client";
 import AuthenticationApi from "./endpoints/auth";
 import AvailabilityExceptions from "./endpoints/integrationApi/AvailabilityExceptions";
 import Events from "./endpoints/integrationApi/Events";
@@ -40,11 +41,18 @@ class IntegrationSdk {
   apisConfigs: ApiConfigs<true>;
 
   /**
-   * Axios instance used for making API requests.
+   * Fetch-based HTTP client used for making API requests.
    *
-   * @type {AxiosInstance}
+   * @type {HttpClient}
    */
-  axios: AxiosInstance;
+  httpClient: HttpClient;
+
+  /**
+   * @deprecated Use `httpClient` instead. Alias kept for 3.x compatibility.
+   */
+  get axios(): HttpClient {
+    return this.httpClient;
+  }
 
   // Endpoints
   /**
@@ -166,14 +174,12 @@ class IntegrationSdk {
     };
 
     this.apisConfigs = createApisConfigs(true);
-    this.axios = axios.create(
-      createAxiosConfig(this, {
+    this.httpClient = createHttpClient(
+      createHttpConfig(this, {
         baseURL: `${this.sdkConfig.baseUrl}/${this.sdkConfig.version}/`,
-        httpAgent: this.sdkConfig.httpAgent,
-        httpsAgent: this.sdkConfig.httpsAgent,
       })
     );
-    prepareAxiosInstance(this);
+    prepareHttpClient(this);
 
     this.auth = new AuthenticationApi(this);
     this.integration_api = new IntegrationApi(this);

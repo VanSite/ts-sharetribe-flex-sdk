@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#process-transitions
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {ProcessTransitionsQueryParameter, ProcessTransitionsResponse,} from "../../types";
 
@@ -16,13 +16,13 @@ import {ProcessTransitionsQueryParameter, ProcessTransitionsResponse,} from "../
  */
 class ProcessTransitions {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/process_transitions`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -31,7 +31,7 @@ class ProcessTransitions {
    *
    * @template P
    * @param {P & ProcessTransitionsQueryParameter} params
-   * @returns {Promise<AxiosResponse<ProcessTransitionsResponse<"query">>>}
+   * @returns {Promise<HttpResponse<ProcessTransitionsResponse<"query">>>}
    *
    * @example
    * // Fetch all transitions for the default booking process
@@ -47,8 +47,8 @@ class ProcessTransitions {
    */
   async query<P extends ProcessTransitionsQueryParameter>(
     params: P
-  ): Promise<AxiosResponse<ProcessTransitionsResponse<"query">>> {
-    return this.axios.get(`${this.endpoint}/query`, {
+  ): Promise<HttpResponse<ProcessTransitionsResponse<"query">>> {
+    return this.httpClient.get(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });

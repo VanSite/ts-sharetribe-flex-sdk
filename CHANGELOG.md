@@ -1,5 +1,47 @@
 # Changelog
 
+## 4.0.0 (2026-08-17)
+
+### axios is gone — native fetch under the hood 🚀
+
+The SDK's HTTP layer now runs on native `fetch` (Node.js ≥ 18, all modern browsers,
+React Native). **axios and axios-retry are no longer dependencies**, which removes
+~50 KB (raw) from every consumer bundle on top of the 3.2.0 tree-shaking wins — with
+zero changes required in typical application code.
+
+#### What stays the same
+
+- The entire public API: all endpoints, method signatures, and the
+  `{ data, status, statusText, headers }` response shape.
+- Error handling: failed requests still reject with a `SharetribeApiError`
+  (`name`, `status`, `statusText`, `data` with the parsed API error body).
+- Automatic retries: 3 attempts with exponential backoff for network errors and
+  idempotent 5xx responses (the axios-retry defaults), now built into the client.
+  Retries happen below the interceptors, so the transit-body double-serialization
+  class of bugs (fixed in 3.1.2) is now structurally impossible.
+- Token management: transparent 401/403 refresh, token stores, transit
+  serialization — all unchanged (86 tests, all green).
+
+#### Breaking changes
+
+- **Node.js ≥ 18 required** (native `fetch`). `"engines"` is set accordingly.
+- **`httpAgent` / `httpsAgent` SDK config options removed** — fetch does not use
+  `http.Agent`. Node's undici pools and keep-alives connections automatically, so
+  the Integration SDK keeps its connection reuse without configuration.
+- **`sdk.axios` is deprecated** (but still works): it now returns the SDK's own
+  fetch-based client, which mirrors the axios surface the SDK used (callable,
+  `get`/`post`, `interceptors`, `defaults`). Migrate to `sdk.httpClient`.
+- TypeScript: `AxiosInstance`/`AxiosResponse` types in signatures are replaced by
+  the SDK's own `HttpClient`/`HttpResponse` (exported from the package root).
+  If you only consume `const { data } = await sdk...`, nothing changes.
+
+#### For library/tool authors
+
+- New exports: `HttpError`, `createHttpClient`, and the `HttpClient`,
+  `HttpResponse`, `HttpRequestConfig` types.
+- The client's transport is swappable via `sdk.httpClient.defaults.adapter` —
+  handy for testing without network access.
+
 ## 3.2.0 (2026-08-17)
 
 ### Tree-shakeable builds & lightweight subpath exports 🌳

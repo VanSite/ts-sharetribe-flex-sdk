@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#files
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {FilesShowParameter, FilesShowResponse} from "../../types";
 
@@ -16,13 +16,13 @@ import {FilesShowParameter, FilesShowResponse} from "../../types";
  */
 class Files {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/files`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -30,15 +30,15 @@ class Files {
    * Fetch a file the current user can access via a file attachment.
    *
    * @param {FilesShowParameter} params - Requires `fileAttachmentId`
-   * @returns {Promise<AxiosResponse<FilesShowResponse>>}
+   * @returns {Promise<HttpResponse<FilesShowResponse>>}
    *
    * @example
    * const { data } = await sdk.files.show({ fileAttachmentId: "fa-abc123" });
    */
   async show(
     params: FilesShowParameter
-  ): Promise<AxiosResponse<FilesShowResponse>> {
-    return this.axios.get(`${this.endpoint}/show`, {
+  ): Promise<HttpResponse<FilesShowResponse>> {
+    return this.httpClient.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,
     });

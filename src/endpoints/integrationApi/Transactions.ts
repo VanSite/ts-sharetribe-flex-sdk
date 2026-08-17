@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/integration.html#transactions
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import IntegrationApi from "./index";
 import {
   ExtraParameter,
@@ -24,13 +24,13 @@ import {
  */
 class Transactions {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: IntegrationApi) {
     this.endpoint = `${api.endpoint}/transactions`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -39,12 +39,12 @@ class Transactions {
    *
    * @template P
    * @param {P & TransactionsShowParameter} params
-   * @returns {Promise<AxiosResponse<TransactionsResponse<"show", P>>>}
+   * @returns {Promise<HttpResponse<TransactionsResponse<"show", P>>>}
    */
   async show<P extends TransactionsShowParameter>(
     params: P
-  ): Promise<AxiosResponse<TransactionsResponse<"show", P, {expand: true}>>> {
-    return this.axios.get(`${this.endpoint}/show`, {
+  ): Promise<HttpResponse<TransactionsResponse<"show", P, {expand: true}>>> {
+    return this.httpClient.get(`${this.endpoint}/show`, {
       headers: this.headers,
       params,
     });
@@ -55,12 +55,12 @@ class Transactions {
    *
    * @template P
    * @param {P & TransactionsQueryParameter<true>} params - Note: `true` enables privileged fields like `customerId`, `providerId`
-   * @returns {Promise<AxiosResponse<TransactionsResponse<"query", P>>>}
+   * @returns {Promise<HttpResponse<TransactionsResponse<"query", P>>>}
    */
   async query<P extends TransactionsQueryParameter<true>>(
     params: P
-  ): Promise<AxiosResponse<TransactionsResponse<"query", P>>> {
-    return this.axios.get(`${this.endpoint}/query`, {
+  ): Promise<HttpResponse<TransactionsResponse<"query", P>>> {
+    return this.httpClient.get(`${this.endpoint}/query`, {
       headers: this.headers,
       params,
     });
@@ -73,7 +73,7 @@ class Transactions {
    * @template EP
    * @param {P & TransactionsTransitionParameter} params
    * @param {EP} [extraParams] - Optional extra parameters (e.g. `expand: true`)
-   * @returns {Promise<AxiosResponse<TransactionsResponse<"transition", P, EP>>>}
+   * @returns {Promise<HttpResponse<TransactionsResponse<"transition", P, EP>>>}
    *
    * @example
    * await sdk.transactions.transition({
@@ -87,8 +87,8 @@ class Transactions {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<TransactionsResponse<"transition", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<TransactionsResponse<"transition", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/transition`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -104,7 +104,7 @@ class Transactions {
    * @template EP
    * @param {P & TransactionsTransitionSpeculativeParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<TransactionsResponse<"transitionSpeculative", P, EP>>>}
+   * @returns {Promise<HttpResponse<TransactionsResponse<"transitionSpeculative", P, EP>>>}
    */
   async transitionSpeculative<
     P extends TransactionsTransitionSpeculativeParameter,
@@ -112,8 +112,8 @@ class Transactions {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<TransactionsResponse<"transitionSpeculative", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<TransactionsResponse<"transitionSpeculative", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/transition_speculative`,
       {...params, ...extraParams},
       {headers: this.headers}
@@ -127,7 +127,7 @@ class Transactions {
    * @template EP
    * @param {P & TransactionsUpdateMetadataParameter} params
    * @param {EP} [extraParams]
-   * @returns {Promise<AxiosResponse<TransactionsResponse<"updateMetadata", P, EP>>>}
+   * @returns {Promise<HttpResponse<TransactionsResponse<"updateMetadata", P, EP>>>}
    */
   async updateMetadata<
     P extends TransactionsUpdateMetadataParameter,
@@ -135,8 +135,8 @@ class Transactions {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<TransactionsResponse<"updateMetadata", P, EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<TransactionsResponse<"updateMetadata", P, EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/update_metadata`,
       {...params, ...extraParams},
       {headers: this.headers}

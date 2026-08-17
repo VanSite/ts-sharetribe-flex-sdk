@@ -1,16 +1,18 @@
-import {AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig,} from "axios";
-import {
+import type {
   AnonymousTokenRequest,
   AuthToken,
-  ExtendedInternalAxiosRequestConfig,
+  ExtendedInternalHttpRequestConfig,
+  HttpRequestConfig,
+  HttpResponse,
   IntegrationTokenRequest,
+  InternalHttpRequestConfig,
   RefreshTokenRequest
 } from "../types";
 import SharetribeSdk from "../sdk";
 import parameterSerializer from "./parameter-serializer";
 import IntegrationSdk from "../integrationSdk";
 import {createTransitConverters} from "./transit";
-import axiosRetry, {IAxiosRetryConfig} from "axios-retry";
+import {HttpError} from "./http-client";
 import {createSharetribeApiError} from "./util";
 
 /**
@@ -126,7 +128,7 @@ const sanitizeError = (error: unknown): object => {
     message: error.message,
   };
 
-  if (error instanceof AxiosError) {
+  if (error instanceof HttpError) {
     sanitized.status = error.response?.status;
     sanitized.url = error.config?.url;
     sanitized.method = error.config?.method;
@@ -137,30 +139,26 @@ const sanitizeError = (error: unknown): object => {
 };
 
 /**
- * Marker key used to remember the raw (pre-transit) request body across an
- * axios-retry retry. axios-retry re-invokes the axios instance with
- * `error.config`, which axios merges against the instance defaults before
- * handing it back to this same request interceptor -- so without this,
- * a retried POST would have its already-transit-serialized `data` string
- * serialized a second time (see `handleRequestSuccess`).
+ * Marker key used to remember the raw (pre-transit) request body when the
+ * same config is sent through the request interceptor more than once. The
+ * 401/403 token-refresh path re-invokes the client with `error.config`,
+ * which runs this interceptor again -- so without this, a re-issued POST
+ * would have its already-transit-serialized `data` string serialized a
+ * second time (see `handleRequestSuccess`). (Transport-level retries are
+ * unaffected: they happen below the interceptors and reuse the final
+ * config as-is.)
  *
- * Must be a plain string key, not a Symbol: axios' config merge only
- * carries over string/number-keyed own properties on retry.
- *
- * The raw body is wrapped in `{ value }` rather than stored directly:
- * axios' merge drops any custom config key whose value is `undefined`
- * (its default merge strategy treats `undefined` as "not set"), which
- * would silently lose the marker for requests whose body is legitimately
- * `undefined`. Wrapping guarantees the marker object itself is always
- * defined, even when the raw value it carries is `undefined` or `null`.
+ * The raw body is wrapped in `{ value }` rather than stored directly, so
+ * the marker stays detectable even when the raw value it carries is
+ * legitimately `undefined` or `null`.
  */
 const RAW_TRANSIT_DATA_KEY = "__sdkRawTransitData";
 
-type ConfigWithRawTransitData = InternalAxiosRequestConfig & {
+type ConfigWithRawTransitData = InternalHttpRequestConfig & {
   [RAW_TRANSIT_DATA_KEY]?: { value: unknown };
 };
 
-export const QUERY_PARAMETERS = [
+const QUERY_PARAMETERS = [
   "include",
   "page",
   "perPage",
@@ -184,13 +182,13 @@ const isJson = (res: any) => {
 };
 
 // Utility functions
-export const isTokenUnauthorized = (status: number) => [401].includes(status);
+const isTokenUnauthorized = (status: number) => [401].includes(status);
 export const isTokenExpired = (status: number) => [401, 403].includes(status);
-export const isAuthTokenUnauthorized = (error: AxiosError) =>
+const isAuthTokenUnauthorized = (error: HttpError) =>
   error.response?.status === 401 && error?.config?.method === "post" && error?.config?.url?.includes("/auth/token")
 
-export const routeNeedsTrustedUser = (
-  requestConfig: InternalAxiosRequestConfig,
+const routeNeedsTrustedUser = (
+  requestConfig: InternalHttpRequestConfig,
   sdk: SharetribeSdk | IntegrationSdk
 ) => {
   const requestUrl = requestConfig.url!;
@@ -211,9 +209,12 @@ export const routeNeedsTrustedUser = (
 export const prepareAuthorizationHeader = (data: any) =>
   `${data.token_type} ${data.access_token}`;
 
-// Interceptor handlers
+// Interceptor handlers.
+// The two big handlers below intentionally keep the exact pre-4.0 control flow
+// (ported 1:1 from the axios interceptors, covered by the test suite) — don't
+// restructure them as part of unrelated changes.
 export function handleResponseSuccess(sdk: SharetribeSdk | IntegrationSdk) {
-  return async function onFulfilled(response: AxiosResponse): Promise<AxiosResponse> {
+  return async function onFulfilled(response: HttpResponse): Promise<HttpResponse> {
     if (!sdk.sdkConfig.tokenStore) {
       throw new Error("Token store is not set");
     }
@@ -246,16 +247,17 @@ export function handleResponseSuccess(sdk: SharetribeSdk | IntegrationSdk) {
   };
 }
 
+// fallow-ignore-next-line complexity
 export async function handleResponseFailure(
   sdk: SharetribeSdk | IntegrationSdk,
-  error: AxiosError | any
+  error: HttpError | any
 ) {
   if (!sdk.sdkConfig.tokenStore) {
     throw new Error("Token store is not set");
   }
 
   try {
-    const originalRequest = error.config as ExtendedInternalAxiosRequestConfig;
+    const originalRequest = error.config as ExtendedInternalHttpRequestConfig;
 
     // Parse response data if needed
     if (error.response && isTransit(error.response)) {
@@ -295,7 +297,7 @@ export async function handleResponseFailure(
             refreshManager.subscribeTokenRefresh(
               (newToken: string) => {
                 originalRequest.headers.Authorization = `Bearer ${newToken}`;
-                resolve(sdk.axios(originalRequest));
+                resolve(sdk.httpClient(originalRequest));
               },
               (error: Error) => {
                 reject(error);
@@ -325,7 +327,7 @@ export async function handleResponseFailure(
             response.data
           );
 
-          return sdk.axios(originalRequest);
+          return sdk.httpClient(originalRequest);
         } catch (refreshError) {
           // createSharetribeApiError now always returns an Error instance, but
           // keep a defensive wrap so a stray non-Error never stringifies to
@@ -364,7 +366,7 @@ export async function handleResponseFailure(
           await sdk.sdkConfig.tokenStore.setToken(response.data);
         }
 
-        return sdk.axios(originalRequest);
+        return sdk.httpClient(originalRequest);
       }
     }
 
@@ -390,10 +392,11 @@ export async function handleResponseFailure(
   }
 }
 
+// fallow-ignore-next-line complexity
 export async function handleRequestSuccess(
   sdk: SharetribeSdk | IntegrationSdk,
-  requestConfig: InternalAxiosRequestConfig
-): Promise<InternalAxiosRequestConfig> {
+  requestConfig: InternalHttpRequestConfig
+): Promise<InternalHttpRequestConfig> {
   if (!sdk.sdkConfig.tokenStore) {
     throw new Error("Token store is not set");
   }
@@ -426,7 +429,7 @@ export async function handleRequestSuccess(
       requestConfig.headers.Authorization =
         prepareAuthorizationHeader(authToken);
     } else {
-      let response: AxiosResponse<any>;
+      let response: HttpResponse<any>;
       if (sdk instanceof SharetribeSdk) {
         response = await sdk.auth.token<AnonymousTokenRequest>({
           client_id: sdk.sdkConfig.clientId,
@@ -525,42 +528,29 @@ export async function handleRequestSuccess(
   return requestConfig;
 }
 
-export function createAxiosConfig(
+export function createHttpConfig(
   sdk: SharetribeSdk | IntegrationSdk,
-  config: AxiosRequestConfig
+  config: HttpRequestConfig
 ) {
   config.headers = {
     ...config.headers,
     Accept: "application/transit+json",
   };
-  config.transformRequest = (v) => v;
-  config.transformResponse = (v) => v;
   if (sdk.sdkConfig.transitVerbose) {
     config.headers["X-Transit-Verbose"] = true;
   }
   return config;
 }
 
-// Main setup function
-export function prepareAxiosInstance(sdk: SharetribeSdk | IntegrationSdk) {
-  try {
-    const retryConfig: IAxiosRetryConfig = {
-      retries: 3, // Number of retries
-      retryDelay: axiosRetry.exponentialDelay,
-    };
-
-    // Use type assertion to bypass TypeScript error
-    (axiosRetry as any)(sdk.axios, retryConfig);
-  } catch (e) {
-    console.warn("Failed to initialize axios-retry:", e);
-  }
-
-  sdk.axios.interceptors.response.use(
+// Main setup function. Transport-level retries (3x, exponential backoff)
+// are built into the http client itself — see utils/http-client.ts.
+export function prepareHttpClient(sdk: SharetribeSdk | IntegrationSdk) {
+  sdk.httpClient.interceptors.response.use(
     handleResponseSuccess(sdk),
-    (error: AxiosError) => handleResponseFailure(sdk, error)
+    (error: HttpError) => handleResponseFailure(sdk, error)
   );
-  sdk.axios.interceptors.request.use((config: InternalAxiosRequestConfig) =>
+  sdk.httpClient.interceptors.request.use((config: InternalHttpRequestConfig) =>
     handleRequestSuccess(sdk, config)
   );
-  sdk.axios.defaults.paramsSerializer = parameterSerializer;
+  sdk.httpClient.defaults.paramsSerializer = parameterSerializer;
 }

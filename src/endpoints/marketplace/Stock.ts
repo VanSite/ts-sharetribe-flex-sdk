@@ -7,7 +7,7 @@
  * @see https://www.sharetribe.com/api-reference/marketplace.html#stock
  */
 
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {HttpClient, HttpResponse} from "../../types";
 import MarketplaceApi from "./index";
 import {ExtraParameter, StockCompareAndSetParameter, StockResponse,} from "../../types";
 
@@ -16,13 +16,13 @@ import {ExtraParameter, StockCompareAndSetParameter, StockResponse,} from "../..
  */
 class Stock {
   public readonly authRequired = true;
-  private readonly axios: AxiosInstance;
+  private readonly httpClient: HttpClient;
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
 
   constructor(api: MarketplaceApi) {
     this.endpoint = `${api.endpoint}/stock`;
-    this.axios = api.axios;
+    this.httpClient = api.httpClient;
     this.headers = api.headers;
   }
 
@@ -35,7 +35,7 @@ class Stock {
    * @template EP
    * @param {P & StockCompareAndSetParameter} params
    * @param {EP} [extraParams] - Optional extra parameters (e.g. `expand: true`)
-   * @returns {Promise<AxiosResponse<StockResponse<"compareAndSet", EP>>>}
+   * @returns {Promise<HttpResponse<StockResponse<"compareAndSet", EP>>>}
    *
    * @example
    * // Reserve 2 units if current stock is 10
@@ -59,8 +59,8 @@ class Stock {
   >(
     params: P,
     extraParams?: EP
-  ): Promise<AxiosResponse<StockResponse<"compareAndSet", EP>>> {
-    return this.axios.post(
+  ): Promise<HttpResponse<StockResponse<"compareAndSet", EP>>> {
+    return this.httpClient.post(
       `${this.endpoint}/compare_and_set`,
       {...params, ...extraParams},
       {headers: this.headers}

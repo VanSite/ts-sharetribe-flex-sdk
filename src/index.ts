@@ -16,7 +16,6 @@ import MemoryStore from "./utils/stores/MemoryStore";
 import BrowserStore from "./utils/stores/BrowserStore";
 import ExpressStore from "./utils/stores/ExpressStore";
 import {objectQueryString} from "./utils/util";
-import {read, write} from "./utils/transit";
 import {generateKey} from "./utils/stores/store";
 
 // Export marketplace types
@@ -103,19 +102,6 @@ export const TokenStores: TokenStores = {
   ExpressStore,
 };
 
-export type Transit = {
-  read: typeof read;
-  write: typeof write;
-};
-
-/**
- * Transit utilities for reading and writing transit data.
- */
-export const transit: Transit = {
-  read,
-  write,
-};
-
 /**
  * Export the Sharetribe SDK and Integration SDK.
  */
@@ -149,8 +135,6 @@ const defaultExport = {
   sdkTypes,
   /** Export of utility functions. */
   util,
-  /** Export of Transit utilities. */
-  transit,
 };
 export default defaultExport;
 
@@ -160,5 +144,4 @@ export type DefaultExport = {
   TokenStores: typeof TokenStores;
   sdkTypes: typeof sdkTypes;
   util: typeof util;
-  transit: typeof transit;
 };

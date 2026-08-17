@@ -1,5 +1,33 @@
 # Changelog
 
+## 4.1.0 (2026-08-17)
+
+### transit-js loads lazily — main bundle drops another ~120 KB 🪶
+
+The SDK now loads transit-js via dynamic `import()` on the **first API call** instead
+of statically at module load. An eagerly constructed `new SharetribeSdk()` in your
+app bootstrap no longer pulls transit-js (~120 KB raw) into the main bundle — your
+bundler splits it into a separate chunk that is fetched once, right before the first
+request is serialized. No app code changes needed for this.
+
+- Works in ESM (`import()` chunk), CJS (lazy `require` at call time) and the UMD
+  browser bundle (transit stays inlined there — single-file constraint).
+- Combined with 4.0.0 (axios removal) and 3.2.0 (tree-shaking), the main-bundle
+  cost of an eagerly constructed SDK is now just the SDK's own code plus `js-cookie`
+  and `uuid`.
+
+#### Removed
+
+- The static root exports `transit` / `Transit` (`import { transit } from "@vansite/ts-sharetribe-flex-sdk"`)
+  are gone — keeping them would have forced the static transit-js import back into
+  the main entry. Use the dedicated subpath instead (available since 3.2.0):
+
+  ```js
+  import { read, write } from "@vansite/ts-sharetribe-flex-sdk/transit";
+  ```
+
+  Everything else, including `sdkTypes` and `replacer`/`reviver`, is unchanged.
+
 ## 4.0.1 (2026-08-17)
 
 - docs: README — version guide (4.x vs 3.2.x), subpath-export examples, updated changelog section.

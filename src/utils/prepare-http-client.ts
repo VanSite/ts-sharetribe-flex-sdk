@@ -11,7 +11,6 @@ import type {
 import SharetribeSdk from "../sdk";
 import parameterSerializer from "./parameter-serializer";
 import IntegrationSdk from "../integrationSdk";
-import {createTransitConverters} from "./transit";
 import {HttpError} from "./http-client";
 import {createSharetribeApiError} from "./util";
 
@@ -139,6 +138,17 @@ const sanitizeError = (error: unknown): object => {
 };
 
 /**
+ * Lazily loaded transit module. transit-js is ~120 KB raw — by importing it
+ * dynamically on the first API call, the main bundle stays free of it even
+ * when `new SharetribeSdk()` is constructed eagerly at bootstrap. The promise
+ * is cached, so the module is fetched at most once.
+ */
+type TransitModule = typeof import("./transit");
+let transitModulePromise: Promise<TransitModule> | undefined;
+const loadTransit = (): Promise<TransitModule> =>
+  (transitModulePromise ??= import("./transit"));
+
+/**
  * Marker key used to remember the raw (pre-transit) request body when the
  * same config is sent through the request interceptor more than once. The
  * 401/403 token-refresh path re-invokes the client with `error.config`,
@@ -220,7 +230,7 @@ export function handleResponseSuccess(sdk: SharetribeSdk | IntegrationSdk) {
     }
 
     if (isTransit(response)) {
-      const {reader} = createTransitConverters(sdk.sdkConfig.typeHandlers, {
+      const {reader} = (await loadTransit()).createTransitConverters(sdk.sdkConfig.typeHandlers, {
         verbose: sdk.sdkConfig.transitVerbose,
       });
       if (typeof response.data === 'string') {
@@ -261,7 +271,7 @@ export async function handleResponseFailure(
 
     // Parse response data if needed
     if (error.response && isTransit(error.response)) {
-      const {reader} = createTransitConverters(sdk.sdkConfig.typeHandlers, {
+      const {reader} = (await loadTransit()).createTransitConverters(sdk.sdkConfig.typeHandlers, {
         verbose: sdk.sdkConfig.transitVerbose,
       });
       if (typeof error.response.data === 'string') {
@@ -517,7 +527,7 @@ export async function handleRequestSuccess(
         configWithRawData[RAW_TRANSIT_DATA_KEY] = { value: requestConfig.data };
       }
 
-      const {writer} = createTransitConverters(sdk.sdkConfig.typeHandlers, {
+      const {writer} = (await loadTransit()).createTransitConverters(sdk.sdkConfig.typeHandlers, {
         verbose: sdk.sdkConfig.transitVerbose,
       });
       requestConfig.data = writer.write(requestConfig.data);

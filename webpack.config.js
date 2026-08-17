@@ -1,6 +1,7 @@
 // Webpack only builds the UMD browser bundle. CJS/ESM come from tsup
 // (see tsup.config.ts), type declarations from `tsc -p tsconfig.build.json`.
 const path = require("path");
+const webpack = require("webpack");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const TerserPlugin = require("terser-webpack-plugin");
 
@@ -58,15 +59,20 @@ const umdConfig = {
     pathinfo: true,
     globalObject: "this",
   },
-  plugins: isAnalyze
-    ? [
-        new BundleAnalyzerPlugin({
-          analyzerMode: "static",
-          reportFilename: "bundle-analysis-umd.html",
-          openAnalyzer: false,
-        }),
-      ]
-    : [],
+  plugins: [
+    // The SDK lazy-loads transit via dynamic import(); the UMD build must
+    // stay a single file, so inline that chunk instead of splitting it out.
+    new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
+    ...(isAnalyze
+      ? [
+          new BundleAnalyzerPlugin({
+            analyzerMode: "static",
+            reportFilename: "bundle-analysis-umd.html",
+            openAnalyzer: false,
+          }),
+        ]
+      : []),
+  ],
 };
 
 module.exports = [umdConfig];

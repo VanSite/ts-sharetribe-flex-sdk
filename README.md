@@ -145,6 +145,10 @@ handlers keep working.
 
 ## Changelog
 
+### 4.1.0
+- **transit-js loads lazily** on the first API call — an eagerly constructed `new SharetribeSdk()` no longer puts transit-js (~120 KB raw) in your main bundle
+- Removed: static root export `transit` — use `@vansite/ts-sharetribe-flex-sdk/transit` instead
+
 ### 4.0.0
 - **axios replaced with native `fetch`** — axios/axios-retry dropped, ~50 KB (raw) less in every consumer bundle; retries (3×, exponential backoff) built in
 - Breaking: Node.js ≥ 18 required; `httpAgent`/`httpsAgent` config removed; `sdk.axios` deprecated in favor of `sdk.httpClient`

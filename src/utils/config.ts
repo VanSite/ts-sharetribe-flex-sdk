@@ -24,7 +24,9 @@ type DefaultIntegrationSdkConfigType = {
 export const DefaultSdkConfig: DefaultSdkConfigType = {
   assetCdnBaseUrl: "https://cdn.st-api.com", // Base URL for assets
   baseUrl: "https://flex-api.sharetribe.com", // Base URL for the API
-  tokenStore: new MemoryStore(), // Default token store (in-memory)
+  // PURE keeps this module free of top-level side effects so bundlers can
+  // tree-shake the config (and everything it pulls in) when unused.
+  tokenStore: /* @__PURE__ */ new MemoryStore(), // Default token store (in-memory)
   transitVerbose: false, // Toggle for verbose transit serialization
   typeHandlers: [], // Array to handle custom data types
   version: "v1", // API version
@@ -39,7 +41,7 @@ export const DefaultSdkConfig: DefaultSdkConfigType = {
  */
 export const DefaultIntegrationSdkConfig: DefaultIntegrationSdkConfigType = {
   baseUrl: "https://flex-integ-api.sharetribe.com",
-  tokenStore: new MemoryStore(), // Default token store (in-memory)
+  tokenStore: /* @__PURE__ */ new MemoryStore(), // Default token store (in-memory)
   transitVerbose: false, // Toggle for verbose transit serialization
   typeHandlers: [], // Array to handle custom data types
   version: "v1", // API version

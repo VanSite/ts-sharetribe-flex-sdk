@@ -1,6 +1,33 @@
 # Changelog
 
-## 4.1.0 (2026-08-17)
+## 4.2.0 (2026-08-19)
+
+### Tree-shaking works now — Integration API branch dropped from client bundles 🌳
+
+Despite `sideEffects: false` and a proper ESM build, webpack 5 consumers got the
+**entire** SDK in their bundle — including the full `endpoints/integrationApi/*` tree
+that client code never uses. Three blockers were fixed:
+
+1. **`keepNames: true` in tsup** wrapped every declaration in a non-PURE `__name()`
+   helper call, so consumers' minifiers treated all classes as side-effectful.
+   Nothing in the SDK relies on `constructor.name` at runtime (transit write
+   handlers are keyed by class identity), so keepNames is now off.
+2. **`instanceof IntegrationSdk` in the shared HTTP layer** made the whole
+   Integration API tree reachable from every `SharetribeSdk` instance. Both SDK
+   classes now carry a readonly `_sdkType` discriminator (`"marketplace"` /
+   `"integration"`) and the HTTP layer imports the classes type-only.
+3. **Top-level `new MemoryStore()`** in the default configs is now
+   `/* @__PURE__ */`-annotated.
+
+Measured with a webpack 5 production fixture that imports only
+`{ SharetribeSdk, TokenStores }` against `dist/index.mjs`:
+**54.7 KB → 40.6 KB minified (−26 %)**; `IntegrationSdk`, all
+`endpoints/integrationApi/*` classes and the integration default config are gone
+from the output. The fixture is a permanent regression guard:
+`pnpm run test:treeshake` (in `tests/fixtures/treeshake/`).
+
+No API changes; the new `_sdkType` field is public but internal. CJS/Node and UMD
+consumers are unaffected.
 
 ### transit-js loads lazily — main bundle drops another ~120 KB 🪶
 

@@ -5,8 +5,8 @@
  */
 
 import type {HttpClient, HttpResponse} from "../../types";
-import SharetribeSdk from "../../sdk";
-import IntegrationSdk from "../../integrationSdk";
+import type SharetribeSdk from "../../sdk";
+import type IntegrationSdk from "../../integrationSdk";
 import {
   AuthWithIdpParameter,
   RevokeResponse,

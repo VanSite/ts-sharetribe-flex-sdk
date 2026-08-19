@@ -5,7 +5,7 @@
  */
 
 import type {HttpClient, HttpResponse} from "../../types";
-import SharetribeSdk from "../../sdk";
+import type SharetribeSdk from "../../sdk";
 import {
   AssetByAliasParameter,
   AssetByVersionParameter,

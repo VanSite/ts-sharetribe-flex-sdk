@@ -21,7 +21,7 @@
  */
 
 import type {HttpClient} from "../../types";
-import SharetribeSdk from "../../sdk";
+import type SharetribeSdk from "../../sdk";
 
 import AvailabilityExceptions from "./AvailabilityExceptions";
 import Bookings from "./Bookings";

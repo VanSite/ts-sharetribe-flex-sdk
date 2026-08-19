@@ -21,7 +21,7 @@
  */
 
 import type {HttpClient} from "../../types";
-import IntegrationSdk from "../../integrationSdk";
+import type IntegrationSdk from "../../integrationSdk";
 
 import AvailabilityExceptions from "./AvailabilityExceptions";
 import Events from "./Events";

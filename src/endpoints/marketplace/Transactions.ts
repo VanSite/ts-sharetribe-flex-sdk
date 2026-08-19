@@ -13,7 +13,7 @@
  */
 
 import type {HttpClient, HttpResponse} from "../../types";
-import MarketplaceApi from "./index";
+import type MarketplaceApi from "./index";
 import {
   ExtraParameter,
   TransactionsInitiateParameter,

@@ -18,7 +18,11 @@ export default defineConfig({
   noExternal: ["transit-js"],
   sourcemap: true,
   minify: false,
-  keepNames: true,
+  // keepNames wraps every declaration in a non-PURE __name() call, which makes
+  // consumers' minifiers treat all classes as side-effectful and defeats
+  // tree-shaking. Nothing in src/ relies on constructor.name at runtime
+  // (transit write handlers are keyed by class identity, not name).
+  keepNames: false,
   // Type declarations come from `tsc -p tsconfig.build.json`, UMD from webpack.
   dts: false,
   clean: false, // `npm run clean` handles this; must not wipe UMD/types output

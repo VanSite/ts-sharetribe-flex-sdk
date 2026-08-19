@@ -50,6 +50,14 @@ import {DefaultSdkConfig} from "./utils/config";
 
 class SharetribeSdk {
   /**
+   * Discriminator used instead of `instanceof` checks in the shared HTTP
+   * layer, so that layer never has to import the SDK classes at runtime
+   * (an `instanceof IntegrationSdk` there would drag the whole Integration
+   * API tree into client bundles and defeat tree-shaking).
+   */
+  readonly _sdkType = "marketplace" as const;
+
+  /**
    * The SDK configuration object.
    * @type {SdkConfig}
    */

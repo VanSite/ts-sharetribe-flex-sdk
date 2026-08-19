@@ -6,7 +6,7 @@
  */
 
 import type {HttpClient, HttpResponse} from "../../types";
-import IntegrationApi from "./index";
+import type IntegrationApi from "./index";
 import {
   FileAttachmentsQueryParameter,
   FileAttachmentsQueryResponse,

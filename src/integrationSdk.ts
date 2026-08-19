@@ -27,6 +27,12 @@ import {DefaultIntegrationSdkConfig} from "./utils/config";
  */
 class IntegrationSdk {
   /**
+   * Discriminator used instead of `instanceof` checks in the shared HTTP
+   * layer — see the note on SharetribeSdk._sdkType.
+   */
+  readonly _sdkType = "integration" as const;
+
+  /**
    * Configuration for the SDK.
    *
    * @type {SdkConfig}

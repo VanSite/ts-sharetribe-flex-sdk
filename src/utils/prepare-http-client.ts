@@ -8,9 +8,12 @@ import type {
   InternalHttpRequestConfig,
   RefreshTokenRequest
 } from "../types";
-import SharetribeSdk from "../sdk";
+// Type-only imports: a runtime import of the SDK classes here (e.g. for
+// `instanceof`) would make the Integration API tree reachable from every
+// consumer of the shared HTTP layer and break tree-shaking.
+import type SharetribeSdk from "../sdk";
 import parameterSerializer from "./parameter-serializer";
-import IntegrationSdk from "../integrationSdk";
+import type IntegrationSdk from "../integrationSdk";
 import {HttpError} from "./http-client";
 import {createSharetribeApiError} from "./util";
 
@@ -440,13 +443,13 @@ export async function handleRequestSuccess(
         prepareAuthorizationHeader(authToken);
     } else {
       let response: HttpResponse<any>;
-      if (sdk instanceof SharetribeSdk) {
+      if (sdk._sdkType === "marketplace") {
         response = await sdk.auth.token<AnonymousTokenRequest>({
           client_id: sdk.sdkConfig.clientId,
           grant_type: "client_credentials",
           scope: "public-read",
         });
-      } else if (sdk instanceof IntegrationSdk) {
+      } else if (sdk._sdkType === "integration") {
         if (!sdk.sdkConfig.clientSecret) {
           throw new Error("clientSecret is required for integration SDK");
         }

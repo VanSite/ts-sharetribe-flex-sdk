@@ -145,6 +145,9 @@ handlers keep working.
 
 ## Changelog
 
+### 4.2.0
+- **Tree-shaking fixed** — webpack 5 consumers importing only `SharetribeSdk` no longer bundle the Integration API tree (fixture bundle: 54.7 → 40.6 KB min); blockers were tsup `keepNames`, an `instanceof IntegrationSdk` in the shared HTTP layer (now a `_sdkType` discriminator) and a non-PURE top-level `new MemoryStore()`
+
 ### 4.1.0
 - **transit-js loads lazily** on the first API call — an eagerly constructed `new SharetribeSdk()` no longer puts transit-js (~120 KB raw) in your main bundle
 - Removed: static root export `transit` — use `@vansite/ts-sharetribe-flex-sdk/transit` instead

@@ -129,9 +129,10 @@ describe("handleResponseFailure", () => {
   let originalRequest: any;
 
   beforeEach(() => {
-    // Create a proper mock that passes the constructor.name check
+    // Mock that passes the _sdkType discriminator check in the HTTP layer
     const mockSdk = Object.create(SharetribeSdk.prototype);
     sdk = Object.assign(mockSdk, {
+      _sdkType: "marketplace",
       sdkConfig: {
         clientId: "test-client-id",
         tokenStore: {
@@ -194,9 +195,10 @@ describe("handleRequestSuccess", () => {
   let requestConfig: any;
 
   beforeEach(() => {
-    // Create a proper mock that passes the constructor.name check
+    // Mock that passes the _sdkType discriminator check in the HTTP layer
     const mockSdk = Object.create(SharetribeSdk.prototype);
     sdk = Object.assign(mockSdk, {
+      _sdkType: "marketplace",
       sdkConfig: {
         clientId: "test-client-id",
         tokenStore: {

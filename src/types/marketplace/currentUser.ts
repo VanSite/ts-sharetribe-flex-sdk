@@ -128,7 +128,6 @@ export interface CurrentUserParameter extends ApiParameter {
  * Endpoint parameters
  */
 export type CurrentUserShowParameter = CurrentUserParameter;
-export type CurrentUserDeleteParameter = void;
 export type CurrentUserSendVerificationEmailParameter = void;
 
 export interface CurrentUserCreateParameter extends CurrentUserParameter {
@@ -163,6 +162,10 @@ export interface CurrentUserUpdateProfileParameter extends CurrentUserParameter 
 export interface CurrentUserChangePasswordParameter {
   currentPassword: string;
   newPassword: string;
+}
+
+export interface CurrentUserDeleteParameter {
+  currentPassword: string;
 }
 
 export interface CurrentUserChangeEmailParameter {

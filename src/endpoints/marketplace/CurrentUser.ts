@@ -208,12 +208,24 @@ class CurrentUser {
   /**
    * Delete current user account
    *
-   * @returns {Promise<HttpResponse<CurrentUserResponse<"delete">>>}
+   * @template P
+   * @template EP
+   * @param {P & CurrentUserDeleteParameter} params
+   * @param {EP} [extraParams]
+   * @returns {Promise<HttpResponse<CurrentUserResponse<"delete", P, EP>>>}
    */
-  async delete<P extends CurrentUserDeleteParameter>(): Promise<HttpResponse<CurrentUserResponse<"delete", P>>> {
-    return this.httpClient.post(`${this.endpoint}/delete`, null, {
-      headers: this.headers,
-    });
+  async delete<
+    P extends CurrentUserDeleteParameter,
+    EP extends ExtraParameter | undefined = undefined
+  >(
+    params: P,
+    extraParams?: EP
+  ): Promise<HttpResponse<CurrentUserResponse<"delete", P, EP>>> {
+    return this.httpClient.post(
+      `${this.endpoint}/delete`,
+      {...params, ...extraParams},
+      {headers: this.headers}
+    );
   }
 
   /**

@@ -1,5 +1,22 @@
 # Changelog
 
+## 4.2.1 (2026-10-08)
+
+### `currentUser.delete` sends the current password again
+
+`currentUser.delete()` took no arguments and always POSTed an empty body, so
+the Marketplace API rejected every self-service account deletion with
+`400 validation-invalid-params` ("(not (map? nil))"). It now has the same
+signature as `changePassword`/`changeEmail`:
+
+```ts
+await sdk.currentUser.delete({ currentPassword }, { expand: true });
+```
+
+`CurrentUserDeleteParameter` is now `{ currentPassword: string }` instead of
+`void`. Calls without arguments no longer type-check — they could never
+succeed against the API.
+
 ## 4.2.0 (2026-08-19)
 
 ### Tree-shaking works now — Integration API branch dropped from client bundles 🌳

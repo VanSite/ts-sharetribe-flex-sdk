@@ -366,10 +366,14 @@ class SharetribeSdk {
     if (this.sdkConfig.clientSecret === undefined) {
       throw new Error("clientSecret is required to login with idp");
     }
+    // The Auth API expects snake_case form fields; the public parameter type
+    // stays camelCase like the rest of the SDK.
     return this.auth.authWithIdp({
       client_id: this.sdkConfig.clientId,
-      client_secret: this.sdkConfig.clientSecret!,
-      ...params,
+      client_secret: this.sdkConfig.clientSecret,
+      idp_id: params.idpId,
+      idp_client_id: params.idpClientId,
+      idp_token: params.idpToken,
     });
   }
 

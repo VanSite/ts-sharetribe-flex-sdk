@@ -1,5 +1,23 @@
 # Changelog
 
+## 4.2.2 (2026-11-12)
+
+### `loginWithIdp` sends snake_case fields to the Auth API
+
+`loginWithIdp()` passed `idpId`, `idpClientId` and `idpToken` to
+`POST /auth/auth_with_idp` unchanged. The Auth API expects `idp_id`,
+`idp_client_id` and `idp_token`, so every IdP login failed with `400`.
+The SDK now maps the fields before sending. The call itself does not change:
+
+```ts
+await sdk.loginWithIdp({ idpId: "google", idpClientId, idpToken });
+```
+
+`AuthWithIdpParameter` (the low-level `sdk.auth.authWithIdp()` input) now
+describes the wire format: `{ client_id, client_secret, idp_id, idp_client_id,
+idp_token }`. Direct `authWithIdp` calls with camelCase fields no longer
+type-check; they could never succeed against the API.
+
 ## 4.2.1 (2026-10-08)
 
 ### `currentUser.delete` sends the current password again

@@ -146,12 +146,17 @@ export type LoginWithIdpParameter = {
 };
 
 /**
- * Login with external IdP
+ * Login with external IdP — form fields sent to `POST /auth/auth_with_idp`
+ * (snake_case wire format). `sdk.loginWithIdp()` builds this from
+ * {@link LoginWithIdpParameter}.
  */
 export type AuthWithIdpParameter = {
   client_id: string;
   client_secret: string;
-} & LoginWithIdpParameter;
+  idp_id: IdentityProviderId;
+  idp_client_id: string;
+  idp_token: string;
+};
 
 /**
  * Successful token response

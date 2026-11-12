@@ -48,12 +48,14 @@ await sdk.loginAs({
 
 ### Login with Identity Provider
 
-Authenticate via external IdP (Google, Facebook, etc.).
+Authenticate via external IdP (Google, Facebook, etc.). Requires `clientSecret`,
+so call it server-side only.
 
 ```typescript
 await sdk.loginWithIdp({
   idpId: 'google',
-  idpToken: 'google-oauth-token',
+  idpClientId: 'google-oauth-client-id',
+  idpToken: 'google-id-token',
 });
 ```
 

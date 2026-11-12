@@ -382,6 +382,42 @@ describe("Authentication process", () => {
         refresh_token: "joe.dunphy@example.com-refresh-1",
       });
     });
+
+    it("should send the IdP params to /auth_with_idp in snake_case", async () => {
+      const sdk = new SharetribeSdk({
+        clientId: "test-client-id",
+        clientSecret: "test-client-secret",
+      });
+      const mock = new FetchMockAdapter(sdk.axios);
+      mock
+        .onPost("https://flex-api.sharetribe.com/v1/auth/auth_with_idp")
+        .reply(200, {
+          access_token: "idp-access-token",
+          token_type: "bearer",
+          expires_in: 86400,
+          scope: "user",
+          refresh_token: "idp-refresh-token",
+        });
+
+      await sdk.loginWithIdp({
+        idpId: "google",
+        idpClientId: "google-client-id",
+        idpToken: "google-id-token",
+      });
+
+      const request = mock.history.post.find(
+        (r) => r.url === "https://flex-api.sharetribe.com/v1/auth/auth_with_idp"
+      );
+      expect(request).toBeDefined();
+      const body = Object.fromEntries(new URLSearchParams(request!.data));
+      expect(body).toEqual({
+        client_id: "test-client-id",
+        client_secret: "test-client-secret",
+        idp_id: "google",
+        idp_client_id: "google-client-id",
+        idp_token: "google-id-token",
+      });
+    });
   });
 
   describe("Logout edge cases", () => {
